@@ -11,6 +11,7 @@ app.config(function($routeProvider, $locationProvider) {
 
 app.controller('MainController', function($rootScope, $scope){
 
+  // General
   $rootScope.$on("$routeChangeStart", function(){
     $rootScope.loading = true;
   });
@@ -18,6 +19,11 @@ app.controller('MainController', function($rootScope, $scope){
   $rootScope.$on("$routeChangeSuccess", function(){
     $rootScope.loading = false;
   });
- 
-  $scope.userAgent =  navigator.userAgent;
+
+  // Details Screen
+  $scope.userAgent = "Press Button!"; 
+  $scope.checkAgent = function(){
+    $scope.userAgent =  navigator.userAgent;  
+  }
+  
 });
