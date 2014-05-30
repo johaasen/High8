@@ -27,13 +27,14 @@
           Turn Off
       </a>        
     </div>
-    <div>
-      <h3>User Agent<br/>
-      <div class="btn btn-default" ng-click="checkAgent()">Check User Agent</div><br>
-      <small><span ng-bind="userAgent"></span></small>
-      </h3>
-    </div>
   </div>
-
+  <div bs-panel title="User Agent">
+    <div class="btn btn-default" ng-click="checkAgent()">Check User Agent</div><br>
+    <h3><small><span ng-bind="userAgent"></span></small></h3>
+  </div>
+  <div bs-panel title="Mampf Backend Connection">
+    <div class="btn btn-default" ng-click="testBackendCon()">Test Mampf</div>
+    <h3><small><span ng-bind="testMampfString"></span></small></h3>
+  </div>
 </div>
 </div>

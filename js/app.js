@@ -21,9 +21,21 @@ app.controller('MainController', function($rootScope, $scope){
   });
 
   // Details Screen
+  // Test User Agent
   $scope.userAgent = "Press Button!"; 
   $scope.checkAgent = function(){
     $scope.userAgent =  navigator.userAgent;  
-  }
+  };
+
+  // Mampf Backend Connection
+  $scope.testMampfString = "Press Button!";
+  $scope.mampfCon = new MampfAPI(BACKEND_URL);
+  
+  $scope.testBackendCon = function(){
+    //Test backend connection with demo values from mampfBackendConnection.js
+    $scope.mampfCon.config = new MampfRequest(demoIdentity, demoInvitees, demoCurrentPosition, demoTimeSlots);
+    $scope.mampfCon.findMatches();
+    $scope.testMampfString = "Check Console!";
+  }; 
   
 });
