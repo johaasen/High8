@@ -1,7 +1,39 @@
 <html>
 <head>
 <script src="md5.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="mampfBackendConnection.js"></script>
+<script>
+    var MampfClientApi = function(url) {
+        this.mampfClientApiUrl = url;
+    
+        this.getBestMatch = function(intention, callbackDone, callbackError) {
+    
+            $.ajax({
+                url : this.mampfClientApiUrl,
+    
+                success : callbackDone,
+    
+                error : callbackError,
+    
+                dataType : "json",
+    
+                type : "POST",
+    
+                data : JSON.stringify(intention, null, '  '),
+    
+                contentType : "application/json; charset=utf-8",
+    
+            /*
+             * xhrFields : { withCredentials : true }
+             */
+    
+            });
+        };
+    
+    }
+    
+</script>
 </head>
 <body>
 
