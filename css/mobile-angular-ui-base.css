@@ -5103,7 +5103,7 @@ a.list-group-item .icon.pull-right {
 
 .sidebar-left {
   background: #555555;
-  width: 300px;
+  width: 250px; /*default: 300px*/
   left: 0;
   right: auto;
   -webkit-transition: width 400ms ease;
@@ -5112,7 +5112,7 @@ a.list-group-item .icon.pull-right {
 
 .sidebar-right {
   background: #555555;
-  width: 300px;
+  width: 250px; /*default: 300px*/
   left: auto;
   right: 0;
   opacity: 1;
@@ -5131,8 +5131,8 @@ a.list-group-item .icon.pull-right {
 
 .sidebar-left-in .app {
   width: 100%;
-  -webkit-transform: translate3d(300px, 0, 0);
-  transform: translate3d(300px, 0, 0);
+  -webkit-transform: translate3d(250px, 0, 0); /*default: 300px*/
+  transform: translate3d(250px, 0, 0); /*default: 300px*/
   -webkit-transition: -webkit-transform 400ms ease;
   -moz-transition: -moz-transform 400ms ease;
   -o-transition: -o-transform 400ms ease;
@@ -5141,8 +5141,8 @@ a.list-group-item .icon.pull-right {
 
 .sidebar-right-in .app {
   width: 100%;
-  -webkit-transform: translate3d(-300px, 0, 0);
-  transform: translate3d(-300px, 0, 0);
+  -webkit-transform: translate3d(-250px, 0, 0); /*default: 300px*/
+  transform: translate3d(-250px, 0, 0); /*default: 300px*/
   -webkit-transition: -webkit-transform 400ms ease;
   -moz-transition: -moz-transform 400ms ease;
   -o-transition: -o-transform 400ms ease;
