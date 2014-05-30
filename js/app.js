@@ -91,7 +91,7 @@ app.controller('MainController', function($rootScope, $scope, MampfConfig){
   $scope.testMampfString = "Press Button!";
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
   
-  // Fill MampfConfig with demo values
+  // Fill MampfConfig with demo values (to be deleted)
   MampfConfig.setIdentity("ich");
   MampfConfig.addInvitee("invitee1");
   MampfConfig.addInvitee("invitee2");
@@ -99,7 +99,6 @@ app.controller('MainController', function($rootScope, $scope, MampfConfig){
   MampfConfig.addTimeslot({"startTime":"2014-05-28T11:22:03.816+02:00", "endTime":"2014-05-28T13:22:03.817+02:00"});
   MampfConfig.addTimeslot({"startTime":"2014-05-28T13:22:03.817+02:00", "endTime":"2014-05-28T15:22:03.817+02:00"});
   console.log(MampfConfig.getConfig());
-
   console.log(MampfConfig.config);
     
   $scope.testBackendCon = function(){
@@ -107,5 +106,41 @@ app.controller('MainController', function($rootScope, $scope, MampfConfig){
     $scope.mampfCon.findMatches();
     $scope.testMampfString = "Check Console & Network!";
   };
-  
+
+  // Geolocation
+  $scope.currentPosition = {};
+  $scope.currentPosition.latitude = 0;
+  $scope.currentPosition.longitude = 0;
+
+  $scope.getLocation = function() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition($scope.updatePosition, $scope.locationError);
+    }else{
+      console.log("Geolocation is not supported by this browser.");
+    }
+  };
+
+  $scope.updatePosition = function(position) {
+    $scope.currentPosition.latitude = position.coords.latitude;
+    $scope.currentPosition.longitude = position.coords.longitude;
+    $scope.$apply();
+  };
+
+  $scope.locationError = function(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        console.log("User denied the request for Geolocation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        console.log("Location information is unavailable.");
+        break;
+      case error.TIMEOUT:
+        console.log("The request to get user location timed out.");
+        break;
+      case error.UNKNOWN_ERROR:
+        console.log(x.innerHTML="An unknown error occurred.");
+        break;
+    }
+  };
+
 });
