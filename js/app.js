@@ -35,6 +35,15 @@ app.service('MampfConfig', function() {
   // - remove this.config and use this.identity etc. directly (?)
   // - checks for duplicate invitees/timeslots needed
   // - md5 encoding for identity and invitees - should it be done here?
+  // - local storage (?)
+
+  // Init localStorage
+  if(typeof(Storage) != "undefined"){
+    this.localStorageAvailable  = true;
+  }else{
+    this.localStorageAvailable = false;
+  }
+
   this.config = {};
   this.config.identity = "";
   this.config.invitees = [];
@@ -42,6 +51,23 @@ app.service('MampfConfig', function() {
   this.config.timeslots = [];
   
   this.getConfig = function() { return this.config; };
+  this.saveConfig = function() {
+    if(this.localStorageAvailable){
+      localStorage.setItem("MampfConfig", JSON.stringify(this.config));
+      return true;
+    }else{
+      console.log("localStorage not available");
+      return false;
+    }
+  };
+  this.loadConfig = function() {
+    if(this.localStorageAvailable){
+      this.config = JSON.parse(localStorage.getItem("MampfConfig"));
+    }else{
+      console.log("localStorage not available");
+      return false;
+    }
+  };
 
   this.setIdentity = function(identity) { this.config.identity = identity; };
   this.getIdentity = function() { return this.config.identity; };
@@ -100,6 +126,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
     $scope.userAgent =  navigator.userAgent;
   };
 
+  // Test Backend Screen
   // Mampf Backend Connection
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
   $scope.mampfConfig = MampfConfig;

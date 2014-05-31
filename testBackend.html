@@ -7,6 +7,12 @@
     <div class="btn btn-default" ng-click="findMatches()">Test Request</div> 
   </div>
 
+  <!-- Local Storage -->
+  <div bs-panel title="Local Storage">
+    <div class="btn btn-default" ng-click="mampfConfig.saveConfig()">Save to LS</div>
+    <div class="btn btn-default" ng-click="mampfConfig.loadConfig()">Load from LS</div>
+  </div>
+
   <!-- Identity -->
   <div bs-panel title="Identity">
     <input type="text" name="identity" ng-model="mampfConfig.config.identity">
