@@ -29,13 +29,15 @@ app.service('MampfConnection', function(){
 */
 
 app.service('MampfConfig', function() {
-  // model for configuration of MampfAPI
+  // service for configuration of MampfAPI
+  // this.config is the actual model
 
   // TODO:
   // - remove this.config and use this.identity etc. directly (?)
-  // - checks for duplicate invitees/timeslots needed
+  //    - benefit of separate config object is that we can access the config without function definition
+  //      otherwise the getConfig() function needs to concatenate everything to store it in LS or pass to API
+  // - remove getter (?), model can be accessed with mampfconfig.config anyway
   // - md5 encoding for identity and invitees - should it be done here?
-  // - local storage (?)
 
   // Init localStorage
   if(typeof(Storage) != "undefined"){
@@ -44,12 +46,14 @@ app.service('MampfConfig', function() {
     this.localStorageAvailable = false;
   }
 
+  // Init model object
   this.config = {};
   this.config.identity = "";
   this.config.invitees = [];
   this.config.currentPosition = [];
   this.config.timeslots = [];
   
+  // Functions to update/read model
   this.getConfig = function() { return this.config; };
   this.saveConfig = function() {
     if(this.localStorageAvailable){
@@ -74,7 +78,15 @@ app.service('MampfConfig', function() {
 
   this.delInvitees = function() { this.config.invitees = []; };
   this.getInvitees = function() { return this.config.invitees; };
-  this.addInvitee = function(invitee) { this.config.invitees.push(invitee); };
+  this.addInvitee = function(invitee) {
+    var pos = this.config.invitees.indexOf(invitee);
+    if (pos > -1) {
+      return false;
+    }else{
+      this.config.invitees.push(invitee);
+      return true;
+    }
+  };
   this.remInvitee = function(invitee) {
     var pos = this.config.invitees.indexOf(invitee);
     if (pos > -1) {
@@ -90,21 +102,37 @@ app.service('MampfConfig', function() {
 
   this.delTimeslots = function() { this.config.timeslots = []; };
   this.getTimeslots = function() { return this.config.timeslots; };
-  this.addTimeslot = function(timeslot) {
-    //this.config.timeslots.push(timeslot);
-    // adds reference to input fields(?), workaround:
-    this.config.timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
-  };
-  this.remTimeslot = function(timeslot) {
+  this.isTimeslotInModel = function(timeslot) {
+    // auxiliary function similar to indexOf
     for (var pos in this.config.timeslots) {
       if (this.config.timeslots[pos].hasOwnProperty("startTime") && this.config.timeslots[pos].hasOwnProperty("endTime")){
         if(this.config.timeslots[pos].startTime === timeslot.startTime && this.config.timeslots[pos].endTime === timeslot.endTime){
-          this.config.timeslots.splice(pos,1);
-          return true;
+          // timeslot is in model - return true
+          return pos;
         }
       }
     }
-    return false;
+    return -1;
+  };
+  this.addTimeslot = function(timeslot) {
+    //push(timeslot) adds reference to input fields(?), workaround:
+    //push({"startTime": timeslot.startTime, "endTime":timeslot.endTime})
+    var pos = this.isTimeslotInModel(timeslot);
+    if(pos > -1){
+      return false;
+    }else{
+      this.config.timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
+      return true;
+    }
+  };
+  this.remTimeslot = function(timeslot) {
+    var pos = this.isTimeslotInModel(timeslot);
+    if(pos > -1) {
+      this.config.timeslots.splice(pos,1);
+      return true;
+    }else{
+      return false;
+    }
   };
 });
 
