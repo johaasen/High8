@@ -17,6 +17,7 @@ app.config(function($routeProvider, $locationProvider) {
   General app.js discussion
   - encapsulation of MampfAPI and config object like currently implemented useful?
   - usage of angular.factory vs. angular.service
+  - one MainController to rule them all (?)
 */
 
 /*
@@ -31,7 +32,7 @@ app.service('MampfConfig', function() {
   // model for configuration of MampfAPI
 
   // TODO:
-  // - remove this.config and use this.identity etc. directly
+  // - remove this.config and use this.identity etc. directly (?)
   // - checks for duplicate invitees/timeslots needed
   // - md5 encoding for identity and invitees - should it be done here?
   this.config = {};
@@ -81,7 +82,7 @@ app.service('MampfConfig', function() {
   };
 });
 
-app.controller('MainController', function($rootScope, $scope, MampfConfig){
+app.controller('MainController', function($rootScope, $scope, $timeout, MampfConfig){
 
   // General
   $rootScope.$on("$routeChangeStart", function(){
@@ -103,6 +104,10 @@ app.controller('MainController', function($rootScope, $scope, MampfConfig){
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
   $scope.mampfConfig = MampfConfig;
 
+  $scope.logConfig = function(){
+    console.log($scope.mampfConfig.config);
+  };
+
   // default values for input fields
   $scope.newInvitee = "Invitee_3";
   $scope.newTimeslot = {};
@@ -117,23 +122,24 @@ app.controller('MainController', function($rootScope, $scope, MampfConfig){
   $scope.mampfConfig.setCurrentPos({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
   $scope.mampfConfig.addTimeslot({"startTime":"2014-05-28T11:22:03.816+02:00", "endTime":"2014-05-28T13:22:03.817+02:00"});
   $scope.mampfConfig.addTimeslot({"startTime":"2014-05-28T13:22:03.817+02:00", "endTime":"2014-05-28T15:22:03.817+02:00"});
+  $scope.logConfig();
 
-  console.log($scope.mampfConfig.config);
-    
-  $scope.testBackendCon = function(){
+  $scope.findMatches = function(){
+    $rootScope.loading = true;
+
     $scope.mampfCon.config = $scope.mampfConfig.config;
-    $scope.mampfCon.findMatches();
-  };
+    $scope.mampfCon.findMatches();/*function(response){
+      //callback
+      console.log(response);
+      $rootScope.loading = false;
+    });*/
+    
+    //TODO: callback function not yet implemented - timeout loading indicator after 0.5 sec
+    $timeout(function() {$rootScope.loading = false;}, 500);
 
-  $scope.logConfig = function(){
-    console.log($scope.mampfConfig.config);
   };
 
   // Geolocation
-  $scope.currentPosition = {};
-  $scope.currentPosition.latitude = 0;
-  $scope.currentPosition.longitude = 0;
-
   $scope.getLocation = function() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition($scope.updatePosition, $scope.locationError);
@@ -143,8 +149,6 @@ app.controller('MainController', function($rootScope, $scope, MampfConfig){
   };
 
   $scope.updatePosition = function(position) {
-    $scope.currentPosition.latitude = position.coords.latitude;
-    $scope.currentPosition.longitude = position.coords.longitude;
     $scope.mampfConfig.setCurrentPos({"longitude" : position.coords.longitude, "latitude" : position.coords.latitude});
     $scope.$apply();
   };
