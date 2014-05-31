@@ -54,7 +54,10 @@ app.service('MampfConfig', function() {
   this.config.timeslots = [];
   
   // Functions to update/read model
-  this.getConfig = function() { return this.config; };
+  this.getConfig = function() {
+    return this.config;
+  };
+
   this.saveConfig = function() {
     if(this.localStorageAvailable){
       localStorage.setItem("MampfConfig", JSON.stringify(this.config));
@@ -64,6 +67,7 @@ app.service('MampfConfig', function() {
       return false;
     }
   };
+
   this.loadConfig = function() {
     if(this.localStorageAvailable){
       this.config = JSON.parse(localStorage.getItem("MampfConfig"));
@@ -73,11 +77,22 @@ app.service('MampfConfig', function() {
     }
   };
 
-  this.setIdentity = function(identity) { this.config.identity = identity; };
-  this.getIdentity = function() { return this.config.identity; };
+  this.setIdentity = function(identity) {
+    this.config.identity = identity;
+  };
 
-  this.delInvitees = function() { this.config.invitees = []; };
-  this.getInvitees = function() { return this.config.invitees; };
+  this.getIdentity = function() {
+    return this.config.identity;
+  };
+
+  this.delInvitees = function() {
+    this.config.invitees = [];
+  };
+
+  this.getInvitees = function() {
+    return this.config.invitees;
+  };
+
   this.addInvitee = function(invitee) {
     var pos = this.config.invitees.indexOf(invitee);
     if (pos > -1) {
@@ -87,6 +102,7 @@ app.service('MampfConfig', function() {
       return true;
     }
   };
+
   this.remInvitee = function(invitee) {
     var pos = this.config.invitees.indexOf(invitee);
     if (pos > -1) {
@@ -97,11 +113,22 @@ app.service('MampfConfig', function() {
     }
   };
   
-  this.setCurrentPos = function(currentPosition) { this.config.currentPosition = currentPosition; };
-  this.getCurrentPos = function() { return this.config.currentPosition; };
+  this.setCurrentPos = function(currentPosition) {
+    this.config.currentPosition = currentPosition;
+  };
 
-  this.delTimeslots = function() { this.config.timeslots = []; };
-  this.getTimeslots = function() { return this.config.timeslots; };
+  this.getCurrentPos = function() {
+    return this.config.currentPosition;
+  };
+
+  this.delTimeslots = function() {
+    this.config.timeslots = [];
+  };
+
+  this.getTimeslots = function() {
+    return this.config.timeslots;
+  };
+
   this.isTimeslotInModel = function(timeslot) {
     // auxiliary function similar to indexOf
     for (var pos in this.config.timeslots) {
@@ -114,6 +141,7 @@ app.service('MampfConfig', function() {
     }
     return -1;
   };
+
   this.addTimeslot = function(timeslot) {
     //push(timeslot) adds reference to input fields(?), workaround:
     //push({"startTime": timeslot.startTime, "endTime":timeslot.endTime})
@@ -125,6 +153,7 @@ app.service('MampfConfig', function() {
       return true;
     }
   };
+
   this.remTimeslot = function(timeslot) {
     var pos = this.isTimeslotInModel(timeslot);
     if(pos > -1) {
@@ -191,7 +220,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
     
     //TODO: callback function not yet implemented - timeout loading indicator after 0.5 sec
     $timeout(function() {$rootScope.loading = false;}, 500);
-
   };
 
   // Geolocation
@@ -224,5 +252,4 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
         break;
     }
   };
-
 });

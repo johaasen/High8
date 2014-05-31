@@ -3,26 +3,30 @@
 
   <!-- Test Buttons -->
   <div bs-panel title="Test it!">
-    <div class="btn btn-default" ng-click="logConfig()">Log Config</div>
-    <div class="btn btn-default" ng-click="findMatches()">Test Request</div> 
+    <div class="btn-group justified">
+      <div class="btn btn-default" ng-click="logConfig()">Log Config</div>
+      <div class="btn btn-default" ng-click="findMatches()">Test Request</div> 
+    </div>
   </div>
 
   <!-- Local Storage -->
   <div bs-panel title="Local Storage">
-    <div class="btn btn-default" ng-click="mampfConfig.saveConfig()">Save to LS</div>
-    <div class="btn btn-default" ng-click="mampfConfig.loadConfig()">Load from LS</div>
+    <div class="btn-group justified">
+      <div class="btn btn-default" ng-click="mampfConfig.saveConfig()">Save to LS</div>
+      <div class="btn btn-default" ng-click="mampfConfig.loadConfig()">Load from LS</div>
+    </div>
   </div>
 
   <!-- Identity -->
   <div bs-panel title="Identity">
-    <input type="text" name="identity" ng-model="mampfConfig.config.identity">
+    <input type="text" name="identity" ng-model="mampfConfig.config.identity" class="justified">
     <h3><small>mampfconfig.config.identity: {{mampfConfig.config.identity}}</small></h3>
   </div>
 
   <!-- Invitees -->
   <div bs-panel title="Invitees">
-    <input type="text" name="newInvitee" ng-model="newInvitee">
-    <div class="btn btn-default" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
+    <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
+    <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
 
     <li ng-repeat="invitee in mampfConfig.config.invitees">
       <h3><small>{{invitee}} 
@@ -36,7 +40,7 @@
     first update takes some seconds in some cases - delay of API or does the model not update?
     -->
   <div bs-panel title="Current Position">
-    <div class="btn btn-default" ng-click="getLocation()">Update Geo Location</div><br>
+    <div class="btn btn-default justified" ng-click="getLocation()">Update Geo Location</div><br>
     <h3><small>
       Lat: {{mampfConfig.config.currentPosition.latitude}}<br>
       Long: {{mampfConfig.config.currentPosition.longitude}}
@@ -46,13 +50,13 @@
   <!-- Timeslots -->
   <!-- 
     TODO:
-    input types are datetime-local, because it is supported by angular
+    input types are datetime-local, because it is supported by angular,
     "datetime" (with time zone) needed for Mampf backend  
     -->
   <div bs-panel title="Timeslots (without time zone)">
-    <h3><small>StartTime <input type="datetime-local" name="newStartTime" ng-model="newTimeslot.startTime"></small></h3>
-    <h3><small>EndTime <input type="datetime-local" name="newEndTime" ng-model="newTimeslot.endTime"></small></h3>
-    <div class="btn btn-default" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
+    <input bs-form-control type="datetime-local" ng-model="newTimeslot.startTime" label="Start Time">
+    <input bs-form-control type="datetime-local" ng-model="newTimeslot.endTime" label="End Time">
+    <div class="btn btn-default justified" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
 
     <li ng-repeat="timeslot in mampfConfig.config.timeslots">
       <h3><small>{{timeslot}} 
