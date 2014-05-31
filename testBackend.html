@@ -1,0 +1,57 @@
+<div class="scrollable">
+<div class="scrollable-content">
+
+  <!-- Test Buttons -->
+  <div bs-panel title="Test it!">
+    <div class="btn btn-default" ng-click="logConfig()">Log Config</div>
+    <div class="btn btn-default" ng-click="testBackendCon()">Test Request</div> 
+  </div>
+
+  <!-- Identity -->
+  <div bs-panel title="Identity">
+    <input type="text" name="identity" ng-model="mampfConfig.config.identity">
+    <h3><small>mampfconfig.config.identity: {{mampfConfig.config.identity}}</small></h3>
+  </div>
+
+  <!-- Invitees -->
+  <div bs-panel title="Invitees">
+    <input type="text" name="newInvitee" ng-model="newInvitee">
+    <div class="btn btn-default" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
+
+    <li ng-repeat="invitee in mampfConfig.config.invitees">
+      <h3><small>{{invitee}} 
+      <div class="btn btn-default btn-xs" ng-click="mampfConfig.remInvitee(invitee)">delete!</div></small></h3>
+    </li>
+  </div>
+
+  <!-- Location -->
+  <!-- 
+    TODO:
+    first update takes some seconds in some cases - delay of API or does the model not update?
+    -->
+  <div bs-panel title="Current Position">
+    <div class="btn btn-default" ng-click="getLocation()">Update Geo Location</div><br>
+    <h3><small>
+      Lat: {{mampfConfig.config.currentPosition.latitude}}<br>
+      Long: {{mampfConfig.config.currentPosition.longitude}}
+    </small></h3>
+  </div>
+
+  <!-- Timeslots -->
+  <!-- 
+    TODO:
+    input types are datetime-local, because it is supported by angular
+    "datetime" (with time zone) needed for Mampf backend  
+    -->
+  <div bs-panel title="Timeslots (without time zone)">
+    <h3><small>StartTime <input type="datetime-local" name="newStartTime" ng-model="newTimeslot.startTime"></small></h3>
+    <h3><small>EndTime <input type="datetime-local" name="newEndTime" ng-model="newTimeslot.endTime"></small></h3>
+    <div class="btn btn-default" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
+
+    <li ng-repeat="timeslot in mampfConfig.config.timeslots">
+      <h3><small>{{timeslot}} 
+      <div class="btn btn-default btn-xs" ng-click="mampfConfig.remTimeslot(timeslot)">delete!</div></small></h3>
+    </li>
+  </div>
+</div>
+</div>
