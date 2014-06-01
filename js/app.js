@@ -60,7 +60,7 @@ app.service('MampfConfig', function() {
 
   this.saveConfig = function() {
     if(this.localStorageAvailable){
-      localStorage.setItem("MampfConfig", JSON.stringify(this.config));
+      localStorage.setItem("MampfConfig", angular.toJson(this.config));
       return true;
     }else{
       console.log("localStorage not available");
@@ -200,29 +200,27 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
   
   // Fill MampfConfig with demo values
   // TODO: delete
-  $scope.mampfConfig.setIdentity("DemoIdentity");
-  $scope.mampfConfig.addInvitee("Invitee_1");
-  $scope.mampfConfig.addInvitee("Invitee_2");
+  $scope.mampfConfig.setIdentity("B25BF7426FABCADF01103045FD7707CE");
+  $scope.mampfConfig.addInvitee("A9B9D2ED66A5DA2AFB3247F6947F5591");
   $scope.mampfConfig.setCurrentPos({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
-  $scope.mampfConfig.addTimeslot({"startTime":"2014-05-28T11:22:03.816+02:00", "endTime":"2014-05-28T13:22:03.817+02:00"});
-  $scope.mampfConfig.addTimeslot({"startTime":"2014-05-28T13:22:03.817+02:00", "endTime":"2014-05-28T15:22:03.817+02:00"});
+  $scope.mampfConfig.addTimeslot({"startTime":1401621970786,"endTime":1401629170786});
+  $scope.mampfConfig.addTimeslot({"startTime":1401629170786,"endTime":1401636370786});
   $scope.logConfig();
 
   $scope.findMatches = function(){
     $rootScope.loading = true;
 
     $scope.mampfCon.config = $scope.mampfConfig.config;
-    $scope.mampfCon.findMatches();/*function(response){
+    $scope.mampfCon.findMatches(function(response){
       //callback
-      console.log(response);
+      $scope.response = response;
       $rootScope.loading = false;
-    });*/
-    
-    //TODO: callback function not yet implemented - timeout loading indicator after 0.5 sec
-    $timeout(function() {
-      $rootScope.loading = false;
+      $rootScope.$apply();
+
       $scope.toggle("responseOverlay");
-    }, 500);
+    });
+    
+    //$timeout(function() {$rootScope.loading = false; $scope.toggle("responseOverlay");}, 500);
   };
 
   // Geolocation

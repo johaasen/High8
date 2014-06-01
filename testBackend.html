@@ -58,7 +58,7 @@
     <input bs-form-control type="datetime-local" ng-model="newTimeslot.endTime" label="End Time">
     <div class="btn btn-default justified" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
 
-    <li ng-repeat="timeslot in mampfConfig.config.timeslots">
+    <li ng-repeat="timeslot in mampfConfig.config.timeslots track by timeslot.startTime">
       <h3><small>{{timeslot}} 
       <div class="btn btn-default btn-xs" ng-click="mampfConfig.remTimeslot(timeslot)">delete!</div></small></h3>
     </li>
@@ -67,13 +67,13 @@
   <!-- Overlay for response -->
   <div overlay="responseOverlay">
     <h4 class="overlay-title">Response</h4>    
-    <p>Lorem ipsum dolor sit</p>
+    <p>{{response}}</p>
 
     <p toggle="off" bubble target="responseOverlay">
       <span class="btn btn-primary">Ok</span>
       <span class="btn btn-default">Cancel</span>
     </p>  
   </div>
-  
+
 </div>
 </div>
