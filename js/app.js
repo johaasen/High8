@@ -20,17 +20,9 @@ app.config(function($routeProvider, $locationProvider) {
   - one MainController to rule them all (?)
 */
 
-/*
-//TODO: separate MampfAPI service necessary?
-app.service('MampfConnection', function(){
-  var url = "http://dennistempi.itm.uni-luebeck.de/mampf/";
-  var api = new MampfAPI(url);
-});
-*/
-
-app.service('MampfConfig', function() {
-  // service for configuration of MampfAPI
-  // this.config is the actual model
+app.service('Config', function() {
+  // service that holds the global model and provides update functions
+  // this.model is the actual model
 
   // TODO:
   // - remove this.config and use this.identity etc. directly (?)
@@ -39,28 +31,50 @@ app.service('MampfConfig', function() {
   // - remove getter (?), model can be accessed with mampfconfig.config anyway
   // - md5 encoding for identity and invitees - should it be done here?
 
-  // Init localStorage
+  // init local storage
   if(typeof(Storage) != "undefined"){
     this.localStorageAvailable  = true;
   }else{
     this.localStorageAvailable = false;
   }
 
-  // Init model object
-  this.config = {};
-  this.config.identity = "";
-  this.config.invitees = [];
-  this.config.currentPosition = [];
-  this.config.timeslots = [];
+  // init model object
+  this.model = {};
+  this.model.identity = {}; // {"phone":"017600000000","md5":"ASDF"}
+  this.model.position = {}; // {"longitude" : 9.170299499999999, "latitude" : 48.773556600000006}
+  this.model.contacts = []; // [ {"name" : "Peter", "phone" : 012345, "md5" : "ASDF", "lunch" : true}, {next} ]
+  this.model.timeslots = []; // [ {"startTime":1401621970786,"endTime":1401629170786}, {next}]
   
-  // Functions to update/read model
-  this.getConfig = function() {
-    return this.config;
+  // get API config
+  this.getMampfAPIModel = function(){
+    // should look like this
+    // var demoConfig1 = {"identity":"B25BF7426FABCADF01103045FD7707CE",
+    //                    "invitees":["A9B9D2ED66A5DA2AFB3247F6947F5591"],
+    //                    "currentPosition":{"longitude":9.170299499999999,"latitude":48.773556600000006},
+    //                    "timeslots":[{"startTime":1401621970786,"endTime":1401629170786},
+    //                                 {"startTime":1401629170786,"endTime":1401636370786}]};
+
+    var mampfConfig = {};
+    mampfConfig.identity = this.model.identity.md5;
+    mampfConfig.currentPosition = this.model.position;
+    mampfConfig.timeslots = this.model.timeslots;
+    mampfConfig.invitees = [];
+    
+    for (var pos in this.model.contacts) {
+      if (this.model.contacts[pos].hasOwnProperty("md5") && this.model.contacts[pos].hasOwnProperty("lunch")){
+        if(this.model.contacts[pos].lunch === true){
+          mampfConfig.invitees.push(this.model.contacts[pos].md5);
+        }
+      }
+    }
+
+    return mampfConfig;
   };
 
-  this.saveConfig = function() {
+  // functions to update model
+  this.saveModel = function() {
     if(this.localStorageAvailable){
-      localStorage.setItem("MampfConfig", angular.toJson(this.config));
+      localStorage.setItem("MampfModel", angular.toJson(this.model));
       return true;
     }else{
       console.log("localStorage not available");
@@ -68,72 +82,74 @@ app.service('MampfConfig', function() {
     }
   };
 
-  this.loadConfig = function() {
+  this.loadModel = function() {
     if(this.localStorageAvailable){
-      this.config = JSON.parse(localStorage.getItem("MampfConfig"));
+      this.model = angular.fromJson(localStorage.getItem("MampfModel"));
     }else{
       console.log("localStorage not available");
       return false;
     }
   };
 
-  this.setIdentity = function(identity) {
-    this.config.identity = identity;
+  this.setIdentity = function(phone) {
+    this.model.identity.phone = phone;
+    this.model.identity.md5 = md5(phone).toUpperCase();
   };
 
-  this.getIdentity = function() {
-    return this.config.identity;
+  this.delContacts = function() {
+    this.model.contacts = [];
   };
 
-  this.delInvitees = function() {
-    this.config.invitees = [];
+  this.addContact = function(name, phone) {
+    //TODO: check if phone no. already in contacts
+    var contact = {};
+    contact.name = name;
+    contact.phone = phone;
+    contact.md5 = md5(phone).toUpperCase();
+    contact.lunch = false;
+
+    this.model.contacts.push(contact);
   };
 
-  this.getInvitees = function() {
-    return this.config.invitees;
-  };
-
-  this.addInvitee = function(invitee) {
-    var pos = this.config.invitees.indexOf(invitee);
-    if (pos > -1) {
-      return false;
-    }else{
-      this.config.invitees.push(invitee);
-      return true;
+  this.getContactByPhone = function(phone) {
+    for (var pos in this.model.contacts) {
+      if (this.model.contacts[pos].hasOwnProperty("phone")){
+        if(this.model.contacts[pos].phone == phone){
+          return this.model.contacts[pos];
+        }
+      }
     }
+    return -1; //TODO: correct return value(?)
   };
 
-  this.remInvitee = function(invitee) {
-    var pos = this.config.invitees.indexOf(invitee);
+  this.toggleLunchWithContact = function(contact) {
+    var pos = this.model.contacts.indexOf(contact);
+    this.model.contacts[pos].lunch = !(this.model.contacts[pos].lunch);
+  };
+
+  this.remContact = function(contact) {
+    var pos = this.model.contacts.indexOf(contact);
     if (pos > -1) {
-      this.config.invitees.splice(pos, 1);
+      this.model.contacts.splice(pos, 1);
       return true;
     }else{
       return false;
     }
   };
   
-  this.setCurrentPos = function(currentPosition) {
-    this.config.currentPosition = currentPosition;
-  };
-
-  this.getCurrentPos = function() {
-    return this.config.currentPosition;
+  this.setPosition = function(position) {
+    this.model.position = position;
   };
 
   this.delTimeslots = function() {
-    this.config.timeslots = [];
-  };
-
-  this.getTimeslots = function() {
-    return this.config.timeslots;
+    this.model.timeslots = [];
   };
 
   this.isTimeslotInModel = function(timeslot) {
     // auxiliary function similar to indexOf
-    for (var pos in this.config.timeslots) {
-      if (this.config.timeslots[pos].hasOwnProperty("startTime") && this.config.timeslots[pos].hasOwnProperty("endTime")){
-        if(this.config.timeslots[pos].startTime === timeslot.startTime && this.config.timeslots[pos].endTime === timeslot.endTime){
+    for (var pos in this.model.timeslots) {
+      if (this.model.timeslots[pos].hasOwnProperty("startTime") && this.model.timeslots[pos].hasOwnProperty("endTime")){
+        if(this.model.timeslots[pos].startTime === timeslot.startTime && this.model.timeslots[pos].endTime === timeslot.endTime){
           // timeslot is in model - return true
           return pos;
         }
@@ -149,7 +165,7 @@ app.service('MampfConfig', function() {
     if(pos > -1){
       return false;
     }else{
-      this.config.timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
+      this.model.timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
       return true;
     }
   };
@@ -157,7 +173,7 @@ app.service('MampfConfig', function() {
   this.remTimeslot = function(timeslot) {
     var pos = this.isTimeslotInModel(timeslot);
     if(pos > -1) {
-      this.config.timeslots.splice(pos,1);
+      this.model.timeslots.splice(pos,1);
       return true;
     }else{
       return false;
@@ -165,9 +181,9 @@ app.service('MampfConfig', function() {
   };
 });
 
-app.controller('MainController', function($rootScope, $scope, $timeout, MampfConfig){
+app.controller('MainController', function($rootScope, $scope, $timeout, Config){
 
-  // General
+  // loading indicator on page nav
   $rootScope.$on("$routeChangeStart", function(){
     $rootScope.loading = true;
   });
@@ -176,41 +192,17 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
     $rootScope.loading = false;
   });
 
-  // Details Screen
-  // Test User Agent
-  $scope.userAgent = "Press Button!";
-  $scope.checkAgent = function(){
-    $scope.userAgent =  navigator.userAgent;
-  };
+  // bind Config service to $scope, so that it is available in html
+  $scope.config = Config;
 
-  // Test Backend Screen
-  // Mampf Backend Connection
+  // backend connection for Mampf API (mampfBackendConnection.js)
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
-  $scope.mampfConfig = MampfConfig;
 
-  $scope.logConfig = function(){
-    console.log($scope.mampfConfig.config);
-  };
-
-  // default values for input fields
-  $scope.newInvitee = "Invitee_3";
-  $scope.newTimeslot = {};
-  $scope.newTimeslot.startTime = "2014-05-29T11:22";
-  $scope.newTimeslot.endTime = "2014-05-29T13:22";
-  
-  // Fill MampfConfig with demo values
-  // TODO: delete
-  $scope.mampfConfig.setIdentity("B25BF7426FABCADF01103045FD7707CE");
-  $scope.mampfConfig.addInvitee("A9B9D2ED66A5DA2AFB3247F6947F5591");
-  $scope.mampfConfig.setCurrentPos({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
-  $scope.mampfConfig.addTimeslot({"startTime":1401621970786,"endTime":1401629170786});
-  $scope.mampfConfig.addTimeslot({"startTime":1401629170786,"endTime":1401636370786});
-  $scope.logConfig();
-
+  // call Mampf API 
   $scope.findMatches = function(){
     $rootScope.loading = true;
 
-    $scope.mampfCon.config = $scope.mampfConfig.config;
+    $scope.mampfCon.config = $scope.config.getMampfAPIModel();
     $scope.mampfCon.findMatches(function(response){
       //callback
       $scope.response = response;
@@ -219,8 +211,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
 
       $scope.toggle("responseOverlay");
     });
-    
-    //$timeout(function() {$rootScope.loading = false; $scope.toggle("responseOverlay");}, 500);
   };
 
   // Geolocation
@@ -233,7 +223,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
   };
 
   $scope.updatePosition = function(position) {
-    $scope.mampfConfig.setCurrentPos({"longitude" : position.coords.longitude, "latitude" : position.coords.latitude});
+    $scope.config.setPosition({"longitude" : position.coords.longitude, "latitude" : position.coords.latitude});
     $scope.$apply();
   };
 
@@ -252,5 +242,47 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
         console.log(x.innerHTML="An unknown error occurred.");
         break;
     }
+  };
+
+  // **********
+  // demo / test functions and demo setup follows
+  // **********
+  $scope.logGlobalModel = function(){
+    console.log($scope.config.model);
+  };
+
+  // default values for input fields
+  $scope.newInvitee = "";
+  $scope.newTimeslot = {};
+  $scope.newTimeslot.startTime = "";
+  $scope.newTimeslot.endTime = "";
+  
+  // fill model with demo values
+  $scope.initAsPeter = function(){
+    // Peter is Identity  
+    $scope.config.setIdentity("0176000000");
+    $scope.config.addContact("Hans","0175000000");
+    $scope.config.toggleLunchWithContact($scope.config.getContactByPhone("0175000000"));
+  };
+
+  $scope.initAsHans = function(){
+    // Hans is Identity
+    $scope.config.setIdentity("0175000000");
+    $scope.config.addContact("Peter","0176000000");
+    $scope.config.toggleLunchWithContact($scope.config.getContactByPhone("0176000000"));
+  };
+
+  $scope.initAsHans();
+  //$scope.initAsPeter();
+  $scope.config.addContact("Franz","0174000000");
+  $scope.config.setPosition({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
+  $scope.config.addTimeslot({"startTime":1401621970786,"endTime":1401629170786});
+  $scope.config.addTimeslot({"startTime":1401629170786,"endTime":1401636370786});
+  $scope.logGlobalModel();
+
+  // test User Agent
+  $scope.userAgent = "Press Button!";
+  $scope.checkAgent = function(){
+    $scope.userAgent =  navigator.userAgent;
   };
 });
