@@ -24,7 +24,7 @@ var MampfAPI = function(apiUrl) {
     this.config = {};
 }
 
-var MampfRequest = function(identity, invitees, currentPosition, timeslots) {
+var MampfConfig = function(identity, invitees, currentPosition, timeslots) {
     this.identity = identity;
     this.invitees = invitees;
     this.currentPosition = currentPosition;
@@ -42,7 +42,9 @@ var demoConfig2 = {"identity":"A9B9D2ED66A5DA2AFB3247F6947F5591","invitees":["B2
 var test = new MampfAPI(BACKEND_URL);
 test.config = demoConfig1;
 
-
-
-
+/*
+var apiObject = new MampfAPI(BACKEND_URL);
+apiObject.config = new MampfConfig(identity, invitees, currentPosition, timeslots);
+apiObject.findMatches(callback);
+*/
 
