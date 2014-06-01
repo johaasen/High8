@@ -219,7 +219,10 @@ app.controller('MainController', function($rootScope, $scope, $timeout, MampfCon
     });*/
     
     //TODO: callback function not yet implemented - timeout loading indicator after 0.5 sec
-    $timeout(function() {$rootScope.loading = false;}, 500);
+    $timeout(function() {
+      $rootScope.loading = false;
+      $scope.toggle("responseOverlay");
+    }, 500);
   };
 
   // Geolocation
