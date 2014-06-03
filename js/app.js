@@ -136,13 +136,18 @@ app.service('Config', function() {
 
   this.addContact = function(name, phone) {
     //TODO: check if phone no. already in contacts
-    var contact = {};
-    contact.name = name;
-    contact.phone = phone;
-    contact.md5 = md5(phone).toUpperCase();
-    contact.lunch = false;
-
+	//first try:
+	if(this.getContactByPhone(phone)==undefined){
+		var contact = {};
+		contact.name = name;
+		contact.phone = phone;
+		contact.md5 = md5(phone).toUpperCase();
+		contact.lunch = false;
     this.model.contacts.push(contact);
+	}
+	else{
+	//TODO: add notification: already existing contact
+	}
   };
 
   this.getContactByPhone = function(phone) {
