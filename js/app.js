@@ -119,7 +119,18 @@ app.service('Config', function() {
         }
       }
     }
-    return -1; //TODO: correct return value(?)
+    return undefined; //TODO: correct return value(?)
+  };
+
+  this.getContactByMD5 = function(md5) {
+    for (var pos in this.model.contacts) {
+      if (this.model.contacts[pos].hasOwnProperty("md5")){
+        if(this.model.contacts[pos].md5 == md5){
+          return this.model.contacts[pos];
+        }
+      }
+    }
+    return undefined; //TODO: correct return value(?)
   };
 
   this.toggleLunchWithContact = function(contact) {
@@ -205,7 +216,16 @@ app.controller('MainController', function($rootScope, $scope, $timeout, Config){
     $scope.mampfCon.config = $scope.config.getMampfAPIModel();
     $scope.mampfCon.findMatches(function(response){
       //callback
-      $scope.response = response;
+      $scope.response = {};
+      $scope.response.full = response;
+      $scope.response.names = [];
+      response.subjects.forEach(function(subject) {
+        $scope.response.names.push($scope.config.getContactByMD5(subject).name);
+      });
+      $scope.$apply();
+
+      console.log($scope.response);
+
       $rootScope.loading = false;
       $rootScope.$apply();
 
@@ -272,8 +292,8 @@ app.controller('MainController', function($rootScope, $scope, $timeout, Config){
     $scope.config.toggleLunchWithContact($scope.config.getContactByPhone("0176000000"));
   };
 
-  $scope.initAsHans();
-  //$scope.initAsPeter();
+  //$scope.initAsHans();
+  $scope.initAsPeter();
   $scope.config.addContact("Franz","0174000000");
   $scope.config.setPosition({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
   $scope.config.addTimeslot({"startTime":1401621970786,"endTime":1401629170786});

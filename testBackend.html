@@ -71,7 +71,12 @@
   <!-- Overlay for response -->
   <div overlay="responseOverlay">
     <h4 class="overlay-title">Response</h4>    
-    <p>{{response}}</p>
+    <div><div>Just the first: {{response.names[0]}}</div></div>
+    <!-- ng repeat not working..-->
+    <div ng-repeat="name in response.names">{{name.text}}</div>
+
+    <br>
+    <p>{{response.full}}</p>
 
     <p toggle="off" bubble target="responseOverlay">
       <span class="btn btn-primary">Ok</span>
