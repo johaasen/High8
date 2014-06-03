@@ -1,13 +1,29 @@
 <div class="scrollable">
 <div class="scrollable-content">
-  <div bs-panel title="User Agent">
+  <div bs-panel title="Profile">
     <div class="btn btn-default" ng-click="setIdentity()">Save personal number</div><br>
-    <h3><small><span ng-bind="userAgent"></span></small></h3>
+    <h3><small><span>{{config.model.identity.phone}}</span></small></h3>
   </div>
-  <div class="container-fluid section section-break" id="toggleExample">
-    <p toggleable id="shuttle" active-class="text-primary" class="text-default">
-      <i class="fa fa-space-shuttle"></i>
-    </p>
+  <div bs-panel title="Contacts">
+  </div>
+    <!-- Identity -->
+  <div bs-panel title="Identity">
+    <!-- <input type="text" name="identity" ng-model="mampfConfig.config.identity" class="justified"> -->
+    <h3><small>Phone: {{config.model.identity.phone}}</small></h3>
+    <h3><small>MD5: {{config.model.identity.md5}}</small></h3>
+  </div>
+
+  <!-- Invitees -->
+  <div bs-panel title="Contacts">
+    <!--
+    <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
+    <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
+    -->
+
+    <li ng-repeat="contact in config.model.contacts">
+      <h3><small>{{contact.name}} / {{contact.phone}} 
+      <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">delete!</div></small></h3>
+    </li>
   </div>
 </div>
 </div>
