@@ -49,10 +49,10 @@
     <div ng-include="'sidebar.html'" class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar"></div>
 
     <!-- App -->
-    <div class="app">
+    <div class="app" id="{{currentView}}">
 
       <!-- Navbar Top -->
-      <div class="navbar navbar-app navbar-absolute-top">
+      <div class="navbar navbar-app navbar-absolute-top" ng-show="$storage.isInitialized">
         <div class="navbar-brand navbar-brand-center" yield-to="title">
           <span>DHBW Mampf</span>
         </div>
@@ -64,7 +64,7 @@
       </div>
 
       <!-- Navbar Bottom -->
-      <div class="navbar navbar-app navbar-absolute-bottom">
+      <div class="navbar navbar-app navbar-absolute-bottom" ng-show="$storage.isInitialized">
         <div class="btn-group justified">
           <a href="#/" class="btn btn-navbar">
             <i class="fa fa-home fa-navbar"></i> Home</a>

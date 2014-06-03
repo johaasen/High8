@@ -7,10 +7,22 @@ var app = angular.module('Mampf-Angular', [
 
 app.config(function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(false);  //TODO effects of (true)?
-  $routeProvider.when('/',          {templateUrl: "home.html"});
-  $routeProvider.when('/details',    {templateUrl: "details.html"});
-  $routeProvider.when('/testBackend',    {templateUrl: "testBackend.html"});
-  $routeProvider.when('/contacts',    {templateUrl: "contacts.html"});
+  $routeProvider
+		.when('/', {
+			templateUrl: "home.html"
+		})
+		.when('/contacts', {
+			templateUrl: "contacts.html"
+		})
+		.when('/details', {
+			templateUrl: "details.html"
+		})
+		.when('/initialize', {
+			templateUrl: 'initialize.html'
+		})
+		.when('/testBackend', {
+			templateUrl: "testBackend.html"
+		});
 });
 
 /* 
@@ -236,16 +248,27 @@ app.service('Config', function() {
   };
 });
 
-app.controller('MainController', function($rootScope, $scope, $timeout, $localStorage, Config){
+app.controller('MainController', function($rootScope, $scope, $timeout, $localStorage, $location, Config){
 
   // loading indicator on page nav
   $rootScope.$on("$routeChangeStart", function(){
     $rootScope.loading = true;
+		//$rootScope.currentView = '';
   });
 
   $rootScope.$on("$routeChangeSuccess", function(){
     $rootScope.loading = false;
   });
+	
+	$rootScope.$storage = $localStorage;
+  
+  $scope.init = function() {
+		$location.path('/initialize');
+		$rootScope.currentView = 'initialize';
+		$rootScope.$storage.isInitialized = false; // nach Submit auf true setzen
+	};
+	
+	if (!$rootScope.$storage.isInitialized) $scope.init();
 
   // bind Config service to $scope, so that it is available in html
   $scope.config = Config;
@@ -258,6 +281,12 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   $scope.loadConfig = function(){
     $scope.config.model = $localStorage.model;
   };
+	
+	$scope.signUp = function() {
+		$location.path('/');
+		$rootScope.$storage.isInitialized = true;
+		$rootScope.currentView = '';
+	}
 
   // backend connection for Mampf API (mampfBackendConnection.js)
   $scope.mampfCon = new MampfAPI(BACKEND_URL);

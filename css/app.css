@@ -1,3 +1,44 @@
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+
+
+.app#initialize {
+	background: rgb(169,3,41); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(169,3,41,1)), color-stop(44%,rgba(143,2,34,1)), color-stop(100%,rgba(109,0,25,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(169,3,41,1) 0%,rgba(143,2,34,1) 44%,rgba(109,0,25,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(169,3,41,1) 0%,rgba(143,2,34,1) 44%,rgba(109,0,25,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(169,3,41,1) 0%,rgba(143,2,34,1) 44%,rgba(109,0,25,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom, rgba(169,3,41,1) 0%,rgba(143,2,34,1) 44%,rgba(109,0,25,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019',GradientType=0 ); /* IE6-9 */
+}
+
+.app#initialize p#logo {
+	font-family: Lobster;
+	text-align: center;
+	line-height: 1em;
+	font-size: 6em;
+	color: #e9e9e9;
+	text-shadow: rgba(0, 0, 0, .2) 6px 6px 6px;
+     
+    /*text stroke*/
+    -webkit-text-stroke: 1px rgba(100, 100, 100, 0);
+}
+
+.app#initialize .bg-info {
+	margin: 2em 0;
+	color: #e9e9e9;
+	padding: .5em;
+	background: none;
+	border: 1px solid #e9e9e9;
+	-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+}
+
+.app#initialize .form-group {
+	padding-top: 0;
+}
+
 /* mainly from demo.css of mobile-angular-ui demo application*/
 #shuttle {
   font-size: 100px;

@@ -4988,7 +4988,7 @@ a.list-group-item .icon.pull-right {
   position: relative;
   z-index: 2;
   width: 100%;
-  background: #999999;
+  background: #fff;
   overflow: hidden;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
