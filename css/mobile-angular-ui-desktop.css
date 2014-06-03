@@ -348,7 +348,7 @@
   padding: 6px 12px;
   line-height: 1.42857143;
   text-decoration: none;
-  color: #007aff;
+  color: #E2001A;
   background-color: #ffffff;
   border: 1px solid #dddddd;
   margin-left: -1px;
@@ -380,8 +380,8 @@
 .pagination > .active > span:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #007aff;
-  border-color: #007aff;
+  background-color: #E2001A;
+  border-color: #E2001A;
   cursor: default;
 }
 .pagination > .disabled > span,
