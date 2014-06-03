@@ -1,6 +1,7 @@
 var app = angular.module('Mampf-Angular', [
   "ngRoute",
   "ngTouch",
+  "ngStorage",
   "mobile-angular-ui"
 ]);
 
@@ -14,9 +15,6 @@ app.config(function($routeProvider, $locationProvider) {
 /* 
   TODO: 
   General app.js discussion
-  - angular.factory vs. angular.service
-  - one MainController to rule them all (?)
-  - getter Funktionen (?), config.model.xyz geht 
   - Kontakte:
     - generelle Struktur (?)
     - md5 encoding für identity + contacts in model service (?)
@@ -39,7 +37,52 @@ app.service('Config', function() {
   this.model.position = {}; // {"longitude" : 9.170299499999999, "latitude" : 48.773556600000006}
   this.model.contacts = []; // [ {"name" : "Peter", "phone" : 012345, "md5" : "ASDF", "lunch" : true}, {next} ]
   this.model.timeslots = []; // [ {"startTime":1401621970786,"endTime":1401629170786}, {next}]
+
+  //TODO: To be discussed:
+  /*
+    Funktionsumfang:
+    (- nur LUNCH TODAY szenario)
+    - alte requests mitspeichern, in einer liste anzeigen, "check again" button
+      (ansonsten muss der user sich darauf verlassen, dass der partner sich meldet)
+    
+    Kontakte:
+    - Struktur im model (?)
+    - Einmaliger "pull" des telefon-adressbuchs über phonegap
+    - "flag" zur Anzeige, ob lunch-wunsch-kandidat
+      - lastLunch -> default für neuen request sind die des Letzten
+      - kein flag, sondern guckt immer im letzten request (requests müssten gespeichert werden)
+
+  */
+
+  //new one
+  /*
+  this.model = {
+    identity: {
+      phone: "",
+      md5: ""
+    },
+    contacts: [{
+      name: "",
+      phone: "",
+      md5: ""
+    }],
+    requests: [{
+      position: {
+        longitude: 0,
+        latitude: 0,
+      },
+      invitees: [{
+        md5: ""
+      }],
+      timeslots: [{
+        startTime: "",
+        endTime: ""
+      }],
+    }],
+  };
+  */
   
+
   // get API config
   this.getMampfAPIModel = function(){
     // should look like this
@@ -187,7 +230,7 @@ app.service('Config', function() {
   };
 });
 
-app.controller('MainController', function($rootScope, $scope, $timeout, Config){
+app.controller('MainController', function($rootScope, $scope, $timeout, $localStorage, Config){
 
   // loading indicator on page nav
   $rootScope.$on("$routeChangeStart", function(){
@@ -200,6 +243,15 @@ app.controller('MainController', function($rootScope, $scope, $timeout, Config){
 
   // bind Config service to $scope, so that it is available in html
   $scope.config = Config;
+
+  // ngStorage test
+  $scope.$watch('config', function() {
+    $localStorage.model = $scope.config.model;
+  });
+
+  $scope.loadConfig = function(){
+    $scope.config.model = $localStorage.model;
+  };
 
   // backend connection for Mampf API (mampfBackendConnection.js)
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
