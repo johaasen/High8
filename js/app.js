@@ -93,6 +93,7 @@ app.service('Config', function() {
 
   this.setIdentity = function(phone) {
     this.model.identity.phone = phone;
+    //remove spaces, hyphens, blahblah
     this.model.identity.md5 = md5(phone).toUpperCase();
   };
 
