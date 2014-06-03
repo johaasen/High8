@@ -5,8 +5,7 @@ var app = angular.module('Mampf-Angular', [
 ]);
 
 app.config(function($routeProvider, $locationProvider) {
-  $locationProvider.html5Mode(false);
-  //TODO effects of (true)?
+  $locationProvider.html5Mode(false);  //TODO effects of (true)?
   $routeProvider.when('/',          {templateUrl: "home.html"});
   $routeProvider.when('/details',    {templateUrl: "details.html"});
   $routeProvider.when('/testBackend',    {templateUrl: "testBackend.html"});
@@ -15,21 +14,17 @@ app.config(function($routeProvider, $locationProvider) {
 /* 
   TODO: 
   General app.js discussion
-  - encapsulation of MampfAPI and config object like currently implemented useful?
-  - usage of angular.factory vs. angular.service
+  - angular.factory vs. angular.service
   - one MainController to rule them all (?)
+  - getter Funktionen (?), config.model.xyz geht 
+  - Kontakte:
+    - generelle Struktur (?)
+    - md5 encoding für identity + contacts in model service (?)
 */
 
 app.service('Config', function() {
   // service that holds the global model and provides update functions
-  // this.model is the actual model
-
-  // TODO:
-  // - remove this.config and use this.identity etc. directly (?)
-  //    - benefit of separate config object is that we can access the config without function definition
-  //      otherwise the getConfig() function needs to concatenate everything to store it in LS or pass to API
-  // - remove getter (?), model can be accessed with mampfconfig.config anyway
-  // - md5 encoding for identity and invitees - should it be done here?
+  // this.model is the global model
 
   // init local storage
   if(typeof(Storage) != "undefined"){
@@ -71,7 +66,7 @@ app.service('Config', function() {
     return mampfConfig;
   };
 
-  // functions to update model
+  // local storage functions
   this.saveModel = function() {
     if(this.localStorageAvailable){
       localStorage.setItem("MampfModel", angular.toJson(this.model));
@@ -91,12 +86,7 @@ app.service('Config', function() {
     }
   };
 
-  this.setIdentity = function(phone) {
-    this.model.identity.phone = phone;
-    //remove spaces, hyphens, blahblah
-    this.model.identity.md5 = md5(phone).toUpperCase();
-  };
-
+  // functions to update model
   this.delContacts = function() {
     this.model.contacts = [];
   };
@@ -120,7 +110,7 @@ app.service('Config', function() {
         }
       }
     }
-    return undefined; //TODO: correct return value(?)
+    return undefined;
   };
 
   this.getContactByMD5 = function(md5) {
@@ -131,7 +121,7 @@ app.service('Config', function() {
         }
       }
     }
-    return undefined; //TODO: correct return value(?)
+    return undefined;
   };
 
   this.toggleLunchWithContact = function(contact) {
@@ -149,6 +139,13 @@ app.service('Config', function() {
     }
   };
   
+  this.setIdentity = function(phone) {
+    this.model.identity.phone = phone;
+    //TODO: format phone number
+    //remove spaces, hyphens, blahblah
+    this.model.identity.md5 = md5(phone).toUpperCase();
+  };
+
   this.setPosition = function(position) {
     this.model.position = position;
   };
@@ -157,12 +154,11 @@ app.service('Config', function() {
     this.model.timeslots = [];
   };
 
-  this.isTimeslotInModel = function(timeslot) {
+  this.getTimeslotIndex = function(timeslot) {
     // auxiliary function similar to indexOf
     for (var pos in this.model.timeslots) {
       if (this.model.timeslots[pos].hasOwnProperty("startTime") && this.model.timeslots[pos].hasOwnProperty("endTime")){
         if(this.model.timeslots[pos].startTime === timeslot.startTime && this.model.timeslots[pos].endTime === timeslot.endTime){
-          // timeslot is in model - return true
           return pos;
         }
       }
@@ -171,9 +167,7 @@ app.service('Config', function() {
   };
 
   this.addTimeslot = function(timeslot) {
-    //push(timeslot) adds reference to input fields(?), workaround:
-    //push({"startTime": timeslot.startTime, "endTime":timeslot.endTime})
-    var pos = this.isTimeslotInModel(timeslot);
+    var pos = this.getTimeslotIndex(timeslot);
     if(pos > -1){
       return false;
     }else{
@@ -183,7 +177,7 @@ app.service('Config', function() {
   };
 
   this.remTimeslot = function(timeslot) {
-    var pos = this.isTimeslotInModel(timeslot);
+    var pos = this.getTimeslotIndex(timeslot);
     if(pos > -1) {
       this.model.timeslots.splice(pos,1);
       return true;
