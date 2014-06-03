@@ -10,6 +10,7 @@ app.config(function($routeProvider, $locationProvider) {
   $routeProvider.when('/',          {templateUrl: "home.html"});
   $routeProvider.when('/details',    {templateUrl: "details.html"});
   $routeProvider.when('/testBackend',    {templateUrl: "testBackend.html"});
+  $routeProvider.when('/contacts',    {templateUrl: "contacts.html"});
 });
 
 /* 
