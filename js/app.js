@@ -12,7 +12,8 @@ app.config(function($routeProvider, $locationProvider) {
 			templateUrl: "home.html"
 		})
 		.when('/contacts', {
-			templateUrl: "contacts.html"
+			templateUrl: "contacts.html",
+			controller: 'contactCtrl'
 		})
 		.when('/details', {
 			templateUrl: "details.html"
@@ -33,6 +34,7 @@ app.factory('Model', function($localStorage) {
 	var storage = $localStorage;
 	
 	storage.profile = {};
+	storage.contacts = [];
 	
 	return storage;
 });
@@ -404,6 +406,24 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   };
 });
 
+app.controller('contactCtrl', function($rootScope, $scope, $localStorage, $location, Config, Model){
+	$scope.contacts = Model.contacts;
+	
+	$scope.importContacts = function() {
+		// Zunächst alle Kontakte löschen
+		$scope.contacts.splice(0, $scope.contacts.length);
+		
+		// Dummy-Kontakte anlegen
+		var contacts = [
+			{name: 'Mike', phone: '12234'},
+			{name: 'Johannes', phone: '23989'}
+		];
+		
+		// Kontakte ins Model speichern
+		$scope.contacts.push(contacts);
+	};
+});
+
 app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $location, Config, Model){
 	
 	$rootScope.$storage = $localStorage;
@@ -422,9 +442,9 @@ app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $lo
 		}
 		
 		// set profile
+		Model.profile.id			= md5(phonenr.$modelValue).toUpperCase();
 		Model.profile.name 		= name.$modelValue;
 		Model.profile.phonenr = phonenr.$modelValue;
-		Model.profile.md5			= md5(phonenr.$modelValue).toUpperCase();
 		
 		// set initialized flag
 		$rootScope.$storage.isInitialized = true;
