@@ -39,6 +39,64 @@ border-radius: 5px;
 	padding-top: 0;
 }
 
+.app#location #map-canvas {
+	height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.app#location .controls {
+	margin-top: 16px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.app#location #pac-input {
+	background-color: #fff;
+	padding: 0 11px 0 13px;
+	width: 400px;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+    text-overflow: ellipsis;
+}
+
+.app#location #pac-input:focus {
+	border-color: #4d90fe;
+	margin-left: -1px;
+	padding-left: 14px;  /* Regular padding-left + 1. */
+	width: 401px;
+}
+
+.app#location .pac-container {
+	font-family: Roboto;
+}
+
+.app#location #type-selector {
+	color: #fff;
+	background-color: #4d90fe;
+	padding: 5px 11px 0px 11px;
+}
+
+.app#location #type-selector label {
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+	  
+.app#location #location-add {
+	position: absolute;
+	right: 10px;
+	bottom: 40px;
+	opacity: 0.9;
+	display: none;
+}
+
 /* mainly from demo.css of mobile-angular-ui demo application*/
 #shuttle {
   font-size: 100px;

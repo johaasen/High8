@@ -20,6 +20,10 @@ app.config(function($routeProvider, $locationProvider) {
 		.when('/initialize', {
 			templateUrl: 'initialize.html'
 		})
+		.when('/location', {
+			templateUrl: 'location.html',
+			controller: 'locationCtrl'
+		})
 		.when('/testBackend', {
 			templateUrl: "testBackend.html"
 		});
@@ -263,6 +267,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 
   $rootScope.$on("$routeChangeSuccess", function(){
     $rootScope.loading = false;
+		//if ($("#location") != "undefined" && $("#location").length != 0) alert();
   });
 	
 	$rootScope.$storage = $localStorage;
@@ -397,4 +402,21 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   $scope.checkAgent = function(){
     $scope.userAgent =  navigator.userAgent;
   };
+});
+
+app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $location, Config){
+	
+	$rootScope.currentView = 'location';
+	
+	$scope.init = function () {
+		$.getScript('js/location.js', function(){
+			initialize();
+		});
+	};
+	
+	$scope.select = function() {
+		alert($("#location-add").data().marker.position);
+	}
+	
+	$scope.init();
 });
