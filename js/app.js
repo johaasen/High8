@@ -42,29 +42,33 @@ app.service('Config', function() {
   //new one
   this.model = {
     identity: {
-      phone: "",
-      md5: ""
+      //phone: "",
+      //md5: ""
     },
-    contacts: [{
-      name: "",
-      phone: "",
-      md5: ""
-    }],
+    contacts: [
+      //{
+      // name: "",
+      // phone: "",
+      // md5: ""  
+      //}
+    ],
     requests: [{
       currentPosition: {
-        longitude: 0,
-        latitude: 0,
+        //longitude: 0,
+        //latitude: 0,
       },
       invitees: [], // as MD5
-      timeslots: [{
-        startTime: "",
-        endTime: ""
-      }],
+      timeslots: [
+        //{
+        //startTime: "",
+        //endTime: ""
+        //}
+      ],
       response: {
         subjects: [], // as MD5
         timeslots: {
-          startTime: "",
-          endTime: ""
+          //startTime: "",
+          //endTime: ""
         },
       },
     }],
