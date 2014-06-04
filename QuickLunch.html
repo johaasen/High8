@@ -36,12 +36,16 @@
     TODO:
     first update takes some seconds in some cases - delay of API or does the model not update?
     -->
-  <div bs-panel title="Current Position">
-    <div class="btn btn-default justified" ng-click="getLocation()">Update Geo Location</div><br>
-    <h3><small>
+  <div bs-panel title="Location">
+    <button class="btn btn-default" ng-click="getCurrentPosition()"><i class="fa fa-location-arrow"></i> Aktueller Standort</button>
+		<div>Lat: {{api.config.position.latitude}}</div>
+		<div>Lon: {{api.config.position.longitude}}</div>
+    
+		
+		<!-- <h3><small>
       Lat: {{config.model.requests[config.model.requests.length-1].currentPosition.latitude}}<br>
       Long: {{config.model.requests[config.model.requests.length-1].currentPosition.longitude}}
-    </small></h3>
+    </small></h3> -->
   </div>
 
   <!-- Overlay for response -->

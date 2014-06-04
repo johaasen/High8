@@ -34,27 +34,27 @@ app.config(function($routeProvider, $locationProvider) {
 app.factory('Model', function($localStorage) {
 	var storage = $localStorage;
 	
-	storage.profile = {};
+	storage.profile = $localStorage.profile || {};
 	/*	
 			id: 			'B25BF7426FABCADF01103045FD7707CE'
 			name: 		'Mike Mülhaupt'
 			phonenr:	'12415'
 	*/
-	storage.contacts = [];
+	storage.contacts = $localStorage.contacts || [];
 	/*	[{
 				id:				'A9B9D2ED66A5DA2AFB3247F6947F5591'
 				name:			'Johannes Haasen'
 				phonenr:	'90330'
 			}]
 	*/
-	storage.requests = [{
+	storage.requests = $localStorage.requests || [{
 		invitees: [],
-		currentPosition: {},
+		position: {},
 		timeslots: []
 	}];
 	/*	[{
 				invitees:["A9B9D2ED66A5DA2AFB3247F6947F5591"]
-				currentPosition: {
+				position: {
 					longitude: 9.170299499999999,
 					latitude:	 48.773556600000006
 				},
@@ -66,6 +66,36 @@ app.factory('Model', function($localStorage) {
 	*/
 	
 	return storage;
+});
+
+app.factory('Location', function() {
+	var Location = {
+		locationError: function(error) {
+			switch(error.code) {
+				case error.PERMISSION_DENIED:
+					console.log("User denied the request for Geolocation.");
+					break;
+				case error.POSITION_UNAVAILABLE:
+					console.log("Location information is unavailable.");
+					break;
+				case error.TIMEOUT:
+					console.log("The request to get user location timed out.");
+					break;
+				case error.UNKNOWN_ERROR:
+					console.log(x.innerHTML="An unknown error occurred.");
+					break;
+			}
+		},
+		getCurrentPosition: function(callback) {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(callback, Location.locationError);
+			} else {
+				console.log("Geolocation is not supported by this browser.");
+			}
+		}
+	};
+	
+	return Location;
 });
 
 app.service('Config', function() {
@@ -435,10 +465,15 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   };
 });
 
-app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model){
+app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location){
 	$scope.api = new MampfAPI(BACKEND_URL);
 	$scope.api.config = Model.requests[Model.requests.length-1];
 	$scope.api.config.identity = Model.profile.id;
+	
+	$scope.getCurrentPosition = Location.getCurrentPosition(function(pos) {
+		$scope.api.config.position.latitude  = pos.coords.latitude;
+		$scope.api.config.position.longitude = pos.coords.longitude;
+	});
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, Config, Model){
