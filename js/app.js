@@ -134,6 +134,7 @@ app.service('Config', function() {
 	}
 	else{
     //TODO: add notification: already existing contact
+    console.log("Phone number already used...");
     return false;
 	}
   };
@@ -182,10 +183,28 @@ app.service('Config', function() {
     this.model.requests[this.model.requests.length-1].currentPosition = position;
   };
 
-  this.addInvitee = function(phone) {
-    var invitee = this.getContactByPhone(phone);
+  this.addInvitee = function(contact) {
+    var pos = this.model.requests[this.model.requests.length-1].invitees.indexOf(contact.md5);
+    if(pos > -1){
+      return false;
+    }else{
+      this.model.requests[this.model.requests.length-1].invitees.push(contact.md5);
+      return true;
+    }
+  };
 
-    this.model.requests[this.model.requests.length-1].invitees.push(invitee.md5);
+  this.remInvitee = function(contact) {
+    var pos = this.model.requests[this.model.requests.length-1].invitees.indexOf(contact.md5);
+    if(pos > -1) {
+      this.model.requests[this.model.requests.length-1].invitees.splice(pos,1);
+      return true;
+    }else{
+      return false;
+    }
+  };
+
+  this.delInvitees = function() {
+    this.model.requests[this.model.requests.length-1].invitees = [];
   };
 
   this.delTimeslots = function() {
@@ -374,18 +393,18 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
     // Peter is Identity  
     $scope.config.setIdentity("0176000000");
     $scope.config.addContact("Hans","0175000000");
-    $scope.config.addInvitee("0175000000");
+    $scope.config.addInvitee($scope.config.getContactByPhone("0175000000"));
   };
 
   $scope.initAsHans = function(){
     // Hans is Identity
     $scope.config.setIdentity("0175000000");
     $scope.config.addContact("Peter","0176000000");
-    $scope.config.addInvitee("0176000000");
+    $scope.config.addInvitee($scope.config.getContactByPhone("0176000000"));
   };
 
-  //$scope.initAsHans();
-  $scope.initAsPeter();
+  $scope.initAsHans();
+  //$scope.initAsPeter();
   $scope.config.addContact("Franz","0174000000");
   $scope.config.setPosition({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
   $scope.config.addTimeslot({"startTime":1401621970786,"endTime":1401629170786});
