@@ -157,8 +157,7 @@ app.service('Config', function() {
   };
 
   this.addContact = function(name, phone) {
-    //TODO: check if phone no. already in contacts
-	//first try:
+    //check if phone no. already in contacts
 	if(this.getContactByPhone(phone)==undefined){
 		var contact = {};
 		contact.name = name;
