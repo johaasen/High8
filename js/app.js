@@ -25,31 +25,51 @@ app.config(function($routeProvider, $locationProvider) {
 		});
 });
 
-/* 
-  TODO: 
-  General app.js discussion
-  - Kontakte:
-    - generelle Struktur (?)
-    - md5 encoding für identity + contacts in model service (?)
-*/
-
 app.service('Config', function() {
   // service that holds the global model and provides update functions
   // this.model is the global model
 
-  // init local storage
-  if(typeof(Storage) != "undefined"){
-    this.localStorageAvailable  = true;
-  }else{
-    this.localStorageAvailable = false;
-  }
-
   // init model object
+  // old one
+  /*
   this.model = {};
   this.model.identity = {}; // {"phone":"017600000000","md5":"ASDF"}
   this.model.position = {}; // {"longitude" : 9.170299499999999, "latitude" : 48.773556600000006}
   this.model.contacts = []; // [ {"name" : "Peter", "phone" : 012345, "md5" : "ASDF", "lunch" : true}, {next} ]
   this.model.timeslots = []; // [ {"startTime":1401621970786,"endTime":1401629170786}, {next}]
+  */
+
+  //new one
+  this.model = {
+    identity: {
+      phone: "",
+      md5: ""
+    },
+    contacts: [{
+      name: "",
+      phone: "",
+      md5: ""
+    }],
+    requests: [{
+      currentPosition: {
+        longitude: 0,
+        latitude: 0,
+      },
+      invitees: [], // as MD5
+      timeslots: [{
+        startTime: "",
+        endTime: ""
+      }],
+      response: {
+        subjects: [], // as MD5
+        timeslots: {
+          startTime: "",
+          endTime: ""
+        },
+      },
+    }],
+  };
+  
 
   //TODO: To be discussed:
   /*
@@ -67,46 +87,8 @@ app.service('Config', function() {
 
   */
 
-  //new one
-  /*
-  this.model = {
-    identity: {
-      phone: "",
-      md5: ""
-    },
-    contacts: [{
-      name: "",
-      phone: "",
-      md5: ""
-    }],
-    requests: [{
-      position: {
-        longitude: 0,
-        latitude: 0,
-      },
-      invitees: [{
-        md5: ""
-      }],
-      timeslots: [{
-        startTime: "",
-        endTime: ""
-      }],
-      response: [{
-        invitees: {
-          md5: ""
-        },
-        timeslots: {
-          startTime: "",
-          endTime: ""
-        },
-      }], 
-    }],
-  };
-  */
-  
-
-  // get API config
-  this.getMampfAPIModel = function(){
+  // get API config - pass -1 as index for newest request
+  this.getMampfAPIRequest = function(index){
     // should look like this
     // var demoConfig1 = {"identity":"B25BF7426FABCADF01103045FD7707CE",
     //                    "invitees":["A9B9D2ED66A5DA2AFB3247F6947F5591"],
@@ -114,41 +96,31 @@ app.service('Config', function() {
     //                    "timeslots":[{"startTime":1401621970786,"endTime":1401629170786},
     //                                 {"startTime":1401629170786,"endTime":1401636370786}]};
 
-    var mampfConfig = {};
-    mampfConfig.identity = this.model.identity.md5;
-    mampfConfig.currentPosition = this.model.position;
-    mampfConfig.timeslots = this.model.timeslots;
-    mampfConfig.invitees = [];
-    
-    for (var pos in this.model.contacts) {
-      if (this.model.contacts[pos].hasOwnProperty("md5") && this.model.contacts[pos].hasOwnProperty("lunch")){
-        if(this.model.contacts[pos].lunch === true){
-          mampfConfig.invitees.push(this.model.contacts[pos].md5);
-        }
-      }
+    if (index === -1) {
+      index = this.model.requests.length - 1;
     }
+
+    var mampfConfig = angular.fromJson(angular.toJson(this.model.requests[index]));
+    mampfConfig.identity = this.model.identity.md5;
+    delete mampfConfig.response;
 
     return mampfConfig;
   };
 
-  // local storage functions
-  this.saveModel = function() {
-    if(this.localStorageAvailable){
-      localStorage.setItem("MampfModel", angular.toJson(this.model));
-      return true;
-    }else{
-      console.log("localStorage not available");
-      return false;
-    }
-  };
+  this.newRequest = function() {
+    // clone last entry
+    var index = this.model.requests.length-1;
+    var newRequest = angular.fromJson(angular.toJson(this.model.requests[index]));
 
-  this.loadModel = function() {
-    if(this.localStorageAvailable){
-      this.model = angular.fromJson(localStorage.getItem("MampfModel"));
-    }else{
-      console.log("localStorage not available");
-      return false;
-    }
+    newRequest.response = {
+      subjects: [],
+      timeslots: {
+        startTime: "",
+        endTime: ""
+      },
+    };
+
+    this.model.requests.push(newRequest);
   };
 
   // functions to update model
@@ -157,14 +129,15 @@ app.service('Config', function() {
   };
 
   this.addContact = function(name, phone) {
-    //TODO: check if phone no. already in contacts
+  //TODO: check if phone no. already in contacts
 	//first try:
-	if(this.getContactByPhone(phone)==undefined){
-		var contact = {};
-		contact.name = name;
-		contact.phone = phone;
-		contact.md5 = md5(phone).toUpperCase();
-		contact.lunch = false;
+	if(this.getContactByPhone(phone)===undefined){
+		var contact = {
+      name: name,
+      phone: phone,
+      md5: md5(phone).toUpperCase()
+    };
+
     this.model.contacts.push(contact);
 	}
 	else{
@@ -194,11 +167,6 @@ app.service('Config', function() {
     return undefined;
   };
 
-  this.toggleLunchWithContact = function(contact) {
-    var pos = this.model.contacts.indexOf(contact);
-    this.model.contacts[pos].lunch = !(this.model.contacts[pos].lunch);
-  };
-
   this.remContact = function(contact) {
     var pos = this.model.contacts.indexOf(contact);
     if (pos > -1) {
@@ -216,19 +184,27 @@ app.service('Config', function() {
     this.model.identity.md5 = md5(phone).toUpperCase();
   };
 
+  //TODO: for now, only the last request can be changed with these functions
   this.setPosition = function(position) {
-    this.model.position = position;
+    this.model.requests[this.model.requests.length-1].currentPosition = position;
+  };
+
+  this.addInvitee = function(phone) {
+    var invitee = this.getContactByPhone(phone);
+
+    this.model.requests[this.model.requests.length-1].invitees.push(invitee.md5);
   };
 
   this.delTimeslots = function() {
-    this.model.timeslots = [];
+    this.model.requests[this.model.requests.length-1].timeslots = [];
   };
 
   this.getTimeslotIndex = function(timeslot) {
     // auxiliary function similar to indexOf
-    for (var pos in this.model.timeslots) {
-      if (this.model.timeslots[pos].hasOwnProperty("startTime") && this.model.timeslots[pos].hasOwnProperty("endTime")){
-        if(this.model.timeslots[pos].startTime === timeslot.startTime && this.model.timeslots[pos].endTime === timeslot.endTime){
+    var index = this.model.requests.length-1;
+    for (var pos in this.model.requests[index].timeslots) {
+      if (this.model.requests[index].timeslots[pos].hasOwnProperty("startTime") && this.model.requests[index].timeslots[pos].hasOwnProperty("endTime")){
+        if(this.model.requests[index].timeslots[pos].startTime === timeslot.startTime && this.model.requests[index].timeslots[pos].endTime === timeslot.endTime){
           return pos;
         }
       }
@@ -241,7 +217,7 @@ app.service('Config', function() {
     if(pos > -1){
       return false;
     }else{
-      this.model.timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
+      this.model.requests[this.model.requests.length-1].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
       return true;
     }
   };
@@ -249,9 +225,36 @@ app.service('Config', function() {
   this.remTimeslot = function(timeslot) {
     var pos = this.getTimeslotIndex(timeslot);
     if(pos > -1) {
-      this.model.timeslots.splice(pos,1);
+      this.model.requests[this.model.requests.length-1].timeslots.splice(pos,1);
       return true;
     }else{
+      return false;
+    }
+  };
+
+  //TODO: localStorage handling with ngStorage
+  // init local storage
+  if(typeof(Storage) != "undefined"){
+    this.localStorageAvailable  = true;
+  }else{
+    this.localStorageAvailable = false;
+  }
+  // local storage functions
+  this.saveModel = function() {
+    if(this.localStorageAvailable){
+      localStorage.setItem("MampfModel", angular.toJson(this.model));
+      return true;
+    }else{
+      console.log("localStorage not available");
+      return false;
+    }
+  };
+
+  this.loadModel = function() {
+    if(this.localStorageAvailable){
+      this.model = angular.fromJson(localStorage.getItem("MampfModel"));
+    }else{
+      console.log("localStorage not available");
       return false;
     }
   };
@@ -277,7 +280,9 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 		$rootScope.$storage.isInitialized = false; // nach Submit auf true setzen
 	};
 	
-	if (!$rootScope.$storage.isInitialized) $scope.init();
+	if (!$rootScope.$storage.isInitialized){
+    $scope.init();
+  }
 
   // bind Config service to $scope, so that it is available in html
   $scope.config = Config;
@@ -295,7 +300,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 		$location.path('/');
 		$rootScope.$storage.isInitialized = true;
 		$rootScope.currentView = '';
-	}
+	};
 
   // backend connection for Mampf API (mampfBackendConnection.js)
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
@@ -304,7 +309,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   $scope.findMatches = function(){
     $rootScope.loading = true;
 
-    $scope.mampfCon.config = $scope.config.getMampfAPIModel();
+    $scope.mampfCon.config = $scope.config.getMampfAPIRequest(-1);
     $scope.mampfCon.findMatches(function(response){
       //callback
       $scope.response = {};
@@ -316,6 +321,9 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
       $scope.$apply();
 
       console.log($scope.response);
+
+      // init new request entry after successfull call
+      $scope.config.newRequest();
 
       $rootScope.loading = false;
       $rootScope.$apply();
@@ -373,14 +381,14 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
     // Peter is Identity  
     $scope.config.setIdentity("0176000000");
     $scope.config.addContact("Hans","0175000000");
-    $scope.config.toggleLunchWithContact($scope.config.getContactByPhone("0175000000"));
+    $scope.config.addInvitee("0175000000");
   };
 
   $scope.initAsHans = function(){
     // Hans is Identity
     $scope.config.setIdentity("0175000000");
     $scope.config.addContact("Peter","0176000000");
-    $scope.config.toggleLunchWithContact($scope.config.getContactByPhone("0176000000"));
+    $scope.config.addInvitee("0176000000");
   };
 
   //$scope.initAsHans();
