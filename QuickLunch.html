@@ -6,8 +6,9 @@
     input types are datetime-local, because it is supported by angular,
     "datetime" (with time zone) needed for Mampf backend  
     -->
-  <div bs-panel title="Timeslots (without time zone)">
-    <input bs-form-control type="datetime-local" ng-model="newTimeslot.startTime" label="Just to test Picker">
+  <div bs-panel title="Quick Lunch - do it quick and dirty!">
+      <input bs-form-control type="datetime-local" ng-model="newTimeslot.startTime" label="Startzeitpunkt">
+      <input bs-form-control type="datetime-local" ng-model="newTimeslot.endTime" label="Endzeitpunkt">    
     <!--
     <div class="btn btn-default justified" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
     -->

@@ -19,6 +19,10 @@ app.config(function($routeProvider, $locationProvider) {
 			templateUrl: 'initialize.html',
 			controller: 'initializeCtrl'
 		})
+		.when('/location', {
+			templateUrl: 'location.html',
+			controller: 'locationCtrl'
+		})
     .when('/QuickLunch', {
       templateUrl: 'QuickLunch.html',
 			controller: 'quicklunchCtrl'
@@ -335,6 +339,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 
   $rootScope.$on("$routeChangeSuccess", function(){
     $rootScope.loading = false;
+		//if ($("#location") != "undefined" && $("#location").length != 0) alert();
   });
 	
 	$rootScope.$storage = $localStorage;
@@ -465,7 +470,25 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   };
 });
 
-app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location){
+
+app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $location, Config){
+	
+	$rootScope.currentView = 'location';
+	
+	$scope.init = function () {
+		$.getScript('js/location.js', function(){
+			initialize();
+		});
+	};
+	
+	$scope.select = function() {
+		alert($("#location-add").data().marker.position);
+	}
+	
+	$scope.init();
+});
+
+app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model){
 	$scope.api = new MampfAPI(BACKEND_URL);
 	$scope.api.config = Model.requests[Model.requests.length-1];
 	$scope.api.config.identity = Model.profile.id;
@@ -526,4 +549,3 @@ app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $lo
 		$location.path('/');
 	}
 });
-
