@@ -20,9 +20,12 @@ app.config(function($routeProvider, $locationProvider) {
 		.when('/initialize', {
 			templateUrl: 'initialize.html'
 		})
+    .when('/QuickLunch', {
+      templateUrl: 'QuickLunch.html'
+    })
 		.when('/testBackend', {
 			templateUrl: "testBackend.html"
-		});
+	});
 });
 
 app.service('Config', function() {
