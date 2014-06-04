@@ -133,8 +133,7 @@ app.service('Config', function() {
   };
 
   this.addContact = function(name, phone) {
-  //TODO: check if phone no. already in contacts
-	//first try:
+  //check if phone no. already in contacts
 	if(this.getContactByPhone(phone)===undefined){
 		var contact = {
       name: name,
@@ -143,9 +142,11 @@ app.service('Config', function() {
     };
 
     this.model.contacts.push(contact);
+    return true;
 	}
 	else{
-	//TODO: add notification: already existing contact
+    //TODO: add notification: already existing contact
+    return false;
 	}
   };
 
