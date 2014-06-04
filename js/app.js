@@ -83,7 +83,7 @@ app.service('Config', function() {
   */
 
   // get API config - pass -1 as index for newest request
-  this.getMampfAPIRequest = function(index){
+  this.getMampfAPIRequest = function(index) {
     // should look like this
     // var demoConfig1 = {"identity":"B25BF7426FABCADF01103045FD7707CE",
     //                    "invitees":["A9B9D2ED66A5DA2AFB3247F6947F5591"],
@@ -100,6 +100,14 @@ app.service('Config', function() {
     delete mampfConfig.response;
 
     return mampfConfig;
+  };
+
+  this.setResponse = function(index, response) {
+    if (index === -1) {
+      index = this.model.requests.length - 1;
+    }
+
+    this.model.requests[index].response = angular.fromJson(angular.toJson(response));
   };
 
   this.newRequest = function() {
@@ -321,12 +329,14 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
 
   // call Mampf API 
-  $scope.findMatches = function(){
+  $scope.findMatches = function(requestIndex){
     $rootScope.loading = true;
 
-    $scope.mampfCon.config = $scope.config.getMampfAPIRequest(-1);
+    $scope.mampfCon.config = $scope.config.getMampfAPIRequest(requestIndex);
     $scope.mampfCon.findMatches(function(response){
       //callback
+      
+      //testing block
       $scope.response = {};
       $scope.response.full = response;
       $scope.response.names = [];
@@ -334,10 +344,12 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
         $scope.response.names.push($scope.config.getContactByMD5(subject).name);
       });
       $scope.$apply();
-
       console.log($scope.response);
 
-      // init new request entry after successfull call
+      //update model
+      $scope.config.setResponse(requestIndex, response);
+
+      // init new request entry after successfull call and save of response
       $scope.config.newRequest();
 
       $rootScope.loading = false;
