@@ -393,6 +393,9 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   // **********
   // demo / test functions and demo setup follows
   // **********
+  // test scope in chrome dev tools
+  // var scope = angular.element($(".app-body")).scope();
+  //
   $scope.logGlobalModel = function(){
     console.log($scope.config.model);
   };
