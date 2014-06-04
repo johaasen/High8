@@ -8,9 +8,6 @@ var app = angular.module('Mampf-Angular', [
 app.config(function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(false);  //TODO effects of (true)?
   $routeProvider
-		.when('/', {
-			templateUrl: "home.html"
-		})
 		.when('/contacts', {
 			templateUrl: "contacts.html",
 			controller: 'contactCtrl'
@@ -27,7 +24,10 @@ app.config(function($routeProvider, $locationProvider) {
     })
 		.when('/testBackend', {
 			templateUrl: "testBackend.html"
-	});
+		})
+		.otherwise({
+			redirectTo: '/QuickLunch'
+		});
 });
 
 app.factory('Model', function($localStorage) {
