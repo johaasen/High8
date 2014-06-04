@@ -6,23 +6,27 @@
 				Wir brauchen einige deiner pers&ouml;nlichen Daten, damit dich deine Freunde finden k&ouml;nnen.
 			</p>
 		</div>
-		<form role="profile" ng-submit="signUp()">
-			
-			<div class="col-xs-4">
-				<img src="http://placehold.it/300x300" class="img-thumbnail" />
-			</div>
-			
-			<div class="col-xs-8">
-				<div class="form-group">
-					<label class="sr-only" for="lastname">Name</label>
-					<input type="text" class="form-control" id="name" placeholder="Name" required>
+		<div class="col-xs-12">
+			<form novalidate name="profile" ng-submit="signUp()">
+				
+				<div class="col-xs-4">
+					<img src="http://placehold.it/300x300" class="img-thumbnail" />
 				</div>
-				<div class="form-group">
-					<label class="sr-only" for="phonenr">Telefonnummer</label>
-					<input type="tel" class="form-control" id="phonenr" placeholder="Telefonnummer" required>
+				
+				<div class="col-xs-8">
+					<div class="form-group has-feedback">
+						<label class="sr-only" for="lastname">Name</label>
+						<input type="text" name="name" ng-model="name" class="form-control" id="name" placeholder="Name">
+						<!-- <i class="fa fa-times form-control-feedback" ng-show="profile.name.$dirty && profile.name.$invalid"></i> -->
+					</div>
+					<div class="form-group has-feedback">
+						<label class="sr-only" for="phonenr">Telefonnummer</label>
+						<input type="text" name="phonenr" ng-model="phonenr" class="form-control" id="phonenr" placeholder="Telefonnummer">
+						<!-- <i class="fa fa-times form-control-feedback" ng-show="profile.phonenr.$dirty && profile.phonenr.$invalid"></i> -->
+					</div>
+					<button type="submit" class="btn btn-default">Sign Up!</button>
 				</div>
-				<button type="submit" class="btn btn-default">Sign Up!</button>
-			</div>
-		</form>
+			</form>
+		</div>
 	</div>
 </div>

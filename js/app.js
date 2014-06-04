@@ -18,7 +18,8 @@ app.config(function($routeProvider, $locationProvider) {
 			templateUrl: "details.html"
 		})
 		.when('/initialize', {
-			templateUrl: 'initialize.html'
+			templateUrl: 'initialize.html',
+			controller: 'initializeCtrl'
 		})
 		.when('/testBackend', {
 			templateUrl: "testBackend.html"
@@ -33,9 +34,19 @@ app.config(function($routeProvider, $locationProvider) {
     - md5 encoding für identity + contacts in model service (?)
 */
 
-app.service('Config', function() {
+app.factory('Model', function($localStorage) {
+	var storage = $localStorage;
+	
+	storage.profile = {};
+	
+	return storage;
+});
+
+
+app.service('Config', function($localStorage) {
   // service that holds the global model and provides update functions
   // this.model is the global model
+	
 
   // init local storage
   if(typeof(Storage) != "undefined"){
@@ -45,7 +56,8 @@ app.service('Config', function() {
   }
 
   // init model object
-  this.model = {};
+  //this.model = $localStorage;
+	this.model = {};
   this.model.identity = {}; // {"phone":"017600000000","md5":"ASDF"}
   this.model.position = {}; // {"longitude" : 9.170299499999999, "latitude" : 48.773556600000006}
   this.model.contacts = []; // [ {"name" : "Peter", "phone" : 012345, "md5" : "ASDF", "lunch" : true}, {next} ]
@@ -255,6 +267,7 @@ app.service('Config', function() {
       return false;
     }
   };
+	
 });
 
 app.controller('MainController', function($rootScope, $scope, $timeout, $localStorage, $location, Config){
@@ -262,7 +275,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   // loading indicator on page nav
   $rootScope.$on("$routeChangeStart", function(){
     $rootScope.loading = true;
-		//$rootScope.currentView = '';
   });
 
   $rootScope.$on("$routeChangeSuccess", function(){
@@ -270,14 +282,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   });
 	
 	$rootScope.$storage = $localStorage;
-  
-  $scope.init = function() {
-		$location.path('/initialize');
-		$rootScope.currentView = 'initialize';
-		$rootScope.$storage.isInitialized = false; // nach Submit auf true setzen
-	};
-	
-	if (!$rootScope.$storage.isInitialized) $scope.init();
+	if (!$rootScope.$storage.isInitialized) $location.path('/initialize');;
 
   // bind Config service to $scope, so that it is available in html
   $scope.config = Config;
@@ -290,12 +295,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   $scope.loadConfig = function(){
     $scope.config.model = $localStorage.model;
   };
-	
-	$scope.signUp = function() {
-		$location.path('/');
-		$rootScope.$storage.isInitialized = true;
-		$rootScope.currentView = '';
-	}
 
   // backend connection for Mampf API (mampfBackendConnection.js)
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
@@ -384,7 +383,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   };
 
   //$scope.initAsHans();
-  $scope.initAsPeter();
+  //$scope.initAsPeter();
   $scope.config.addContact("Franz","0174000000");
   $scope.config.setPosition({"longitude" : 9.170299499999999, "latitude" : 48.773556600000006});
   $scope.config.addTimeslot({"startTime":1401621970786,"endTime":1401629170786});
@@ -397,3 +396,37 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
     $scope.userAgent =  navigator.userAgent;
   };
 });
+
+app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $location, Config, Model){
+	
+	$rootScope.$storage = $localStorage;
+	$rootScope.currentView = 'initialize';
+	
+	$scope.signUp = function() {
+		var name 		= $scope.profile.name;
+		var phonenr = $scope.profile.phonenr;
+		
+		// dirty validation
+		if (!name.$modelValue) {
+			return false;
+		}
+		if (phonenr.$modelValue == '' || isNaN(phonenr.$modelValue)) {
+			return false;
+		}
+		
+		// set profile
+		Model.profile.name 		= name.$modelValue;
+		Model.profile.phonenr = phonenr.$modelValue;
+		Model.profile.md5			= md5(phonenr.$modelValue).toUpperCase();
+		
+		// set initialized flag
+		$rootScope.$storage.isInitialized = true;
+		
+		// reset currentView-Marker
+		$rootScope.currentView = '';
+		
+		// route to landing screen
+		$location.path('/');
+	}
+});
+

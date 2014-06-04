@@ -39,6 +39,18 @@ border-radius: 5px;
 	padding-top: 0;
 }
 
+.app#initialize .form-group.has-feedback .form-control-feedback {
+	top: 0;
+}
+
+.app#initialize .form-group.has-feedback input.ng-invalid {
+	border-color: #fff;
+}
+
+.app#initialize .form-group.has-feedback i {
+	color: #a94442;
+}
+
 /* mainly from demo.css of mobile-angular-ui demo application*/
 #shuttle {
   font-size: 100px;
