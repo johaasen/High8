@@ -91,19 +91,15 @@ app.service('Config', function() {
         startTime: "",
         endTime: ""
       }],
-    }],
-    match: [{
-      position: {
-        longitude: 0,
-        latitude: 0,
-      },
-      matchpartner: [{
-        md5: ""
-      }],
-      timeslots: [{
-        startTime: "",
-        endTime: ""
-      }],
+      response: [{
+        invitees: {
+          md5: ""
+        },
+        timeslots: {
+          startTime: "",
+          endTime: ""
+        },
+      }], 
     }],
   };
   */
