@@ -18,13 +18,6 @@
 	</div>
   </div>
 
-    <!-- Identity -->
-  <div bs-panel title="Identity">
-    <!-- <input type="text" name="identity" ng-model="mampfConfig.config.identity" class="justified"> -->
-    <h3><small>Phone: {{config.model.identity.phone}}</small></h3>
-    <h3><small>MD5: {{config.model.identity.md5}}</small></h3>
-  </div>
-
   <!-- Invitees -->
   <div bs-panel title="Contacts">
     <!--
@@ -51,8 +44,10 @@
 		<h3><small>My Contacts</small></h3>
 		<li ng-repeat="contact in config.model.contacts">
 		  <h3><small>{{contact.name}} / {{contact.phone}} 
-		  <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">delete!</div></small></h3>
-		  <small>
+		  <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">Delete!</div></small></h3>
+		  <div class="btn btn-default btn-xs" ng-click="config.addInvitee(contact.phone)">Add invitee</div></small></h3>
+		 <!--  		
+		<small>
 		<switch
         bs-form-control
         ng-change="toggleLunchWithContact(contact)"
@@ -62,6 +57,7 @@
         class="col-xs-1" 
         >
         </switch></small>
+		-->
 		</li>
 	</div>
   </div>
