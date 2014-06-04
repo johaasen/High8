@@ -20,7 +20,8 @@ app.config(function($routeProvider, $locationProvider) {
 			controller: 'initializeCtrl'
 		})
     .when('/QuickLunch', {
-      templateUrl: 'QuickLunch.html'
+      templateUrl: 'QuickLunch.html',
+			controller: 'quicklunchCtrl'
     })
 		.when('/testBackend', {
 			templateUrl: "testBackend.html"
@@ -34,7 +35,35 @@ app.factory('Model', function($localStorage) {
 	var storage = $localStorage;
 	
 	storage.profile = {};
+	/*	
+			id: 			'B25BF7426FABCADF01103045FD7707CE'
+			name: 		'Mike Mülhaupt'
+			phonenr:	'12415'
+	*/
 	storage.contacts = [];
+	/*	[{
+				id:				'A9B9D2ED66A5DA2AFB3247F6947F5591'
+				name:			'Johannes Haasen'
+				phonenr:	'90330'
+			}]
+	*/
+	storage.requests = [{
+		invitees: [],
+		currentPosition: {},
+		timeslots: []
+	}];
+	/*	[{
+				invitees:["A9B9D2ED66A5DA2AFB3247F6947F5591"]
+				currentPosition: {
+					longitude: 9.170299499999999,
+					latitude:	 48.773556600000006
+				},
+				timeslots:[
+					{startTime:1401621970786, endTime:1401629170786},
+					{startTime:1401629170786, endTime:1401636370786}
+				]
+			}]
+	*/
 	
 	return storage;
 });
@@ -406,7 +435,13 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   };
 });
 
-app.controller('contactCtrl', function($rootScope, $scope, $localStorage, $location, Config, Model){
+app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model){
+	$scope.api = new MampfAPI(BACKEND_URL);
+	$scope.api.config = Model.requests[Model.requests.length-1];
+	$scope.api.config.identity = Model.profile.id;
+});
+
+app.controller('contactCtrl', function($rootScope, $scope, Config, Model){
 	$scope.contacts = Model.contacts;
 	
 	$scope.importContacts = function() {
