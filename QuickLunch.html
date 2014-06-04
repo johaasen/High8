@@ -1,0 +1,88 @@
+<div class="scrollable">
+<div class="scrollable-content">
+
+  <!-- Test Buttons -->
+  <div bs-panel title="Test it!">
+    <div class="btn-group justified">
+      <div class="btn btn-default" ng-click="logGlobalModel()">Log Config</div>
+      <div class="btn btn-default" ng-click="findMatches()">Test Request</div> 
+    </div>
+  </div>
+
+  <!-- Local Storage -->
+  <div bs-panel title="Local Storage">
+    <div class="btn-group justified">
+      <div class="btn btn-default" ng-click="config.saveModel()">Save to LS</div>
+      <div class="btn btn-default" ng-click="config.loadModel()">Load from LS</div>
+    </div>
+  </div>
+
+  <!-- Identity -->
+  <div bs-panel title="Identity">
+    <!-- <input type="text" name="identity" ng-model="mampfConfig.config.identity" class="justified"> -->
+    <h3><small>Phone: {{config.model.identity.phone}}</small></h3>
+    <h3><small>MD5: {{config.model.identity.md5}}</small></h3>
+  </div>
+
+  <!-- Invitees -->
+  <div bs-panel title="Contacts">
+    <!--
+    <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
+    <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
+    -->
+
+    <li ng-repeat="contact in config.model.contacts">
+      <h3><small>{{contact.name}} / {{contact.phone}} 
+      <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">delete!</div></small></h3>
+    </li>
+  </div>
+
+  <!-- Location -->
+  <!-- 
+    TODO:
+    first update takes some seconds in some cases - delay of API or does the model not update?
+    -->
+  <div bs-panel title="Current Position">
+    <div class="btn btn-default justified" ng-click="getLocation()">Update Geo Location</div><br>
+    <h3><small>
+      Lat: {{config.model.requests[config.model.requests.length-1].currentPosition.latitude}}<br>
+      Long: {{config.model.requests[config.model.requests.length-1].currentPosition.longitude}}
+    </small></h3>
+  </div>
+
+  <!-- Timeslots -->
+  <!-- 
+    TODO:
+    input types are datetime-local, because it is supported by angular,
+    "datetime" (with time zone) needed for Mampf backend  
+    -->
+  <div bs-panel title="Timeslots (without time zone)">
+    <input bs-form-control type="datetime-local" ng-model="newTimeslot.startTime" label="Just to test Picker">
+    <!--
+    <div class="btn btn-default justified" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
+    -->
+
+    <li ng-repeat="timeslot in config.model.requests[config.model.requests.length-1].timeslots track by $index">
+      <h3><small>Start: {{timeslot.startTime}}<br>End: {{timeslot.endTime}}
+      <div class="btn btn-default btn-xs" ng-click="config.remTimeslot(timeslot)">delete!</div></small></h3>
+    </li>
+  </div>
+
+  <!-- Overlay for response -->
+  <div overlay="responseOverlay">
+    <h4 class="overlay-title">Response</h4>    
+    <div><div>Just the first: {{response.names[0]}}</div></div>
+    <!-- ng repeat not working..-->
+    <div ng-repeat="name in response.names">ASDF</div>
+
+    <br>
+    <p>{{response.full}}</p>
+
+    <p toggle="off" bubble target="responseOverlay">
+      <span class="btn btn-primary">Ok</span>
+      <span class="btn btn-default">Cancel</span>
+    </p>  
+  </div>
+
+</div>
+</div>
