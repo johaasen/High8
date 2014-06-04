@@ -488,7 +488,7 @@ app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $loca
 	$scope.init();
 });
 
-app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model){
+app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location){
 	$scope.api = new MampfAPI(BACKEND_URL);
 	$scope.api.config = Model.requests[Model.requests.length-1];
 	$scope.api.config.identity = Model.profile.id;
