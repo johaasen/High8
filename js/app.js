@@ -27,19 +27,8 @@ app.config(function($routeProvider, $locationProvider) {
 
 app.service('Config', function() {
   // service that holds the global model and provides update functions
-  // this.model is the global model
 
   // init model object
-  // old one
-  /*
-  this.model = {};
-  this.model.identity = {}; // {"phone":"017600000000","md5":"ASDF"}
-  this.model.position = {}; // {"longitude" : 9.170299499999999, "latitude" : 48.773556600000006}
-  this.model.contacts = []; // [ {"name" : "Peter", "phone" : 012345, "md5" : "ASDF", "lunch" : true}, {next} ]
-  this.model.timeslots = []; // [ {"startTime":1401621970786,"endTime":1401629170786}, {next}]
-  */
-
-  //new one
   this.model = {
     identity: {
       //phone: "",
@@ -73,7 +62,6 @@ app.service('Config', function() {
       },
     }],
   };
-  
 
   //TODO: To be discussed:
   /*
