@@ -92,6 +92,19 @@ app.service('Config', function() {
         endTime: ""
       }],
     }],
+    match: [{
+      position: {
+        longitude: 0,
+        latitude: 0,
+      },
+      matchpartner: [{
+        md5: ""
+      }],
+      timeslots: [{
+        startTime: "",
+        endTime: ""
+      }],
+    }],
   };
   */
   
