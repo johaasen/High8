@@ -49,7 +49,7 @@
 	
 	<div class="col-xs-12">
 		<ul ng-repeat="contact in contacts" class="list-unstyled">
-		  <li ng-click="contactClicked(contact)">{{contact.name}}<br />{{contact.phone}}</li>
+		  <li>{{contact.name}}<br />{{contact.phoneNumbers[0]}}</li>
 		</ul>
 		<!--
 		  <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">Delete!</div></small></h3>

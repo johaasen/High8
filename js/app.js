@@ -620,8 +620,10 @@ app.controller('contactCtrl', function($rootScope, $scope, Config, Model) {
 		}];
 
 		// Kontakte ins Model speichern
-		for (i in contacts)
+		for (i in contacts){
+			contacts[i].id = phoneNumberToMd5(contacts[i].phoneNumbers[0]);
 			Model.contacts.push(contacts[i]);
+		}
 			// Die Contacts müssen in Model.contacts gepushed werden
 			// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
 			//
