@@ -63,7 +63,7 @@
     <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
     -->
 		<button class="btn btn-default" ng-click="toggle('selectInvitees')">select invitees</button>
-    <li ng-repeat="invitee in api.config.invitees">
+    <li ng-repeat="invitee in contacts | filter:isInvitee">
       <h3><small>{{invitee.name}} 
       <div class="btn btn-default btn-xs" ng-click="toggleContact(contact)">Remove</div></small></h3>
     </li>

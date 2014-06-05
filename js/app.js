@@ -583,6 +583,13 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Loc
 		else
 			$scope.api.config.invitees.splice(index, 1);
 	};
+	
+	$scope.isInvitee = function(contact) {
+		if (!contact) return;
+		if ($scope.api.config.invitees.indexOf(contact.id) !== -1)
+			return true;
+		else return false;
+	};
 
 	$scope.getCurrentPosition = Location.getCurrentPosition(function(pos) {
 		$scope.api.config.position.latitude = pos.coords.latitude;
