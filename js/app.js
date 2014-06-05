@@ -233,23 +233,16 @@ app.service('Config', function() {
     this.model.requests[0].currentPosition = position;
   };
 
-  this.addInvitee = function(contact) {
+  this.toggleInvitee = function(contact) {
     var pos = this.model.requests[0].invitees.indexOf(contact.md5);
     if(pos > -1){
+      // is invitee -> remove
+      this.model.requests[0].invitees.splice(pos,1);
       return false;
     }else{
+      // is no invitee -> add
       this.model.requests[0].invitees.push(contact.md5);
       return true;
-    }
-  };
-
-  this.remInvitee = function(contact) {
-    var pos = this.model.requests[0].invitees.indexOf(contact.md5);
-    if(pos > -1) {
-      this.model.requests[0].invitees.splice(pos,1);
-      return true;
-    }else{
-      return false;
     }
   };
 
@@ -309,7 +302,9 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 	
 	$rootScope.$storage = $localStorage;
 
-	if (!$rootScope.$storage.isInitialized) $location.path('/initialize');
+	if (!$rootScope.$storage.isInitialized) {
+    $location.path('/initialize');
+  }
 
   // bind Config service to $scope, so that it is available in html
   $scope.config = Config;
@@ -322,7 +317,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
   $scope.loadConfig = function(){
     $scope.config.model = $localStorage.model;
   };
-
 
   // backend connection for Mampf API (mampfBackendConnection.js)
   $scope.mampfCon = new MampfAPI(BACKEND_URL);
@@ -358,37 +352,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
     });
   };
 
-  // Geolocation
-  $scope.getLocation = function() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition($scope.updatePosition, $scope.locationError);
-    }else{
-      console.log("Geolocation is not supported by this browser.");
-    }
-  };
-
-  $scope.updatePosition = function(position) {
-    $scope.config.setPosition({"longitude" : position.coords.longitude, "latitude" : position.coords.latitude});
-    $scope.$apply();
-  };
-
-  $scope.locationError = function(error) {
-    switch(error.code) {
-      case error.PERMISSION_DENIED:
-        console.log("User denied the request for Geolocation.");
-        break;
-      case error.POSITION_UNAVAILABLE:
-        console.log("Location information is unavailable.");
-        break;
-      case error.TIMEOUT:
-        console.log("The request to get user location timed out.");
-        break;
-      case error.UNKNOWN_ERROR:
-        console.log("An unknown error occurred.");
-        break;
-    }
-  };
-
   // **********
   // demo / test functions and demo setup follows
   // **********
@@ -410,14 +373,14 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
     // Peter is Identity  
     $scope.config.setIdentity("0176000000");
     $scope.config.addContact("Hans","0175000000");
-    $scope.config.addInvitee($scope.config.getContactByPhone("0175000000"));
+    $scope.config.toggleInvitee($scope.config.getContactByPhone("0175000000"));
   };
 
   $scope.initAsHans = function(){
     // Hans is Identity
     $scope.config.setIdentity("0175000000");
     $scope.config.addContact("Peter","0176000000");
-    $scope.config.addInvitee($scope.config.getContactByPhone("0176000000"));
+    $scope.config.toggleInvitee($scope.config.getContactByPhone("0176000000"));
   };
 
   //$scope.initAsHans();
