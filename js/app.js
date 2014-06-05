@@ -629,10 +629,6 @@ app.controller('contactCtrl', function($rootScope, $scope, Config, Model) {
 			//
 			//navigator.contacts.create(contacts[i]);
 	};
-
-	$scope.contactClicked = function(contact) {
-		$rootScope.$emit('contactClicked', contact);
-	};
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $location, Config, Model) {
