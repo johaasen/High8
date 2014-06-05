@@ -1,0 +1,22 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {
+            if(xhr.readyState === 4) {
+                if(xhr.status === 200) {
+                    document.write("SUCCESS: " + xhr.responseText);
+                } else {
+                    document.write("HTTP ERROR");
+                }
+            }
+        }
+xhr.open("POST","http://dennistempi.itm.uni-luebeck.de/mampf/");
+xhr.setRequestHeader("Content-type", "application/json");
+xhr.send('{"identity":"A9B9D2ED66A5DA2AFB3247F6947F5591","invitees":["B25BF7426FABCADF01103045FD7707CE"],"currentPosition":{"longitude":9.170299499999999,"latitude":48.773556600000006},"timeslots":[{"startTime":1401622489545,"endTime":1401629689545},{"startTime":1401629689545,"endTime":1401636889546}]}');
+</script>
+<body>
+
+</html>
