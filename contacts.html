@@ -1,6 +1,6 @@
 <div class="scrollable">
 <div class="scrollable-content">
-
+	<!--
   <div bs-panel title="Profile">
 	<div class="col-xs-12">
 		<form name="personalNumberForm" class="form-horizontal" role="form">
@@ -17,6 +17,7 @@
 		</form>
 	</div>
   </div>
+	-->
 	
 	<button class="btn btn-default" ng-click="importContacts()">Import Contacts</button>
 
@@ -26,6 +27,8 @@
     <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
     <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
     -->
+		
+	<!-- 	
 	<div  class="col-xs-12">
 		<h3><small>Add new Contact</small></h3>	
 		<form name="newContact">
@@ -42,12 +45,16 @@
 			</div>
 		</form>
 	</div>
+	-->
+	
 	<div class="col-xs-12">
-		<h3><small>My Contacts</small></h3>
-		<li ng-repeat="contact in config.model.contacts">
-		  <h3><small>{{contact.name}} / {{contact.phone}} 
+		<ul ng-repeat="contact in contacts" class="list-unstyled">
+		  <li ng-click="contactClicked(contact)">{{contact.name}}<br />{{contact.phone}}</li>
+		</ul>
+		<!--
 		  <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">Delete!</div></small></h3>
 		  <div class="btn btn-default btn-xs" ng-click="config.addInvitee(contact.phone)">Add invitee</div></small></h3>
+		-->
 		 <!--  		
 		<small>
 		<switch
@@ -60,7 +67,6 @@
         >
         </switch></small>
 		-->
-		</li>
 	</div>
   </div>
 </div>

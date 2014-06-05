@@ -488,10 +488,23 @@ app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $loca
 	$scope.init();
 });
 
-app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location){
+app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location){	
+	$scope.contacts = Model.contacts;
+
 	$scope.api = new MampfAPI(BACKEND_URL);
 	$scope.api.config = Model.requests[Model.requests.length-1];
 	$scope.api.config.identity = Model.profile.id;
+	
+	$scope.toggleContact = function(contact) {
+		var index = $.inArray(contact, $scope.api.config.invitees);
+		
+		// TODO: $$hashKey verhindert, dass bereits bestehende Objekte erkannt werden
+		
+		if (index == -1) 
+			$scope.api.config.invitees.push(contact);
+		else
+			$scope.api.config.invitees.splice(index, 1);
+	};
 	
 	$scope.getCurrentPosition = Location.getCurrentPosition(function(pos) {
 		$scope.api.config.position.latitude  = pos.coords.latitude;
@@ -513,7 +526,12 @@ app.controller('contactCtrl', function($rootScope, $scope, Config, Model){
 		];
 		
 		// Kontakte ins Model speichern
-		$scope.contacts.push(contacts);
+		for (i in contacts)
+			$scope.contacts.push(contacts[i]);
+	};
+	
+	$scope.contactClicked = function(contact) {
+		$rootScope.$emit('contactClicked', contact);
 	};
 });
 

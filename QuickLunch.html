@@ -25,11 +25,27 @@
     <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
     <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
     -->
-
-    <li ng-repeat="contact in config.model.contacts">
-      <h3><small>{{contact.name}} / {{contact.phone}} 
+		<button class="btn btn-default" ng-click="toggle('selectInvitees')">select invitees</button>
+    <li ng-repeat="invitee in api.config.invitees">
+      <h3><small>{{invitee.name}} / {{invitee.phone}} 
       <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">delete!</div></small></h3>
     </li>
+  </div>
+	
+	<!-- overlay for selecting invitees -->
+	<div overlay="selectInvitees">
+    <h4 class="overlay-title">select invitees</h4>
+		<ul>
+			<li ng-click="toggleContact(contacts[0])">{{contacts[0].name}}<br />{{contacts[0].phone}}</li>
+			<li ng-click="toggleContact(contacts[1])">{{contacts[1].name}}<br />{{contacts[1].phone}}</li>
+		</ul>
+		
+		<!--
+    <p toggle="off" bubble target="selectInvitees">
+      <span class="btn btn-primary">Ok</span>
+      <span class="btn btn-default">Cancel</span>
+    </p> 
+		-->
   </div>
 
   <!-- Location -->
