@@ -86,7 +86,7 @@ app.factory('Location', function() {
 					console.log("The request to get user location timed out.");
 					break;
 				case error.UNKNOWN_ERROR:
-					console.log(x.innerHTML="An unknown error occurred.");
+					console.log("An unknown error occurred.");
 					break;
 			}
 		},
@@ -140,31 +140,8 @@ app.service('Config', function() {
     }],
   };
 
-  //TODO: To be discussed:
-  /*
-    Funktionsumfang:
-    (- nur LUNCH TODAY szenario)
-    - alte requests mitspeichern, in einer liste anzeigen, "check again" button
-      (ansonsten muss der user sich darauf verlassen, dass der partner sich meldet)
-    
-    Kontakte:
-    - Struktur im model (?)
-    - Einmaliger "pull" des telefon-adressbuchs über phonegap
-    - "flag" zur Anzeige, ob lunch-wunsch-kandidat
-      - lastLunch -> default für neuen request sind die des Letzten
-      - kein flag, sondern guckt immer im letzten request (requests müssten gespeichert werden)
-
-  */
-
   // get API config - pass -1 as index for newest request
   this.getMampfAPIRequest = function(index) {
-    // should look like this
-    // var demoConfig1 = {"identity":"B25BF7426FABCADF01103045FD7707CE",
-    //                    "invitees":["A9B9D2ED66A5DA2AFB3247F6947F5591"],
-    //                    "currentPosition":{"longitude":9.170299499999999,"latitude":48.773556600000006},
-    //                    "timeslots":[{"startTime":1401621970786,"endTime":1401629170786},
-    //                                 {"startTime":1401629170786,"endTime":1401636370786}]};
-
     var mampfConfig = angular.fromJson(angular.toJson(this.model.requests[index]));
     mampfConfig.identity = this.model.identity.md5;
     delete mampfConfig.response;
@@ -209,7 +186,6 @@ app.service('Config', function() {
     return true;
 	}
 	else{
-    //TODO: add notification: already existing contact
     console.log("Phone number already used...");
     return false;
 	}
@@ -252,7 +228,7 @@ app.service('Config', function() {
     this.model.identity.md5 = phoneNumberToMd5(phone);
   };
 
-  //TODO: for now, only the last request can be changed with these functions
+  //only the last request can be changed with these functions
   this.setPosition = function(position) {
     this.model.requests[0].currentPosition = position;
   };
@@ -408,7 +384,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
         console.log("The request to get user location timed out.");
         break;
       case error.UNKNOWN_ERROR:
-        console.log(x.innerHTML="An unknown error occurred.");
+        console.log("An unknown error occurred.");
         break;
     }
   };
