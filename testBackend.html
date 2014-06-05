@@ -32,7 +32,7 @@
     -->
 
     <li ng-repeat="contact in config.model.contacts">
-      <h3><small>{{contact.name}} / {{contact.phone}} 
+      <h3><small>{{contact.name}} / {{contact.phoneNumbers[0]}} 
       <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">delete!</div></small></h3>
     </li>
   </div>
