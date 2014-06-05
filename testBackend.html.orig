@@ -16,10 +16,22 @@
   </div>
 
   <!-- Invitees -->
+<<<<<<< HEAD
+  <div bs-panel title="Contacts">
+    <!--
+    <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
+    <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
+    -->
+
+    <li ng-repeat="contact in config.model.contacts">
+      <h3><small>{{contact.name}} / {{contact.phoneNumbers[0]}} 
+      <div class="btn btn-default btn-xs" ng-click="config.remContact(contact)">delete!</div></small></h3>
+=======
   <div bs-panel title="Invitees">
     <li ng-repeat="invitee in config.model.requests[0].invitees">
       <h3><small>{{invitee.name}} / {{invitee.phone}} 
       <div class="btn btn-default btn-xs" ng-click="config.toggleInvitee(contact)">toggle!</div></small></h3>
+>>>>>>> e1824261d4dd326c6850b4e302b646aa23a06388
     </li>
   </div>
 
