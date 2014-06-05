@@ -165,10 +165,6 @@ app.service('Config', function() {
     //                    "timeslots":[{"startTime":1401621970786,"endTime":1401629170786},
     //                                 {"startTime":1401629170786,"endTime":1401636370786}]};
 
-    if (index === -1) {
-      index = this.model.requests.length - 1;
-    }
-
     var mampfConfig = angular.fromJson(angular.toJson(this.model.requests[index]));
     mampfConfig.identity = this.model.identity.md5;
     delete mampfConfig.response;
@@ -177,17 +173,12 @@ app.service('Config', function() {
   };
 
   this.setResponse = function(index, response) {
-    if (index === -1) {
-      index = this.model.requests.length - 1;
-    }
-
     this.model.requests[index].response = angular.fromJson(angular.toJson(response));
   };
 
   this.newRequest = function() {
     // clone last entry
-    var index = this.model.requests.length-1;
-    var newRequest = angular.fromJson(angular.toJson(this.model.requests[index]));
+    var newRequest = angular.fromJson(angular.toJson(this.model.requests[0]));
 
     newRequest.response = {
       subjects: [],
@@ -197,7 +188,7 @@ app.service('Config', function() {
       },
     };
 
-    this.model.requests.push(newRequest);
+    this.model.requests.unshift(newRequest);
   };
 
   // functions to update model
@@ -265,23 +256,23 @@ app.service('Config', function() {
 
   //TODO: for now, only the last request can be changed with these functions
   this.setPosition = function(position) {
-    this.model.requests[this.model.requests.length-1].currentPosition = position;
+    this.model.requests[0].currentPosition = position;
   };
 
   this.addInvitee = function(contact) {
-    var pos = this.model.requests[this.model.requests.length-1].invitees.indexOf(contact.md5);
+    var pos = this.model.requests[0].invitees.indexOf(contact.md5);
     if(pos > -1){
       return false;
     }else{
-      this.model.requests[this.model.requests.length-1].invitees.push(contact.md5);
+      this.model.requests[0].invitees.push(contact.md5);
       return true;
     }
   };
 
   this.remInvitee = function(contact) {
-    var pos = this.model.requests[this.model.requests.length-1].invitees.indexOf(contact.md5);
+    var pos = this.model.requests[0].invitees.indexOf(contact.md5);
     if(pos > -1) {
-      this.model.requests[this.model.requests.length-1].invitees.splice(pos,1);
+      this.model.requests[0].invitees.splice(pos,1);
       return true;
     }else{
       return false;
@@ -289,16 +280,16 @@ app.service('Config', function() {
   };
 
   this.delInvitees = function() {
-    this.model.requests[this.model.requests.length-1].invitees = [];
+    this.model.requests[0].invitees = [];
   };
 
   this.delTimeslots = function() {
-    this.model.requests[this.model.requests.length-1].timeslots = [];
+    this.model.requests[0].timeslots = [];
   };
 
   this.getTimeslotIndex = function(timeslot) {
     // auxiliary function similar to indexOf
-    var index = this.model.requests.length-1;
+    var index = 0;
     for (var pos in this.model.requests[index].timeslots) {
       if (this.model.requests[index].timeslots[pos].hasOwnProperty("startTime") && this.model.requests[index].timeslots[pos].hasOwnProperty("endTime")){
         if(this.model.requests[index].timeslots[pos].startTime === timeslot.startTime && this.model.requests[index].timeslots[pos].endTime === timeslot.endTime){
@@ -314,7 +305,7 @@ app.service('Config', function() {
     if(pos > -1){
       return false;
     }else{
-      this.model.requests[this.model.requests.length-1].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
+      this.model.requests[0].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
       return true;
     }
   };
@@ -322,7 +313,7 @@ app.service('Config', function() {
   this.remTimeslot = function(timeslot) {
     var pos = this.getTimeslotIndex(timeslot);
     if(pos > -1) {
-      this.model.requests[this.model.requests.length-1].timeslots.splice(pos,1);
+      this.model.requests[0].timeslots.splice(pos,1);
       return true;
     }else{
       return false;
