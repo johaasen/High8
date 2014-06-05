@@ -65,7 +65,7 @@
 		<button class="btn btn-default" ng-click="toggle('selectInvitees')">select invitees</button>
     <li ng-repeat="invitee in contacts | filter:isInvitee">
       <h3><small>{{invitee.name}} 
-      <div class="btn btn-default btn-xs" ng-click="toggleContact(contact)">Remove</div></small></h3>
+      <div class="btn btn-default btn-xs" ng-click="toggleContact(invitee)">Remove</div></small></h3>
     </li>
   </div>
 	
