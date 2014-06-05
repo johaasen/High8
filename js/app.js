@@ -380,10 +380,7 @@ app.service('Config', function() {
 		if (pos > -1) {
 			return false;
 		} else {
-      this.model.requests[0].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
-				"startTime" : timeslot.startTime,
-				"endTime" : timeslot.endTime
-			});
+      		this.model.requests[0].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
 			return true;
 		}
 	};
@@ -463,9 +460,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 		});
 	};
 
-			"longitude" : position.coords.longitude,
-			"latitude" : position.coords.latitude
-		});
 	// **********
 	// demo / test functions and demo setup follows
 	// **********
@@ -504,9 +498,8 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 		// Hans is Identity
 		$scope.config.setIdentity("0175000000");
 		$scope.config.addContact("Peter", "0176000000");
-    $scope.config.toggleInvitee($scope.config.getContactByPhone("0176000000"));
-			$scope.config.addInvitee(contacts[0]);
-		};
+    	$scope.config.toggleInvitee($scope.config.getContactByPhone("0176000000"));
+		$scope.config.addInvitee(contacts[0]);
 		var onError = function(err) {
 			console.log("Error:" + err);
 		};
