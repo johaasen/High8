@@ -72,10 +72,10 @@
 	<!-- overlay for selecting invitees -->
 	<div overlay="selectInvitees">
     <h4 class="overlay-title">select invitees</h4>
-		<li repeat-hack="contact in contacts">{{contact.name}}</li>
+		<!-- not working because of bug: <li ng-repeat="contact in contacts">{{contact.name}}</li> -->
 		<ul>
-			<li ng-click="toggleContact(contacts[0])">{{contacts[0].name}}</li>
-			<li ng-click="toggleContact(contacts[1])">{{contacts[1].name}}</li>
+			<li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
+			<li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
 		</ul>
 		
 		<!--
