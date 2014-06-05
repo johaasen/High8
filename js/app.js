@@ -577,12 +577,9 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Loc
 	});
 	
 	$scope.toggleContact = function(contact) {
-		var index = $.inArray(contact, $scope.api.config.invitees);
-
-		// TODO: $$hashKey verhindert, dass bereits bestehende Objekte erkannt werden
-
+		var index = $scope.api.config.invitees.indexOf(contact.id);
 		if (index == -1)
-			$scope.api.config.invitees.push(contact);
+			$scope.api.config.invitees.push(contact.id);
 		else
 			$scope.api.config.invitees.splice(index, 1);
 	};
