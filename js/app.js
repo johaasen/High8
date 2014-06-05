@@ -26,7 +26,7 @@ if (navigator.contacts === undefined) {
 	};
 
 	navigator.contacts.find = function(onSuccess, onError, fields, options, filter, multiple) {
-		var savedContacts = JSON.parse(localStorage.getItem("contacts"));
+		var savedContacts = JSON.parse(localStorage.getItem("ngStorage-contacts"));
 		if(savedContacts===undefined||savedContacts===null){
 			onError("No contacts yet");
 			return;
@@ -621,7 +621,11 @@ app.controller('contactCtrl', function($rootScope, $scope, Config, Model) {
 
 		// Kontakte ins Model speichern
 		for (i in contacts)
-		navigator.contacts.create(contacts[i]);
+			Model.contacts.push(contacts[i]);
+			// Die Contacts müssen in Model.contacts gepushed werden
+			// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
+			//
+			//navigator.contacts.create(contacts[i]);
 	};
 
 	$scope.contactClicked = function(contact) {
