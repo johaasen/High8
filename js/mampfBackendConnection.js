@@ -1,3 +1,18 @@
+//To be moved to another file
+function phoneNumberToMd5(phoneNumber){
+    phoneNumber = phoneNumber.replace(/[+\- ,\.]/g,"");
+    
+    if(phoneNumber.indexOf("00") === 0) {
+        phoneNumber = phoneNumber.slice(2);
+    }
+    if(!(phoneNumber.indexOf("0") === 0)) {
+        phoneNumber = "0" + phoneNumber.slice(2);
+    }
+    var md5value = md5(phoneNumber).toUpperCase();
+    return md5value;
+}
+// Till here
+
 var BACKEND_URL = "http://dennistempi.itm.uni-luebeck.de/mampf/";
 
 var MampfAPI = function(apiUrl) {
