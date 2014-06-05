@@ -32,6 +32,11 @@
     <link rel="stylesheet" href="css/font-awesome.css" />
 		<link rel="stylesheet" href="css/animate.min.css" />
     <link rel="stylesheet" href="css/app.css" />
+		
+		<!-- pickadate -->
+		<link rel="stylesheet" href="bower_components/pickadate/lib/compressed/themes/default.css" id="theme_base" />
+		<link rel="stylesheet" href="bower_components/pickadate/lib/compressed/themes/default.time.css" id="theme_time" />
+		<link rel="stylesheet" href="bower_components/pickadate/lib/compressed/themes/default.date.css" id="theme_date" />
 
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-route.min.js"></script>
@@ -48,6 +53,7 @@
 
   </head>
   <body ng-app="Mampf-Angular" ng-controller="MainController">
+	
     
     <!-- Sidebars -->
     <div ng-include="'sidebar.html'" class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar"></div>
@@ -93,5 +99,11 @@
       </div>
 
     </div><!-- ~ App -->
+		
+		<!-- pickadate -->
+		<script src="bower_components/pickadate/lib/compressed/picker.js"></script>
+		<script src="bower_components/pickadate/lib/compressed/picker.date.js"></script>
+		<script src="bower_components/pickadate/lib/compressed/picker.time.js"></script>
+		<script src="bower_components/pickadate/lib/compressed/legacy.js"></script>
   </body>
 </html>

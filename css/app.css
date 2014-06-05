@@ -19,9 +19,7 @@
 	font-size: 6em;
 	color: #e9e9e9;
 	text-shadow: rgba(0, 0, 0, .2) 6px 6px 6px;
-     
-    /*text stroke*/
-    -webkit-text-stroke: 1px rgba(100, 100, 100, 0);
+  -webkit-text-stroke: 1px rgba(100, 100, 100, 0);
 }
 
 .app#initialize .bg-info {
@@ -107,6 +105,72 @@ border-radius: 5px;
 	bottom: 40px;
 	opacity: 0.9;
 	display: none;
+}
+
+/*
+	QuickLunch Screen
+
+	*/
+	
+.app #quicklunch #timeslots ul#slotlist {
+	overflow: hidden;
+	margin-top: 1em;
+	list-style-type: none;
+	padding: 0;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.app #quicklunch #timeslots ul#slotlist form {
+	padding: 1em 1em;
+	min-height: 3em;
+	border-bottom: 1px solid #eee;
+background: rgb(226,226,226); /* Old browsers */
+background: -moz-linear-gradient(-45deg,  rgba(226,226,226,1) 0%, rgba(219,219,219,1) 50%, rgba(209,209,209,1) 51%, rgba(254,254,254,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(226,226,226,1)), color-stop(50%,rgba(219,219,219,1)), color-stop(51%,rgba(209,209,209,1)), color-stop(100%,rgba(254,254,254,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(-45deg,  rgba(226,226,226,1) 0%,rgba(219,219,219,1) 50%,rgba(209,209,209,1) 51%,rgba(254,254,254,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(-45deg,  rgba(226,226,226,1) 0%,rgba(219,219,219,1) 50%,rgba(209,209,209,1) 51%,rgba(254,254,254,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(-45deg,  rgba(226,226,226,1) 0%,rgba(219,219,219,1) 50%,rgba(209,209,209,1) 51%,rgba(254,254,254,1) 100%); /* IE10+ */
+background: linear-gradient(135deg,  rgba(226,226,226,1) 0%,rgba(219,219,219,1) 50%,rgba(209,209,209,1) 51%,rgba(254,254,254,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#fefefe',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper {
+	float: left;
+}
+
+.app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper.date {
+	width: 40%;
+}
+
+.app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper.startTime,
+.app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper.endTime {
+	width: 20%;
+}
+
+.app #quicklunch #timeslots ul#slotlist>li {
+	padding: 1em 1em;
+	background: #fbfbfb;
+
+}
+
+.app #quicklunch #timeslots ul#slotlist>li:not(:last-child) {
+	
+	border-bottom: 1px solid #e9e9e9;
+}
+
+.app #quicklunch #timeslots ul#slotlist>button {
+	background: rgb(205,235,142); /* Old browsers */
+background: -moz-linear-gradient(-45deg,  rgba(205,235,142,1) 0%, rgba(165,201,86,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(205,235,142,1)), color-stop(100%,rgba(165,201,86,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* IE10+ */
+background: linear-gradient(135deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cdeb8e', endColorstr='#a5c956',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
 }
 
 /* mainly from demo.css of mobile-angular-ui demo application*/

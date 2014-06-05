@@ -486,6 +486,25 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Loc
 	$scope.api.config = Model.requests[Model.requests.length-1];
 	$scope.api.config.identity = Model.profile.id;
 	
+	$('form[name="newTimeslot"] input[name="date"]').pickadate({
+		clear: '',
+		format: 'dd. mmmm',
+		formatSubmit: 'yyyy-mm-dd',
+		hiddenName: true
+	});
+	$('form[name="newTimeslot"] input[name="startTime"]').pickatime({
+		clear: '',
+		format: 'HH:i',
+		formatSubmit: 'HH:i:00.000+02:00',
+		hiddenName: true
+	});
+	$('form[name="newTimeslot"] input[name="endTime"]').pickatime({
+		clear: '',
+		format: 'HH:i',
+		formatSubmit: 'HH:i:00.000+02:00',
+		hiddenName: true
+	});
+	
 	$scope.toggleContact = function(contact) {
 		var index = $.inArray(contact, $scope.api.config.invitees);
 		
@@ -501,6 +520,16 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Loc
 		$scope.api.config.position.latitude  = pos.coords.latitude;
 		$scope.api.config.position.longitude = pos.coords.longitude;
 	});
+	
+	$scope.addTimeslot = function() {
+		var date = newTimeslot.date.value;
+		var startTime = newTimeslot.startTime.value;
+		var endTime = newTimeslot.endTime.value;
+		$scope.api.config.timeslots.push({
+			startTime: date + 'T' + startTime,
+			endTime: date + 'T' + endTime
+		});
+	};
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, Config, Model){
