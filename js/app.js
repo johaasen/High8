@@ -202,7 +202,7 @@ app.service('Config', function() {
 		var contact = {
       name: name,
       phone: phone,
-      md5: md5(phone).toUpperCase()
+      md5: phoneNumberToMd5(phone)
     };
 
     this.model.contacts.push(contact);
@@ -249,9 +249,7 @@ app.service('Config', function() {
   
   this.setIdentity = function(phone) {
     this.model.identity.phone = phone;
-    //TODO: format phone number
-    //remove spaces, hyphens, blahblah
-    this.model.identity.md5 = md5(phone).toUpperCase();
+    this.model.identity.md5 = phoneNumberToMd5(phone);
   };
 
   //TODO: for now, only the last request can be changed with these functions
@@ -544,7 +542,7 @@ app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $lo
 		}
 		
 		// set profile
-		Model.profile.id			= md5(phonenr.$modelValue).toUpperCase();
+		Model.profile.id			= phoneNumberToMd5(phonenr.$modelValue);
 		Model.profile.name 		= name.$modelValue;
 		Model.profile.phonenr = phonenr.$modelValue;
 		
