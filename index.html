@@ -62,7 +62,7 @@
     <div class="app" id="{{currentView}}">
 
       <!-- Navbar Top -->
-      <div class="navbar navbar-app navbar-absolute-top" ng-show="$storage.isInitialized">
+      <div class="navbar navbar-app navbar-absolute-top" ng-show="config.model.isInitialized">
         <div class="navbar-brand navbar-brand-center" yield-to="title">
           <span>DHBW Mampf</span>
         </div>
@@ -75,7 +75,7 @@
 
       <!-- Navbar Bottom -->
 			<!--
-      <div class="navbar navbar-app navbar-absolute-bottom" ng-show="$storage.isInitialized">
+      <div class="navbar navbar-app navbar-absolute-bottom" ng-show="config.model.isInitialized">
         <div class="btn-group justified">
           <a href="#/" class="btn btn-navbar">
             <i class="fa fa-home fa-navbar"></i> Home</a>
