@@ -63,7 +63,7 @@
             exclusion-group="myTabs">
 
           	<ul ng-repeat="contact in config.model.contacts" class="list-unstyled">
-          		<li ng-click="config.toggleContact(contact)">{{contact.name}} <i ng-show="config.isInvitee(contact)" class="fa fa-check fa-2"></i></li>
+          		<li ng-click="config.toggleInvitee(contact)">{{contact.name}} <i ng-show="config.isInvitee(contact)" class="fa fa-check fa-2"></i></li>
       		</ul>
       <!--		
           <ul>
