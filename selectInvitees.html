@@ -1,0 +1,89 @@
+<div class="scrollable">
+<div class="scrollable-content">
+	<div class="section container-fluid">
+
+      <!--<ul class="nav nav-tabs">
+          <li><a href="#Recent" toggle="on" parent-active-class="active">Recent</a></li>
+          <li><a href="#All" toggle="on" parent-active-class="active">All</a></li>
+          <li><a href="#Groups" toggle="on" parent-active-class="active">Groups</a></li>
+      </ul>-->
+
+      <div >
+	      <div class="btn-group justified nav-tabs">
+	        <a class="btn btn-default" href="#Recent" toggle="on" active-class="active">Recent</a>
+	        
+	        <a class="btn btn-default" href="#All" toggle="on" active-class="active">All</a>
+	        
+	        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active">Groups</a>
+	      </div>
+	  </div>
+
+      <div class="tab-content">
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active"
+            default="active" 
+            id="Recent"
+            exclusion-group="myTabs">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
+       
+
+        </div>
+
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active" 
+            id="All" 
+            exclusion-group="myTabs">
+
+          	<ul ng-repeat="contact in contacts" class="list-unstyled">
+          		<li ng-click="toggleContact(contact)">{{contact.name}} <i ng-show="isInvitee(contact)" class="fa fa-check fa-2"></i></li>
+      		</ul>
+      <!--		
+          <ul>
+            <li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
+            <li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
+          </ul>
+        -->
+        </div>
+
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active" 
+            id="Groups"
+            exclusion-group="myTabs">
+
+        </div>
+      </div>
+
+      <a class="btn btn-default" href="#/QuickLunch">Back</a>
+		
+		<!--
+    <p toggle="off" bubble target="selectInvitees">
+      <span class="btn btn-primary">Ok</span>
+      <span class="btn btn-default">Cancel</span>
+    </p> 
+		-->
+	</div>
+</div>
+</div>

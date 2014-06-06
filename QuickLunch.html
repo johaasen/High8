@@ -62,21 +62,61 @@
     <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
     <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
     -->
-		<button class="btn btn-default" ng-click="toggle('selectInvitees')">select invitees</button>
+		<a class="btn btn-default" href="#/selectInvitees">Select invitees</a>
+
     <li ng-repeat="invitee in contacts | filter:isInvitee">
       <h3><small>{{invitee.name}} 
       <div class="btn btn-default btn-xs" ng-click="toggleContact(invitee)">Remove</div></small></h3>
     </li>
   </div>
 	
-	<!-- overlay for selecting invitees -->
+	<!-- overlay for selecting invitees
 	<div overlay="selectInvitees">
-    <h4 class="overlay-title">select invitees</h4>
-		<!-- not working because of bug: <li ng-repeat="contact in contacts">{{contact.name}}</li> -->
-		<ul>
-			<li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
-			<li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
-		</ul>
+    <h4 class="overlay-title">Select invitees</h4>
+
+       <div class="btn-group justified nav-tabs">
+        <a class="btn btn-default" href="#Recent" toggle="on" active-class="active">Recent</a>
+        
+        <a class="btn btn-default" href="#All" toggle="on" active-class="active">All</a>
+        
+        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active">Groups</a>
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active"
+            default="active" 
+            id="Recent"
+            exclusion-group="myTabs">
+          <h3 class="page-header">Recent</h3>
+        </div>
+
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active" 
+            id="All" 
+            exclusion-group="myTabs">
+
+          <h3 class="page-header">All</h3>
+              not working because of bug: <li ng-repeat="contact in contacts">{{contact.name}}</li>
+          <ul>
+            <li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
+            <li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
+          </ul>
+        </div>
+
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active" 
+            id="Groups"
+            exclusion-group="myTabs">
+          <h3 class="page-header">Groups</h3>
+
+        </div>
+      </div>-->
+
+
 		
 		<!--
     <p toggle="off" bubble target="selectInvitees">
