@@ -126,9 +126,6 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/initialize', {
 		templateUrl : 'initialize.html',
 		controller : 'initializeCtrl'
-	}).when('/location', {
-		templateUrl : 'location.html',
-		controller : 'locationCtrl'
 	}).when('/QuickLunch', {
 		templateUrl : 'QuickLunch.html',
 		controller : 'quicklunchCtrl'
@@ -137,47 +134,6 @@ app.config(function($routeProvider, $locationProvider) {
 	}).otherwise({
 		redirectTo : '/QuickLunch'
 	});
-});
-
-app.factory('Model', function($localStorage) {
-	var storage = $localStorage;
-
-	storage.profile = $localStorage.profile || {};
-	/*
-	 id: 			'B25BF7426FABCADF01103045FD7707CE'
-	 name: 		'Mike Mülhaupt'
-	 phonenr:	'12415'
-	 */
-	storage.contacts = $localStorage.contacts || [];
-	// Contacts compatible to cordova should have the following model:
-	//https://github.com/apache/cordova-plugin-contacts/blob/master/doc/index.md#properties
-
-	/*	[{
-	 id:				'A9B9D2ED66A5DA2AFB3247F6947F5591',
-	 name:			'Johannes Haasen',
-	 phoneNumbers: ['01760000000','027758900'],
-	 categories: ['work','university']
-	 }]
-	 */
-	storage.requests = $localStorage.requests || [{
-		invitees : [],
-		position : {},
-		timeslots : []
-	}];
-	/*	[{
-	 invitees:["A9B9D2ED66A5DA2AFB3247F6947F5591"]
-	 position: {
-	 longitude: 9.170299499999999,
-	 latitude:	 48.773556600000006
-	 },
-	 timeslots:[
-	 {startTime:1401621970786, endTime:1401629170786},
-	 {startTime:1401629170786, endTime:1401636370786}
-	 ]
-	 }]
-	 */
-
-	return storage;
 });
 
 app.factory('Location', function() {
@@ -204,29 +160,45 @@ app.factory('Location', function() {
 			} else {
 				console.log("Geolocation is not supported by this browser.");
 			}
+		},
+		init: function() {
+			$.getScript('js/location.js', function() {
+				initialize();
+			})
+		},
+		select: function() {
+			alert($("#location-add").data().marker.position);
 		}
 	};
 
 	return Location;
 });
 
-app.service('Config', function() {
+app.service('Config', function($localStorage) {
 	// service that holds the global model and provides update functions
 
+  // bind to localStorage
+  this.model = $localStorage;
+
+  // initilized flag
+  this.model.isInitialized = $localStorage.isInitialized || false;
+
 	// init model object
-	this.model = {
-		identity : {
+	this.model.identity = $localStorage.identity || {
+      //name: "",
 			//phone: "",
 			//id: ""
-		},
-		contacts : [
+		};
+
+  this.model.contacts = $localStorage.contacts || [
 		//{
 		// name: "",
 		// phone: "",
 		// id: ""
 		//}
-		],
-		requests : [{
+		];
+
+  this.model.requests = $localStorage.requests || [{
 			currentPosition : {
 				//longitude: 0,
 				//latitude: 0,
@@ -245,8 +217,7 @@ app.service('Config', function() {
 					//endTime: ""
 				},
 			},
-		}],
-	};
+		}];
 
 
 	// get API config - pass -1 as index for newest request
@@ -283,11 +254,15 @@ app.service('Config', function() {
 	};
 
 	this.addContact = function(name, phone) {
+    if( typeof phone === 'string' ) {
+      phone = [ phone ];
+    }
+
 		//check if phone no. already in contacts
 		if (this.getContactByPhone(phone) === undefined) {
 			var contact = {
 				name : name,
-				phoneNumbers : [phone],
+				phoneNumbers : phone,
         id: phoneNumberToMd5(phone)
 			};
 
@@ -331,7 +306,8 @@ app.service('Config', function() {
 		}
 	};
 
-	this.setIdentity = function(phone) {
+	this.setIdentity = function(name, phone) {
+    this.model.identity.name = name;
 		this.model.identity.phone = phone;
     this.model.identity.id = phoneNumberToMd5(phone);
 	};
@@ -340,6 +316,11 @@ app.service('Config', function() {
 	this.setPosition = function(position) {
     this.model.requests[0].currentPosition = position;
 	};
+
+  this.isInvitee = function(contact) {
+    var pos = this.model.requests[0].invitees.indexOf(contact.id);
+    return (pos > -1) ? true : false;
+  };
 
   this.toggleInvitee = function(contact) {
     var pos = this.model.requests[0].invitees.indexOf(contact.id);
@@ -375,6 +356,7 @@ app.service('Config', function() {
 		return -1;
 	};
 
+  //TODO: ändern zu starttime, endtime input parameter in EPOCH
 	this.addTimeslot = function(timeslot) {
 		var pos = this.getTimeslotIndex(timeslot);
 		if (pos > -1) {
@@ -396,7 +378,10 @@ app.service('Config', function() {
 	};
 });
 
-app.controller('MainController', function($rootScope, $scope, $timeout, $localStorage, $location, Config) {
+app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
+
+  // bind Config service to $rootScope, so that it is available everywhere
+  $rootScope.config = Config;
 
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
@@ -405,36 +390,23 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 
 	$rootScope.$on("$routeChangeSuccess", function() {
 		$rootScope.loading = false;
-		//if ($("#location") != "undefined" && $("#location").length != 0) alert();
 	});
 
-	$rootScope.$storage = $localStorage;
-
-	if (!$rootScope.$storage.isInitialized) {
+	if (!$rootScope.config.model.isInitialized) {
     $location.path('/initialize');
   }
 
-	// bind Config service to $scope, so that it is available in html
-	$scope.config = Config;
-
-	// ngStorage test
-	$scope.$watch('config', function() {
-		$localStorage.model = $scope.config.model;
-	});
-
-	$scope.loadConfig = function() {
-		$scope.config.model = $localStorage.model;
-	};
-
 	// backend connection for Mampf API (mampfBackendConnection.js)
-	$scope.mampfCon = new MampfAPI(BACKEND_URL);
+	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
 
 	// call Mampf API
-	$scope.findMatches = function(requestIndex) {
+	$rootScope.findMatches = function(requestIndex) {
 		$rootScope.loading = true;
 
-		$scope.mampfCon.config = $scope.config.getMampfAPIRequest(requestIndex);
-		$scope.mampfCon.findMatches(function(response) {
+    requestIndex = requestIndex || 0;
+
+		$rootScope.mampfAPI.config = $rootScope.config.getMampfAPIRequest(requestIndex);
+		$rootScope.mampfAPI.findMatches(function(response) {
 			//callback
 
 			//testing block
@@ -445,13 +417,12 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 				$scope.response.names.push($scope.config.getContactByMD5(subject).name);
 			});
 			$scope.$apply();
-			console.log($scope.response);
 
 			//update model
-			$scope.config.setResponse(requestIndex, response);
+			$rootScope.config.setResponse(requestIndex, response);
 
 			// init new request entry after successfull call and save of response
-			$scope.config.newRequest();
+			$rootScope.config.newRequest();
 
 			$rootScope.loading = false;
 			$rootScope.$apply();
@@ -459,82 +430,10 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 			$scope.toggle("responseOverlay");
 		});
 	};
-
-	// **********
-	// demo / test functions and demo setup follows
-	// **********
-	// test scope in chrome dev tools
-	// var scope = angular.element($(".app-body")).scope();
-	//
-	$scope.logGlobalModel = function() {
-		console.log($scope.config.model);
-	};
-
-	// default values for input fields
-	$scope.newInvitee = "";
-	$scope.newTimeslot = {};
-	$scope.newTimeslot.startTime = "";
-	$scope.newTimeslot.endTime = "";
-
-	// fill model with demo values
-	$scope.initAsPeter = function() {
-		// Peter is Identity
-		$scope.config.setIdentity("0176000000");
-		$scope.config.addContact("Hans", "0175000000");
-    $scope.config.toggleInvitee($scope.config.getContactByPhone("0175000000"));
-		var onSuccess = function(contacts) {
-			$scope.config.addInvitee(contacts[0]);
-		};
-		var onError = function(err) {
-			console.log("Error:" + err);
-		};
-		var fields = {
-			phoneNumbers : ["0175000000"]
-		};
-		navigator.contacts.find(onSuccess, onError, fields, options, filter, false);
-	};
-
-	$scope.initAsHans = function() {
-		// Hans is Identity
-		$scope.config.setIdentity("0175000000");
-		$scope.config.addContact("Peter", "0176000000");
-    $scope.config.toggleInvitee($scope.config.getContactByPhone("0176000000"));
-		$scope.config.addInvitee(contacts[0]);
-		var onError = function(err) {
-			console.log("Error:" + err);
-		};
-		var fields = {
-			phoneNumbers : ["0176000000"]
-		};
-		navigator.contacts.find(onSuccess, onError, fields, options, filter, false);
-	};
-
-	//$scope.initAsHans();
-	//$scope.initAsPeter();
-	$scope.config.addContact("Franz", "0174000000");
-	$scope.config.setPosition({
-		"longitude" : 9.170299499999999,
-		"latitude" : 48.773556600000006
-	});
-	$scope.config.addTimeslot({
-		"startTime" : 1401621970786,
-		"endTime" : 1401629170786
-	});
-	$scope.config.addTimeslot({
-		"startTime" : 1401629170786,
-		"endTime" : 1401636370786
-	});
-	$scope.logGlobalModel();
-
-	// test User Agent
-	$scope.userAgent = "Press Button!";
-	$scope.checkAgent = function() {
-		$scope.userAgent = navigator.userAgent;
-	};
 });
 
+<<<<<<< HEAD
 app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $location, Config) {
-
 	$rootScope.currentView = 'location';
 
 	$scope.init = function() {
@@ -550,13 +449,19 @@ app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $loca
 	$scope.init();
 });
 
+app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
+  // bind to $scope for easier access
+	$scope.contacts = $rootScope.config.model.contacts;
+=======
 app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location) {
 	$scope.contacts = Model.contacts;
 
 	$scope.api = new MampfAPI(BACKEND_URL);
 	$scope.api.config = Model.requests[Model.requests.length - 1];
 	$scope.api.config.identity = Model.profile.id;
+>>>>>>> a9d215974be3f14ddd8135f64a61da11e967c266
 	
+  // initilize time picker
 	$('form[name="newTimeslot"] input[name="date"]').pickadate({
 		clear: '',
 		format: 'dd. mmmm',
@@ -575,32 +480,18 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Loc
 		formatSubmit: 'HH:i:00.000+02:00',
 		hiddenName: true
 	});
-	
-	$scope.toggleContact = function(contact) {
-		var index = $scope.api.config.invitees.indexOf(contact.id);
-		if (index == -1)
-			$scope.api.config.invitees.push(contact.id);
-		else
-			$scope.api.config.invitees.splice(index, 1);
-	};
-	
-	$scope.isInvitee = function(contact) {
-		if (!contact) return;
-		if ($scope.api.config.invitees.indexOf(contact.id) !== -1)
-			return true;
-		else return false;
-	};
 
 	$scope.getCurrentPosition = Location.getCurrentPosition(function(pos) {
-		$scope.api.config.position.latitude = pos.coords.latitude;
-		$scope.api.config.position.longitude = pos.coords.longitude;
+		$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
 	});
+	$scope.location = Location;
 	
-	$scope.addTimeslot = function() {
+	$scope.addTimeslotToRequest = function() {
 		var date = newTimeslot.date.value;
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
-		$scope.api.config.timeslots.push({
+		//TODO: convert to EPOCH + use new addTimeslot(start,end)
+    $rootScope.config.addTimeslot({
 			startTime: date + 'T' + startTime,
 			endTime: date + 'T' + endTime
 		});
@@ -608,36 +499,25 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Loc
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, Config, Model) {
-	$scope.contacts = Model.contacts; //TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
+	$scope.contacts = $rootScope.config.model.contacts; //TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
 
 	$scope.importContacts = function() {
 		// Zunächst alle Kontakte löschen
 		$scope.contacts.splice(0, $scope.contacts.length);
 
 		// Dummy-Kontakte anlegen
-		var contacts = [{
-			name : 'Mike',
-			phoneNumbers : ['12234']
-		}, {
-			name : 'Johannes',
-			phoneNumbers : ['23989']
-		}];
-
-		// Kontakte ins Model speichern
-		for (i in contacts){
-			contacts[i].id = phoneNumberToMd5(contacts[i].phoneNumbers[0]);
-			Model.contacts.push(contacts[i]);
-		}
-			// Die Contacts müssen in Model.contacts gepushed werden
-			// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
-			//
-			//navigator.contacts.create(contacts[i]);
+    $rootScope.addContact("Mike", "12234");
+    $rootScope.addContact("Jo", "56789");
+		
+		// Die Contacts müssen in Model.contacts gepushed werden
+		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
+		//
+		//navigator.contacts.create(contacts[i]);
 	};
 });
 
-app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $location, Config, Model) {
-
-	$rootScope.$storage = $localStorage;
+app.controller('initializeCtrl', function($rootScope, $scope, $location) {
+  // TODO: Mike content-for yield-to
 	$rootScope.currentView = 'initialize';
 
 	$scope.signUp = function() {
@@ -648,19 +528,17 @@ app.controller('initializeCtrl', function($rootScope, $scope, $localStorage, $lo
 		if (!name.$modelValue) {
 			return false;
 		}
-		if (phonenr.$modelValue == '' || isNaN(phonenr.$modelValue)) {
+		if (phonenr.$modelValue === '' || isNaN(phonenr.$modelValue)) {
 			return false;
 		}
 
-		// set profile
-		Model.profile.id = phoneNumberToMd5(phonenr.$modelValue);
-		Model.profile.name = name.$modelValue;
-		Model.profile.phonenr = phonenr.$modelValue;
+		// set identity
+		$rootScope.config.setIdentity(name.$modelValue, phonenr.$modelValue);
 
 		// set initialized flag
-		$rootScope.$storage.isInitialized = true;
+		$rootScope.config.model.isInitialized = true;
 
-		// reset currentView-Marker
+		//TODO: reset currentView-Marker
 		$rootScope.currentView = '';
 
 		// route to landing screen
