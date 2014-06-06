@@ -178,6 +178,7 @@ app.factory('Location', function() {
 });
 
 app.service('Config', function($localStorage) {
+	var that = this;
 	// service that holds the global model and provides update functions
 
   // bind to localStorage
@@ -256,6 +257,7 @@ app.service('Config', function($localStorage) {
 		this.model.contacts = [];
 	};
 
+	//TODO: question if contact has multiple numbers or not, bitches!
 	this.addContact = function(name, phone) {
     if( typeof phone === 'string' ) {
       phone = [ phone ];
@@ -266,7 +268,7 @@ app.service('Config', function($localStorage) {
 			var contact = {
 				name : name,
 				phoneNumbers : phone,
-        id: phoneNumberToMd5(phone)
+     			id: phoneNumberToMd5(phone[0])
 			};
 
 			this.model.contacts.push(contact);
@@ -325,7 +327,9 @@ app.service('Config', function($localStorage) {
 	};
 
   this.isInvitee = function(contact) {
-    var pos = this.model.requests[0].invitees.indexOf(contact.id);
+  	if(!contact)
+  		return;
+    var pos = that.model.requests[0].invitees.indexOf(contact.id);
     return (pos > -1) ? true : false;
   };
 
@@ -500,7 +504,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 });
 
-app.controller('contactCtrl', function($rootScope, $scope, Config, Model) {
+app.controller('contactCtrl', function($rootScope, $scope, Config) {
 	$scope.contacts = $rootScope.config.model.contacts; //TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
 
 	$scope.importContacts = function() {
@@ -508,8 +512,8 @@ app.controller('contactCtrl', function($rootScope, $scope, Config, Model) {
 		$scope.contacts.splice(0, $scope.contacts.length);
 
 		// Dummy-Kontakte anlegen
-    $rootScope.addContact("Mike", "12234");
-    $rootScope.addContact("Jo", "56789");
+    $rootScope.config.addContact("Mike", "12234");
+    $rootScope.config.addContact("Jo", "56789");
 		
 		// Die Contacts müssen in Model.contacts gepushed werden
 		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
