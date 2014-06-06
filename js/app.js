@@ -489,8 +489,6 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			$rootScope.$apply();
 		});
 	};
-
-	$scope.location = Location;
 	
 	$scope.addTimeslotToRequest = function() {
 		var date = newTimeslot.date.value;
@@ -500,6 +498,13 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     $rootScope.config.addTimeslot({
 			startTime: date + 'T' + startTime,
 			endTime: date + 'T' + endTime
+		});
+	};
+	
+	
+	$scope.sendRequest = function() {
+		$rootScope.mampfAPI.findMatches(function(response) {
+			console.log(response);
 		});
 	};
 });
