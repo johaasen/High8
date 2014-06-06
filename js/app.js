@@ -367,13 +367,18 @@ app.service('Config', function($localStorage) {
 		return -1;
 	};
 
-  //TODO: ändern zu starttime, endtime input parameter in EPOCH
-	this.addTimeslot = function(timeslot) {
+	this.addTimeslot = function(startTime, endTime) {
+		var timeslot = {
+			startTime: startTime,
+			endTime: endTime
+		};
+		
 		var pos = this.getTimeslotIndex(timeslot);
+		
 		if (pos > -1) {
 			return false;
 		} else {
-      this.model.requests[0].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
+      this.model.requests[0].timeslots.push(timeslot);
 			return true;
 		}
 	};
@@ -473,13 +478,13 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$('form[name="newTimeslot"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
-		formatSubmit: 'HH:i:00.000+02:00',
+		formatSubmit: 'HH:i',
 		hiddenName: true
 	});
 	$('form[name="newTimeslot"] input[name="endTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
-		formatSubmit: 'HH:i:00.000+02:00',
+		formatSubmit: 'HH:i',
 		hiddenName: true
 	});
 
@@ -494,11 +499,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		var date = newTimeslot.date.value;
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
-		//TODO: convert to EPOCH + use new addTimeslot(start,end)
-    $rootScope.config.addTimeslot({
-			startTime: date + 'T' + startTime,
-			endTime: date + 'T' + endTime
-		});
+		
+    $rootScope.config.addTimeslot(Date.parse(date + ' ' + startTime), Date.parse(date + ' ' + endTime));
 	};
 	
 	
