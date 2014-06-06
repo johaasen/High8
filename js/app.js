@@ -131,6 +131,9 @@ app.config(function($routeProvider, $locationProvider) {
 		controller : 'quicklunchCtrl'
 	}).when('/testBackend', {
 		templateUrl : "testBackend.html"
+	}).when('/selectInvitees', {
+		templateUrl : 'selectInvitees.html',
+		controller : 'quicklunchCtrl'
 	}).otherwise({
 		redirectTo : '/QuickLunch'
 	});
