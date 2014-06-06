@@ -217,13 +217,13 @@ app.service('Config', function() {
 	this.model = {
 		identity : {
 			//phone: "",
-			//md5: ""
+			//id: ""
 		},
 		contacts : [
 		//{
 		// name: "",
 		// phone: "",
-		// md5: ""
+		// id: ""
 		//}
 		],
 		requests : [{
@@ -252,7 +252,7 @@ app.service('Config', function() {
 	// get API config - pass -1 as index for newest request
 	this.getMampfAPIRequest = function(index) {
 		var mampfConfig = angular.fromJson(angular.toJson(this.model.requests[index]));
-		mampfConfig.identity = this.model.identity.md5;
+		mampfConfig.identity = this.model.identity.id;
 		delete mampfConfig.response;
 
 		return mampfConfig;
@@ -288,7 +288,7 @@ app.service('Config', function() {
 			var contact = {
 				name : name,
 				phoneNumbers : [phone],
-      md5: phoneNumberToMd5(phone)
+        id: phoneNumberToMd5(phone)
 			};
 
 			this.model.contacts.push(contact);
@@ -310,10 +310,10 @@ app.service('Config', function() {
 		return undefined;
 	};
 
-	this.getContactByMD5 = function(md5) {
+	this.getContactById = function(id) {
 		for (var pos in this.model.contacts) {
-			if (this.model.contacts[pos].hasOwnProperty("md5")) {
-				if (this.model.contacts[pos].md5 == md5) {
+			if (this.model.contacts[pos].hasOwnProperty("id")) {
+				if (this.model.contacts[pos].id == id) {
 					return this.model.contacts[pos];
 				}
 			}
@@ -333,7 +333,7 @@ app.service('Config', function() {
 
 	this.setIdentity = function(phone) {
 		this.model.identity.phone = phone;
-    this.model.identity.md5 = phoneNumberToMd5(phone);
+    this.model.identity.id = phoneNumberToMd5(phone);
 	};
 
   //only the last request can be changed with these functions
@@ -342,14 +342,14 @@ app.service('Config', function() {
 	};
 
   this.toggleInvitee = function(contact) {
-    var pos = this.model.requests[0].invitees.indexOf(contact.md5);
+    var pos = this.model.requests[0].invitees.indexOf(contact.id);
 		if (pos > -1) {
       // is invitee -> remove
       this.model.requests[0].invitees.splice(pos,1);
 			return false;
 		} else {
       // is no invitee -> add
-      this.model.requests[0].invitees.push(contact.md5);
+      this.model.requests[0].invitees.push(contact.id);
 			return true;
 		}
 	};
@@ -380,7 +380,7 @@ app.service('Config', function() {
 		if (pos > -1) {
 			return false;
 		} else {
-      		this.model.requests[0].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
+      this.model.requests[0].timeslots.push({"startTime": timeslot.startTime, "endTime":timeslot.endTime});
 			return true;
 		}
 	};
@@ -498,7 +498,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $localSt
 		// Hans is Identity
 		$scope.config.setIdentity("0175000000");
 		$scope.config.addContact("Peter", "0176000000");
-    	$scope.config.toggleInvitee($scope.config.getContactByPhone("0176000000"));
+    $scope.config.toggleInvitee($scope.config.getContactByPhone("0176000000"));
 		$scope.config.addInvitee(contacts[0]);
 		var onError = function(err) {
 			console.log("Error:" + err);
