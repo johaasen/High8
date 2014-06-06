@@ -12,7 +12,7 @@
     position: fixed;
     top: 8px;
     z-index: 1030;
-    right: 17px;"><i class="fa fa-arrow-left fa-3"></i>  BACK</a>
+    right: 8px;"><i class="fa fa-arrow-left fa-3"></i>  BACK</a>
     
 
       <input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
@@ -35,7 +35,8 @@
             id="Recent"
             exclusion-group="myTabs">
          <ul class="list-group">
-              <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item" ng-click="config.toggleInvitee(contact)">{{contact.name}}   {{contact.phoneNumbers[0]}} <i ng-show="config.isInvitee(contact)" class="fa fa-check fa-2"></i></li>
+              <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item" ng-click="config.toggleInvitee(contact)">
+                <h3 style="margin-bottom:0px;"><small>{{contact.name}} - {{contact.phoneNumbers[0]}} <i ng-show="config.isInvitee(contact)" class="fa fa-check fa-2"></i></small></h3></li>
           </ul>       
 
         </div>
