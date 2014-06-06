@@ -313,8 +313,12 @@ app.service('Config', function($localStorage) {
 	};
 
   //only the last request can be changed with these functions
-	this.setPosition = function(position) {
-    this.model.requests[0].currentPosition = position;
+	this.setPosition = function(lat, lon) {
+		console.log(lat);
+
+		this.model.requests[0].currentPosition = { "latitude": lat, "longitude": lon};
+    //this.model.requests[0].currentPosition.latitude = lat;
+   // this.model.requests[0].currentPosition.longitude = lon;
 	};
 
   this.isInvitee = function(contact) {
@@ -472,9 +476,13 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		hiddenName: true
 	});
 
-	$scope.getCurrentPosition = Location.getCurrentPosition(function(pos) {
-		$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
-	});
+	$scope.getCurrentPosition = function() {
+		Location.getCurrentPosition(function(pos){
+			$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
+			$rootScope.$apply();
+		});
+	};
+
 	$scope.location = Location;
 	
 	$scope.addTimeslotToRequest = function() {
