@@ -432,7 +432,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	};
 });
 
-<<<<<<< HEAD
 app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $location, Config) {
 	$rootScope.currentView = 'location';
 
@@ -452,14 +451,6 @@ app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $loca
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
   // bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
-=======
-app.controller('quicklunchCtrl', function($rootScope, $scope, Config, Model, Location) {
-	$scope.contacts = Model.contacts;
-
-	$scope.api = new MampfAPI(BACKEND_URL);
-	$scope.api.config = Model.requests[Model.requests.length - 1];
-	$scope.api.config.identity = Model.profile.id;
->>>>>>> a9d215974be3f14ddd8135f64a61da11e967c266
 	
   // initilize time picker
 	$('form[name="newTimeslot"] input[name="date"]').pickadate({
