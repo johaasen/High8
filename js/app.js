@@ -195,6 +195,8 @@ app.service('Config', function($localStorage) {
   this.model.contacts = $localStorage.contacts || [];
 		//[{ name: "", phone: "", id: ""}]
 
+  this.model.groups = $localStorage.groups || [];
+
   this.model.requests = $localStorage.requests || [{
 			currentPosition : {},	//{longitude: 0, latitude: 0}
 			invitees : [],				// as MD5
@@ -240,7 +242,7 @@ app.service('Config', function($localStorage) {
 	};
 
 	//TODO: question if contact has multiple numbers or not
-	this.addContact = function(name, phone) {
+	this.addContact = function(name, phone, groups) {
     if( typeof phone === 'string' ) {
       phone = [ phone ];
     }
@@ -251,7 +253,8 @@ app.service('Config', function($localStorage) {
 				name : name,
 				phoneNumbers : phone,
 				id: phoneNumberToMd5(phone[0]),
-				invited: false
+				invited: false,
+				groups: groups
 			};
 
 			this.model.contacts.push(contact);
@@ -284,6 +287,17 @@ app.service('Config', function($localStorage) {
 		return undefined;
 	};
 
+	this.getGroupByName = function(name) {
+		for (var pos in this.model.groups) {
+			if (this.model.groups[pos].hasOwnProperty("name")) {
+				if (this.model.groups[pos].name == name) {
+					return this.model.groups[pos];
+				}
+			}
+		}
+		return undefined;
+	};
+
 	this.remContact = function(contact) {
 		var pos = this.model.contacts.indexOf(contact);
 		if (pos > -1) {
@@ -310,7 +324,11 @@ app.service('Config', function($localStorage) {
 			return;
 		}
     var pos = that.model.requests[0].invitees.indexOf(contact.id);
-    return (pos > -1) ? true : false;
+	    var returnValue = (pos > -1) ? true : false;
+	    if(returnValue)
+	    	contact.invited=true;
+	    else contact.invited=false;
+    return returnValue;
   };
 
   this.toggleInvitee = function(contact) {
@@ -318,7 +336,11 @@ app.service('Config', function($localStorage) {
 		if (pos > -1) {
       // is invitee -> remove
       this.model.requests[0].invitees.splice(pos,1);
-      		contact.invited = false;
+      contact.invited = false;
+      // if invitee is removed set groups as not invited
+      for(var pos in contact.groups){
+      	this.getGroupByName(contact.groups[pos].value).invited = false;
+    	}
 			return false;
 		} else {
       // is no invitee -> add
@@ -327,6 +349,27 @@ app.service('Config', function($localStorage) {
 			return true;
 		}
 	};
+
+	this.toggleInviteeGroup = function(group) {
+		//group.invited is instantly true after clicking the switch
+		for(var con in group.contacts){
+			contact = this.getContactById(group.contacts[con].id);
+			var pos = this.model.requests[0].invitees.indexOf(contact.id);
+				if (pos > -1 ) {
+		      // is invitee -> remove if group is deactivated
+					if(group.invited == false){
+						this.model.requests[0].invitees.splice(pos,1);
+						contact.invited = false;
+					}
+				} else {
+		      // is no invitee -> add if group is activated
+		      if(group.invited == true){
+		      	this.model.requests[0].invitees.push(contact.id);
+		      	contact.invited = true;
+					}
+				}
+		}
+	}
 
 	this.delInvitees = function() {
     this.model.requests[0].invitees = [];
@@ -488,20 +531,72 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 app.controller('contactCtrl', function($rootScope, $scope) {
 	//TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
 	$scope.contacts = $rootScope.config.model.contacts;
+	$scope.groups = $rootScope.config.model.groups;
+
+	generateGroups = function() {
+		var allGroupNames = [];
+		for (var pos in $scope.contacts) {
+			if ($scope.contacts[pos].hasOwnProperty("groups")) {
+				for (var pos2 in $scope.contacts[pos].groups) {
+					var name = $scope.contacts[pos].groups[pos2].value;
+					var index = allGroupNames.indexOf(name);
+					if(index < 0){
+						allGroupNames.push(name);
+						$scope.groups.push({name : name, contacts : [$scope.contacts[pos]], invited : false });
+					}
+					else {
+						var group = $rootScope.config.getGroupByName(name);
+						group.contacts.push($scope.contacts[pos]);
+					}
+				}
+			}
+		}
+		console.log("Found " + allGroupNames.length + " groups.");
+	};
+
+	//cordova code copied for groups (not needed for final native app)
+	var ContactField = function(type, value, pref) {
+	    this.id = null;
+	    this.type = (type && type.toString()) || null;
+	    this.value = (value && value.toString()) || null;
+	    this.pref = (typeof pref != 'undefined' ? pref : false);
+	};
 
 	$scope.importContacts = function() {
-		// Zunächst alle Kontakte löschen
+		// Zunächst alle Kontakte & Gruppen löschen
 		$scope.contacts.splice(0, $scope.contacts.length);
+		$scope.groups.splice(0, $scope.groups.length);
+
+		//Mit cordova später über navigator.contacts.find() und deren success-callback function alle kontakte in scope.contacts importieren
+		var studentsGroup = [
+			new ContactField("group", "Students", "")
+		]
+
+		var homieGroup = [
+			new ContactField("group", "Homies", ""),
+			new ContactField("group", "Students", "")
+		]
+
+		var profGroup = [
+			new ContactField("group", "Profs", "")
+		]
 
 		// Dummy-Kontakte anlegen
-    $rootScope.config.addContact("Mike Mülhaupt", "0170123456789");
-    $rootScope.config.addContact("Jo", "0170987645321");
+	    $rootScope.config.addContact("Mike Mülhaupt", "0170123456789", homieGroup);
+	    $rootScope.config.addContact("Jo", "0170987645321", homieGroup);
+	    $rootScope.config.addContact("Peter Idiot", "017000000001", studentsGroup);
+	    $rootScope.config.addContact("Jörg Baumgart", "0170123123123", profGroup);
 		
+		generateGroups();
 		// Die Contacts müssen in Model.contacts gepushed werden
 		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
 		//
-		//navigator.contacts.create(contacts[i]);
+		// navigator.contacts.create(contacts[i]);
 	};
+
+	
+
+	
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {

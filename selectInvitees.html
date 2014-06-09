@@ -34,15 +34,15 @@
             default="active" 
             id="Recent"
             exclusion-group="myTabs">
-
-         <ul class="list-group">
+            TODO
+         <!--<ul class="list-group">
               <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
                 <h3 style="margin-bottom:0px;">
                   <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
                 </h3>
                   <switch ng-model="contact.invited" ng-click="config.toggleInvitee(contact)" style="position: absolute; right: 0; top: 6px;"></switch>                
               </li>
-          </ul>       
+          </ul>  -->     
 
         </div>
 
@@ -55,7 +55,7 @@
           	<ul class="list-group">
               <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
                 <h3 style="margin-bottom:0px;">
-                  <small>{{contact.name}} - {{contact.phoneNumbers[0]}}</small>
+                  <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
                 </h3>
                   <switch ng-model="contact.invited" ng-click="config.toggleInvitee(contact)" style="position: absolute; right: 0; top: 6px;"></switch>                
               </li>
@@ -73,6 +73,19 @@
             active-class="active" 
             id="Groups"
             exclusion-group="myTabs">
+
+            <div ng-repeat="group in config.model.groups" style="position:relative;">
+              <h2><small>{{group.name}}</small></h2>
+                <switch ng-model="group.invited" ng-click="config.toggleInviteeGroup(group)" style="position: absolute; right: 0; top: 5px; z-index:100;"></switch> 
+                <ul class="list-group">
+                  <li ng-repeat="contact in group.contacts | filter:contactSearch" class="list-group-item">
+                    <h3 style="margin-bottom:0px;">
+                      <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+                    </h3>
+                                     
+                  </li>
+                </ul>
+            </div>
 
         </div>
       </div>
