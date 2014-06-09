@@ -405,21 +405,10 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 
 		$rootScope.mampfAPI.config = $rootScope.config.getMampfAPIRequest(requestIndex);
 		$rootScope.mampfAPI.findMatches(function(response) {
-			//callback
-
-			//testing block
-			$scope.response = {};
-			$scope.response.full = response;
-			$scope.response.names = [];
-			response.subjects.forEach(function(subject) {
-				$scope.response.names.push($scope.config.getContactByMD5(subject).name);
-			});
-			$scope.$apply();
-
-			//update model
+			// save response to model
 			$rootScope.config.setResponse(requestIndex, response);
 
-			// init new request entry after successfull call and save of response
+			// init new request after successfull call and save of response
 			$rootScope.config.newRequest();
 
 			$rootScope.loading = false;

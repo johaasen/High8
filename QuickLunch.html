@@ -126,17 +126,17 @@
 
   <!-- Overlay for response -->
   <div overlay="responseOverlay">
-    <h4 class="overlay-title">Response</h4>    
-    <div><div>Just the first: {{response.names[0]}}</div></div>
-    <!-- ng repeat not working..-->
-    <div ng-repeat="name in response.names">ASDF</div>
+    <h4 class="overlay-title">Response</h4>
+    <br> 
+    <!-- TODO: ng repeat not working
+    <div ng-repeat="name in response.names">repeat</div>
+    -->
 
-    <br>
-    <p>{{response.full}}</p>
+    <div>Who? {{config.model.requests[1].response.subjects[0]}}</div>
+    <p>When? {{config.model.requests[1].response.timeslot.startTime}}</p>
 
     <p toggle="off" bubble target="responseOverlay">
-      <span class="btn btn-primary">Ok</span>
-      <span class="btn btn-default">Cancel</span>
+      <span class="btn btn-default">Thanks!</span>
     </p>  
   </div>
 
