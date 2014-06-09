@@ -250,7 +250,8 @@ app.service('Config', function($localStorage) {
 			var contact = {
 				name : name,
 				phoneNumbers : phone,
-				id: phoneNumberToMd5(phone[0])
+				id: phoneNumberToMd5(phone[0]),
+				invited: false
 			};
 
 			this.model.contacts.push(contact);
@@ -317,10 +318,12 @@ app.service('Config', function($localStorage) {
 		if (pos > -1) {
       // is invitee -> remove
       this.model.requests[0].invitees.splice(pos,1);
+      		contact.invited = false;
 			return false;
 		} else {
       // is no invitee -> add
       this.model.requests[0].invitees.push(contact.id);
+      		contact.invited = true;
 			return true;
 		}
 	};
@@ -491,8 +494,8 @@ app.controller('contactCtrl', function($rootScope, $scope) {
 		$scope.contacts.splice(0, $scope.contacts.length);
 
 		// Dummy-Kontakte anlegen
-    $rootScope.config.addContact("Mike", "12234");
-    $rootScope.config.addContact("Jo", "56789");
+    $rootScope.config.addContact("Mike Mülhaupt", "0170123456789");
+    $rootScope.config.addContact("Jo", "0170987645321");
 		
 		// Die Contacts müssen in Model.contacts gepushed werden
 		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
