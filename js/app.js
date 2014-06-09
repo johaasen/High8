@@ -1,5 +1,6 @@
 var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui"]);
 
+//TODO: In entsprechenden Controller kapseln
 if (navigator.contacts === undefined) {
 	navigator.contacts = {};
 
@@ -129,8 +130,6 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/QuickLunch', {
 		templateUrl : 'QuickLunch.html',
 		controller : 'quicklunchCtrl'
-	}).when('/testBackend', {
-		templateUrl : "testBackend.html"
 	}).when('/selectInvitees', {
 		templateUrl : 'selectInvitees.html',
 		controller : 'quicklunchCtrl'
@@ -167,7 +166,7 @@ app.factory('Location', function() {
 		init: function() {
 			$.getScript('js/location.js', function() {
 				initialize();
-			})
+			});
 		},
 		select: function() {
 			alert($("#location-add").data().marker.position);
@@ -178,9 +177,11 @@ app.factory('Location', function() {
 });
 
 app.service('Config', function($localStorage) {
-	var that = this;
 	// service that holds the global model and provides update functions
 
+	// in case this context is not correct
+	var that = this;
+	
   // bind to localStorage
   this.model = $localStorage;
 
@@ -188,43 +189,24 @@ app.service('Config', function($localStorage) {
   this.model.isInitialized = $localStorage.isInitialized || false;
 
 	// init model object
-	this.model.identity = $localStorage.identity || {
-      //name: "",
-			//phone: "",
-			//id: ""
-		};
+	this.model.identity = $localStorage.identity || {};
+		//{name: "", phone: "", id: ""}
 
-  this.model.contacts = $localStorage.contacts || [
-		//{
-		// name: "",
-		// phone: "",
-		// id: ""
-		//}
-		];
+  this.model.contacts = $localStorage.contacts || [];
+		//[{ name: "", phone: "", id: ""}]
 
   this.model.requests = $localStorage.requests || [{
-			currentPosition : {
-				//longitude: 0,
-				//latitude: 0,
-			},
-			invitees : [], // as MD5
-			timeslots : [
-			//{
-			//startTime: "",
-			//endTime: ""
-			//}
-			],
+			currentPosition : {},	//{longitude: 0, latitude: 0}
+			invitees : [],				// as MD5
+			timeslots : [],				//{startTime: "", endTime: ""}
 			response : {
-				subjects : [], // as MD5
-				timeslots : {
-					//startTime: "",
-					//endTime: ""
-				},
+				subjects : [],			// as MD5
+				timeslots : {},			//{startTime: "", endTime: ""}
 			},
 		}];
 
 
-	// get API config - pass -1 as index for newest request
+	// get API config
 	this.getMampfAPIRequest = function(index) {
 		var mampfConfig = angular.fromJson(angular.toJson(this.model.requests[index]));
 		mampfConfig.identity = this.model.identity.id;
@@ -257,7 +239,7 @@ app.service('Config', function($localStorage) {
 		this.model.contacts = [];
 	};
 
-	//TODO: question if contact has multiple numbers or not, bitches!
+	//TODO: question if contact has multiple numbers or not
 	this.addContact = function(name, phone) {
     if( typeof phone === 'string' ) {
       phone = [ phone ];
@@ -268,7 +250,7 @@ app.service('Config', function($localStorage) {
 			var contact = {
 				name : name,
 				phoneNumbers : phone,
-     			id: phoneNumberToMd5(phone[0])
+				id: phoneNumberToMd5(phone[0])
 			};
 
 			this.model.contacts.push(contact);
@@ -319,16 +301,13 @@ app.service('Config', function($localStorage) {
 
   //only the last request can be changed with these functions
 	this.setPosition = function(lat, lon) {
-		console.log(lat);
-
 		this.model.requests[0].currentPosition = { "latitude": lat, "longitude": lon};
-    //this.model.requests[0].currentPosition.latitude = lat;
-   // this.model.requests[0].currentPosition.longitude = lon;
 	};
 
   this.isInvitee = function(contact) {
-  	if(!contact)
-  		return;
+		if(!contact){
+			return;
+		}
     var pos = that.model.requests[0].invitees.indexOf(contact.id);
     return (pos > -1) ? true : false;
   };
@@ -374,7 +353,6 @@ app.service('Config', function($localStorage) {
 		};
 		
 		var pos = this.getTimeslotIndex(timeslot);
-		
 		if (pos > -1) {
 			return false;
 		} else {
@@ -383,7 +361,12 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.remTimeslot = function(timeslot) {
+	this.remTimeslot = function(startTime, endTime) {
+		var timeslot = {
+			startTime: startTime,
+			endTime: endTime
+		};
+
 		var pos = this.getTimeslotIndex(timeslot);
 		if (pos > -1) {
       this.model.requests[0].timeslots.splice(pos,1);
@@ -395,7 +378,6 @@ app.service('Config', function($localStorage) {
 });
 
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
-
   // bind Config service to $rootScope, so that it is available everywhere
   $rootScope.config = Config;
 
@@ -511,8 +493,9 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 });
 
-app.controller('contactCtrl', function($rootScope, $scope, Config) {
-	$scope.contacts = $rootScope.config.model.contacts; //TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
+app.controller('contactCtrl', function($rootScope, $scope) {
+	//TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
+	$scope.contacts = $rootScope.config.model.contacts;
 
 	$scope.importContacts = function() {
 		// Zunächst alle Kontakte löschen
