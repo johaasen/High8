@@ -1,14 +1,6 @@
 <div class="scrollable" id="quicklunch">
 <div class="scrollable-content">
 	<!-- Timeslots -->
-  <!-- 
-    TODO:
-    input types are datetime-local, because it is supported by angular,
-    "datetime" (with time zone) needed for Mampf backend  
-    -->
-
-			
-			
 	<div class="panel" id="timeslots">
   <div class="panel-heading">
     <h2 class="panel-title">
@@ -16,15 +8,11 @@
     </h2>
   </div>
   <div class="panel-body">
-		<!-- new timeslot -->
-	 
-		
-		<!-- list timeslot -->
 		<ul class="col-xs-12" id="slotlist">
 			<form name="newTimeslot">
 				<div class="form-control-wrapper date">
 					<label for="date" class="sr-only">Datum</label>
-					<input type="text" class="form-control" ng-model="date" ng-change="changed()" name="date" placeholder="Datum">
+					<input type="text" class="form-control" ng-model="date" name="date" placeholder="Datum">
 				</div>
 				<div class="form-control-wrapper startTime">
 					<label for="startTime" class="sr-only">von</label>
@@ -35,57 +23,88 @@
 					<input type="text" class="form-control" ng-model="endTime" name="endTime" placeholder="bis">
 				</div>
 				<div class="form-control-wrapper">
-					<button type="submit" class="btn btn-default" ng-click="addTimeslot()"><i class="fa fa-plus"></i></button>
+					<button type="submit" class="btn btn-default" ng-click="addTimeslotToRequest()">
+            <i class="fa fa-plus"></i>
+          </button>
 				</div>
 				<div style="clear: left;"></div>
 			</form>
-			<li ng-repeat="timeslot in api.config.timeslots">{{timeslot.startTime | date : 'EEEE, dd.MM.yyyy HH:mm:ss'}}</li>
+			<li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime}}</li>
 		</ul>
   </div>
 </div>
-		
-	<!--
-  <div bs-panel title="Quick Lunch - do it quick and dirty!">
-    
-    <div class="btn btn-default justified" ng-click="mampfConfig.addTimeslot(newTimeslot)">Add Timeslot</div>
-    
-    <li ng-repeat="timeslot in config.model.requests[config.model.requests.length-1].timeslots track by $index">
-      <h3><small>Start: {{timeslot.startTime}}<br>End: {{timeslot.endTime}}
-      <div class="btn btn-default btn-xs" ng-click="config.remTimeslot(timeslot)">delete!</div></small></h3>
-    </li>
-  </div>
-	-->
-	
+
   <!-- Invitees -->
   <div bs-panel title="Contacts">
     <!--
     <input type="text" name="newInvitee" ng-model="newInvitee" class="justified">
     <div class="btn btn-default justified" ng-click="mampfConfig.addInvitee(newInvitee)">Add Invitee</div>
     -->
-		<button class="btn btn-default" ng-click="toggle('selectInvitees')">select invitees</button>
-    <li ng-repeat="invitee in contacts | filter:isInvitee">
+		<a class="btn btn-default" href="#/selectInvitees">Select invitees</a>
+
+    <li ng-repeat="invitee in contacts | filter:config.isInvitee">
       <h3><small>{{invitee.name}} 
-      <div class="btn btn-default btn-xs" ng-click="toggleContact(invitee)">Remove</div></small></h3>
+      <div class="btn btn-default btn-xs" ng-click="config.toggleInvitee(invitee)">Remove</div></small></h3>
     </li>
   </div>
 	
-	<!-- overlay for selecting invitees -->
+	<!-- overlay for selecting invitees
 	<div overlay="selectInvitees">
-    <h4 class="overlay-title">select invitees</h4>
-		<!-- not working because of bug: <li ng-repeat="contact in contacts">{{contact.name}}</li> -->
-		<ul>
-			<li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
-			<li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
-		</ul>
+    <h4 class="overlay-title">Select invitees</h4>
+
+       <div class="btn-group justified nav-tabs">
+        <a class="btn btn-default" href="#Recent" toggle="on" active-class="active">Recent</a>
+        
+        <a class="btn btn-default" href="#All" toggle="on" active-class="active">All</a>
+        
+        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active">Groups</a>
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active"
+            default="active" 
+            id="Recent"
+            exclusion-group="myTabs">
+          <h3 class="page-header">Recent</h3>
+        </div>
+
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active" 
+            id="All" 
+            exclusion-group="myTabs">
+
+          <h3 class="page-header">All</h3>
+              not working because of bug: <li ng-repeat="contact in contacts">{{contact.name}}</li>
+          <ul>
+            <li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
+            <li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
+          </ul>
+        </div>
+
+        <div class="tab-pane" 
+            toggleable 
+            active-class="active" 
+            id="Groups"
+            exclusion-group="myTabs">
+          <h3 class="page-header">Groups</h3>
+
+        </div>
+      </div>-->
+
+
 		
 		<!--
     <p toggle="off" bubble target="selectInvitees">
       <span class="btn btn-primary">Ok</span>
       <span class="btn btn-default">Cancel</span>
-    </p> 
-		-->
+    </p> 	
   </div>
+  -->
 
+  
   <!-- Location -->
   <!-- 
     TODO:
@@ -93,8 +112,8 @@
     -->
   <div bs-panel title="Location">
     <button class="btn btn-default" ng-click="getCurrentPosition()"><i class="fa fa-location-arrow"></i> Aktueller Standort</button>
-		<div>Lat: {{api.config.position.latitude}}</div>
-		<div>Lon: {{api.config.position.longitude}}</div>
+		<div>Lat: {{config.model.requests[0].currentPosition.latitude}}</div>
+		<div>Lon: {{config.model.requests[0].currentPosition.longitude}}</div>
     
 		
 		<!-- <h3><small>
@@ -102,20 +121,23 @@
       Long: {{config.model.requests[config.model.requests.length-1].currentPosition.longitude}}
     </small></h3> -->
   </div>
-
+	
+  <div class="navbar navbar-app navbar-absolute-bottom">
+  	<button class="btn btn-default justified" ng-click="findMatches(0)">Find Matches!</button>
+  </div>
   <!-- Overlay for response -->
   <div overlay="responseOverlay">
-    <h4 class="overlay-title">Response</h4>    
-    <div><div>Just the first: {{response.names[0]}}</div></div>
-    <!-- ng repeat not working..-->
-    <div ng-repeat="name in response.names">ASDF</div>
+    <h4 class="overlay-title">Response</h4>
+    <br> 
+    <!-- TODO: ng repeat not working
+    <div ng-repeat="name in response.names">repeat</div>
+    -->
 
-    <br>
-    <p>{{response.full}}</p>
+    <div>Who? {{config.model.requests[1].response.subjects[0]}}</div>
+    <p>When? {{config.model.requests[1].response.timeslot.startTime}}</p>
 
     <p toggle="off" bubble target="responseOverlay">
-      <span class="btn btn-primary">Ok</span>
-      <span class="btn btn-default">Cancel</span>
+      <span class="btn btn-default">Thanks!</span>
     </p>  
   </div>
 
