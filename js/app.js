@@ -544,7 +544,9 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.setNewPosition = function() {
-		$scope.setPosition($('#location-add').data().pos);
+		var pos = $('#location-add').data().pos;
+		$scope.setPosition(pos);
+		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
 		window.location.href = '#/QuickLunch';
 	};
 	
