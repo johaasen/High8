@@ -126,6 +126,9 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/initialize', {
 		templateUrl : 'initialize.html',
 		controller : 'initializeCtrl'
+	}).when('/location', {
+		templateUrl : 'location.html',
+		controller : 'quicklunchCtrl'
 	}).when('/QuickLunch', {
 		templateUrl : 'QuickLunch.html',
 		controller : 'quicklunchCtrl'
@@ -162,9 +165,12 @@ app.factory('Location', function() {
 			}
 		},
 		init: function() {
+			var that = this;
 			$.getScript('js/location.js', function() {
-				initialize();
-			})
+				that.getCurrentPosition(function(pos){
+					initialize(pos);
+				});
+			});
 		},
 		select: function() {
 			alert($("#location-add").data().marker.position);
@@ -430,22 +436,6 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 			$scope.toggle("responseOverlay");
 		});
 	};
-});
-
-app.controller('locationCtrl', function($rootScope, $scope, $localStorage, $location, Config) {
-	$rootScope.currentView = 'location';
-
-	$scope.init = function() {
-		$.getScript('js/location.js', function() {
-			initialize();
-		});
-	};
-
-	$scope.select = function() {
-		alert($("#location-add").data().marker.position);
-	};
-
-	$scope.init();
 });
 
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
