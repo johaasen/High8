@@ -463,6 +463,36 @@ app.service('Config', function($localStorage) {
 			return false;
 		}
 	};
+
+	this.getPopularContacts = function() {
+	// returns an array of all once invited contacts, sorted descending by the number of invites
+		var counts = {};
+
+		for(var i = 1; i < this.model.requests.length; i++) {
+			for(var j = 0; j < this.model.requests[i].invitees.length; j++){
+				var invitee = this.model.requests[i].invitees[j];
+				counts[invitee] = counts[invitee] ? counts[invitee]+1 : 1;
+			}
+		}
+		
+		var popularIds = Object.keys(counts);
+		popularIds.sort(function(a,b){
+			if (counts[a] < counts[b]){
+				return 1;
+			}
+			if (counts[a] > counts[b]){
+				return -1;
+			}
+			return 0;
+		});
+
+		var popularContacts = [];
+		for (i = 0; i < popularIds.length; i++) {
+			popularContacts.push(this.getContactById(popularIds[i]));
+		}
+
+		return popularContacts;
+	};
 });
 
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
