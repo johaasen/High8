@@ -581,8 +581,15 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	};
 
 	$scope.addGroupToModel = function(name){
-		if(!name) return false;
-		
+		$("input[name=groupName]").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+				$(this).removeClass('animated shake');
+			});
+
+		if(!name){
+			$("input[name=groupName]").addClass("animated shake");
+			return false;
+		}
+
 		$rootScope.config.addGroup(name, members);
 		$window.history.back();
 	};
@@ -596,7 +603,7 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 		}
 	};
 
-	$scope.importContacts = function() {
+	$rootScope.importContacts = function() {
 		// Zunächst alle Kontakte löschen
 		$scope.contacts.splice(0, $scope.contacts.length);
 
@@ -647,6 +654,9 @@ app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 		}
 		
 		if (!returnValue) return false;
+
+		// import contacts
+		$rootScope.importContacts();
 
 		// set identity
 		$rootScope.config.setIdentity(name.$modelValue, phonenr.$modelValue);
