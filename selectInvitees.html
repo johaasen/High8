@@ -8,45 +8,41 @@
           <li><a href="#Groups" toggle="on" parent-active-class="active">Groups</a></li>
       </ul>-->
 
-      <div >
+    <a class="btn btn-navbar" onclick="window.history.back()" style="
+    position: fixed;
+    top: 8px;
+    z-index: 1030;
+    right: 8px;"><i class="fa fa-arrow-left fa-3"></i>  BACK</a>
+    
+
+      <input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
+
+      <div class="navbar navbar-app navbar-absolute-bottom">
 	      <div class="btn-group justified nav-tabs">
-	        <a class="btn btn-default" href="#Recent" toggle="on" active-class="active">Recent</a>
+	        <a class="btn btn-default" href="#Recent" toggle="on" active-class="active"  style="border-radius: 0;">Recent</a>
 	        
-	        <a class="btn btn-default" href="#All" toggle="on" active-class="active">All</a>
+	        <a class="btn btn-default" href="#All" toggle="on" active-class="active"  style="border-radius: 0;">All</a>
 	        
-	        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active">Groups</a>
+	        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active"  style="border-radius: 0;">Groups</a>
 	      </div>
 	  </div>
 
-      <div class="tab-content">
+      <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
         <div class="tab-pane" 
             toggleable 
             active-class="active"
             default="active" 
             id="Recent"
             exclusion-group="myTabs">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
-       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis, pariatur, sint ab assumenda est dolor molestiae maxime eaque sequi adipisci corporis molestias quos officiis rerum accusantium illo ullam commodi blanditiis.</p>
-       
+            TODO
+         <!--<ul class="list-group">
+              <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
+                <h3 style="margin-bottom:0px;">
+                  <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+                </h3>
+                  <switch ng-model="contact.invited" ng-click="config.toggleInvitee(contact)" style="position: absolute; right: 0; top: 6px;"></switch>                
+              </li>
+          </ul>  -->     
 
         </div>
 
@@ -56,9 +52,14 @@
             id="All" 
             exclusion-group="myTabs">
 
-          	<ul ng-repeat="contact in contacts" class="list-unstyled">
-          		<li ng-click="toggleContact(contact)">{{contact.name}} <i ng-show="isInvitee(contact)" class="fa fa-check fa-2"></i></li>
-      		</ul>
+          	<ul class="list-group">
+              <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
+                <h3 style="margin-bottom:0px;">
+                  <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+                </h3>
+                  <switch ng-model="contact.invited" ng-click="config.toggleInvitee(contact)" style="position: absolute; right: 0; top: 6px;"></switch>                
+              </li>
+          </ul>
       <!--		
           <ul>
             <li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
@@ -73,11 +74,23 @@
             id="Groups"
             exclusion-group="myTabs">
 
+            <div ng-repeat="group in config.model.groups" style="position:relative;">
+              <h2><small>{{group.name}}</small></h2>
+                <switch ng-model="group.invited" ng-click="config.toggleInviteeGroup(group)" style="position: absolute; right: 0; top: 5px; z-index:100;"></switch> 
+                <ul class="list-group">
+                  <li ng-repeat="contact in group.contacts | filter:contactSearch" class="list-group-item">
+                    <h3 style="margin-bottom:0px;">
+                      <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+                    </h3>
+                                     
+                  </li>
+                </ul>
+            </div>
+
         </div>
       </div>
 
-      <a class="btn btn-default" href="#/QuickLunch">Back</a>
-		
+
 		<!--
     <p toggle="off" bubble target="selectInvitees">
       <span class="btn btn-primary">Ok</span>
