@@ -23,7 +23,7 @@
 	        
 	        <a class="btn btn-default" href="#All" toggle="on" active-class="active"  style="border-radius: 0;">All</a>
 	        
-	        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active"  style="border-radius: 0;">Groups</a>
+	        <a class="btn btn-default" href="#Groups" ng-click="config.checkGroups()" toggle="on" active-class="active"  style="border-radius: 0;">Groups</a>
 	      </div>
       </div>
 
@@ -105,11 +105,10 @@
 
                </div> 
                 <ul class="list-group">
-                  <li ng-repeat="contact in group.contacts | filter:contactSearch" class="list-group-item">
+                  <li ng-repeat="id in group.members | filter:contactSearch" class="list-group-item">
                     <h3 style="margin-bottom:0px;">
-                      <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
-                    </h3>
-                                     
+                      <small>{{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small></small>
+                    </h3>    
                   </li>
                 </ul>
             </div>
