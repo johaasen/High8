@@ -61,9 +61,8 @@
             active-class="active" 
             id="All" 
             exclusion-group="myTabs">
-
           	<ul class="list-group">
-              <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
+              <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
                 <h3 style="margin-bottom:0px;">
                   <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
                 </h3>
