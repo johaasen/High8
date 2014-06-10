@@ -614,11 +614,11 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 
 	$scope.addGroupToModel = function(name){
 		$("input[name=groupName]").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-				$(this).removeClass('animated shake');
+				$(this).removeClass('animated bounce');
 			});
 
 		if(!name){
-			$("input[name=groupName]").addClass("animated shake");
+			$("input[name=groupName]").addClass("animated bounce");
 			return false;
 		}
 
