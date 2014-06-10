@@ -30,7 +30,7 @@
 				</div>
 				<div style="clear: left;"></div>
 			</form>
-			<li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime}}</li>
+			<li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime | date : 'EEEE, dd.MM.yyyy HH:mm:ss'}}</li>
 		</ul>
   </div>
 </div>
