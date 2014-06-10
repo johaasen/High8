@@ -12,7 +12,7 @@
     position: fixed;
     top: 8px;
     z-index: 1030;
-    right: 8px;"><i class="fa fa-arrow-left fa-3"></i>  BACK</a>
+    right: 8px;"><i class="fa fa-check fa-3"></i>  DONE</a>
     
 
       <input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
@@ -57,7 +57,24 @@
                 <h3 style="margin-bottom:0px;">
                   <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
                 </h3>
-                  <switch ng-model="contact.invited" ng-click="config.toggleInvitee(contact)" style="position: absolute; right: 0; top: 6px;"></switch>                
+                  <!-- Fake switch directive with ng-switch -->
+                <div ng-switch on="config.isInvitee(contact)"> 
+
+                  <div ng-switch-when="false">
+                    <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                          ng-click="config.toggleInvitee(contact)"
+                          style="position: absolute; right: 0; top: 6px;">
+                    <div class="switch-handle"></div></div>
+                  </div>
+
+                  <div ng-switch-when="true">
+                    <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                          ng-click="config.toggleInvitee(contact)" 
+                          style="position: absolute; right: 0; top: 6px;">
+                    <div class="switch-handle"></div></div>
+                  </div>
+
+               </div>               
               </li>
           </ul>
       <!--		

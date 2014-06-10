@@ -188,22 +188,23 @@ app.service('Config', function($localStorage) {
 	// in case this context is not correct
 	var that = this;
 	
-  // bind to localStorage
-  this.model = $localStorage;
+	// bind to localStorage
+	this.model = $localStorage;
 
-  // initilized flag
-  this.model.isInitialized = $localStorage.isInitialized || false;
+	// initilized flag
+	this.model.isInitialized = $localStorage.isInitialized || false;
 
 	// init model object
 	this.model.identity = $localStorage.identity || {};
 		//{name: "", phone: "", id: ""}
 
-  this.model.contacts = $localStorage.contacts || [];
+	this.model.contacts = $localStorage.contacts || [];
 		//[{ name: "", phone: "", id: ""}]
 
-  this.model.groups = $localStorage.groups || [];
+	this.model.groups = $localStorage.groups || [];
+		//[{ groupname: "", invited : boolean, contacts : [{id}]}]
 
-  this.model.requests = $localStorage.requests || [{
+	this.model.requests = $localStorage.requests || [{
 			currentPosition : {},	//{longitude: 0, latitude: 0}
 			invitees : [],				// as MD5
 			timeslots : [],				//{startTime: "", endTime: ""}
@@ -229,7 +230,7 @@ app.service('Config', function($localStorage) {
 
 	this.newRequest = function() {
 		// clone last entry
-    var newRequest = angular.fromJson(angular.toJson(this.model.requests[0]));
+		var newRequest = angular.fromJson(angular.toJson(this.model.requests[0]));
 
 		newRequest.response = {
 			subjects : [],
@@ -239,7 +240,7 @@ app.service('Config', function($localStorage) {
 			},
 		};
 
-    this.model.requests.unshift(newRequest);
+		this.model.requests.unshift(newRequest);
 	};
 
 	// functions to update model
@@ -248,25 +249,43 @@ app.service('Config', function($localStorage) {
 	};
 
 	//TODO: question if contact has multiple numbers or not
-	this.addContact = function(name, phone, groups) {
-    if( typeof phone === 'string' ) {
-      phone = [ phone ];
-    }
+	this.addContact = function(name, phone) {
+		if( typeof phone === 'string' ) {
+			phone = [ phone ];
+		}
 
 		//check if phone no. already in contacts
 		if (this.getContactByPhone(phone) === undefined) {
 			var contact = {
 				name : name,
 				phoneNumbers : phone,
-				id: phoneNumberToMd5(phone[0]),
-				invited: false,
-				groups: groups
+				id: phoneNumberToMd5(phone[0])
 			};
 
 			this.model.contacts.push(contact);
 			return true;
 		} else {
 			console.log("Phone number already used...");
+			return false;
+		}
+	};
+
+	this.addGroup = function(name, contacts) {
+		if( typeof contacts === 'string' ) {
+			contacts = [ contacts ];
+		}
+
+		//check if group already existing
+		if (this.getGroupByName(name) === undefined) {
+			var group = {
+				name : name,
+				contacts : contacts
+			};
+
+			this.model.groups.push(group);
+			return true;
+		} else {
+			console.log("Group already existing...");
 			return false;
 		}
 	};
@@ -315,43 +334,42 @@ app.service('Config', function($localStorage) {
 	};
 
 	this.setIdentity = function(name, phone) {
-    this.model.identity.name = name;
+		this.model.identity.name = name;
 		this.model.identity.phone = phone;
-    this.model.identity.id = phoneNumberToMd5(phone);
+		this.model.identity.id = phoneNumberToMd5(phone);
 	};
 
-  //only the last request can be changed with these functions
+	//only the last request can be changed with these functions
 	this.setPosition = function(lat, lon) {
 		this.model.requests[0].currentPosition = { "latitude": lat, "longitude": lon};
 	};
 
-  this.isInvitee = function(contact) {
+	this.isInvitee = function(contact) {
 		if(!contact){
 			return;
 		}
-    var pos = that.model.requests[0].invitees.indexOf(contact.id);
-	    var returnValue = (pos > -1) ? true : false;
-	    if(returnValue)
-	    	contact.invited=true;
-	    else contact.invited=false;
-    return returnValue;
-  };
+		var pos = that.model.requests[0].invitees.indexOf(contact.id);
+		return (pos > -1) ? true : false;
+	};
 
-  this.toggleInvitee = function(contact) {
-    var pos = this.model.requests[0].invitees.indexOf(contact.id);
+	this.isGroupInvited = function(group) {
+		//if one contact is found which is not currently invited, the whole group is not invited
+			for(var pos in group.contacts){
+				if(this.isInvitee(this.getContactById(group.contacts[pos])))
+					return false;
+			}
+		return true;
+	};
+
+	this.toggleInvitee = function(contact) {
+		var pos = this.model.requests[0].invitees.indexOf(contact.id);
 		if (pos > -1) {
-      // is invitee -> remove
-      this.model.requests[0].invitees.splice(pos,1);
-      contact.invited = false;
-      // if invitee is removed set groups as not invited
-      for(var pos in contact.groups){
-      	this.getGroupByName(contact.groups[pos].value).invited = false;
-    	}
+			// is invitee -> remove
+			this.model.requests[0].invitees.splice(pos,1);
 			return false;
 		} else {
-      // is no invitee -> add
-      this.model.requests[0].invitees.push(contact.id);
-      		contact.invited = true;
+			// is no invitee -> add
+			this.model.requests[0].invitees.push(contact.id);
 			return true;
 		}
 	};
@@ -359,35 +377,33 @@ app.service('Config', function($localStorage) {
 	this.toggleInviteeGroup = function(group) {
 		//group.invited is instantly true after clicking the switch
 		for(var con in group.contacts){
-			contact = this.getContactById(group.contacts[con].id);
+			contact = this.getContactById(group.contacts[con]);
 			var pos = this.model.requests[0].invitees.indexOf(contact.id);
 				if (pos > -1 ) {
-		      // is invitee -> remove if group is deactivated
-					if(group.invited == false){
+					// is invitee -> remove if group is deactivated
+					if(group.invited === false){
 						this.model.requests[0].invitees.splice(pos,1);
-						contact.invited = false;
 					}
 				} else {
-		      // is no invitee -> add if group is activated
-		      if(group.invited == true){
-		      	this.model.requests[0].invitees.push(contact.id);
-		      	contact.invited = true;
+					// is no invitee -> add if group is activated
+					if(group.invited === true){
+						this.model.requests[0].invitees.push(contact.id);
 					}
 				}
 		}
-	}
+	};
 
 	this.delInvitees = function() {
-    this.model.requests[0].invitees = [];
+		this.model.requests[0].invitees = [];
 	};
 
 	this.delTimeslots = function() {
-    this.model.requests[0].timeslots = [];
+		this.model.requests[0].timeslots = [];
 	};
 
 	this.getTimeslotIndex = function(timeslot) {
 		// auxiliary function similar to indexOf
-    var index = 0;
+		var index = 0;
 		for (var pos in this.model.requests[index].timeslots) {
 			if (this.model.requests[index].timeslots[pos].hasOwnProperty("startTime") && this.model.requests[index].timeslots[pos].hasOwnProperty("endTime")) {
 				if (this.model.requests[index].timeslots[pos].startTime === timeslot.startTime && this.model.requests[index].timeslots[pos].endTime === timeslot.endTime) {
@@ -408,7 +424,7 @@ app.service('Config', function($localStorage) {
 		if (pos > -1) {
 			return false;
 		} else {
-      this.model.requests[0].timeslots.push(timeslot);
+			this.model.requests[0].timeslots.push(timeslot);
 			return true;
 		}
 	};
@@ -421,7 +437,7 @@ app.service('Config', function($localStorage) {
 
 		var pos = this.getTimeslotIndex(timeslot);
 		if (pos > -1) {
-      this.model.requests[0].timeslots.splice(pos,1);
+			this.model.requests[0].timeslots.splice(pos,1);
 			return true;
 		} else {
 			return false;
@@ -430,8 +446,8 @@ app.service('Config', function($localStorage) {
 });
 
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
-  // bind Config service to $rootScope, so that it is available everywhere
-  $rootScope.config = Config;
+	// bind Config service to $rootScope, so that it is available everywhere
+	$rootScope.config = Config;
 
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
@@ -443,8 +459,8 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	});
 
 	if (!$rootScope.config.model.isInitialized) {
-    $location.path('/initialize');
-  }
+		$location.path('/initialize');
+	}
 
 	// backend connection for Mampf API (mampfBackendConnection.js)
 	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
@@ -453,7 +469,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	$rootScope.findMatches = function(requestIndex) {
 		$rootScope.loading = true;
 
-    requestIndex = requestIndex || 0;
+		requestIndex = requestIndex || 0;
 
 		$rootScope.mampfAPI.config = $rootScope.config.getMampfAPIRequest(requestIndex);
 		$rootScope.mampfAPI.findMatches(function(response) {
@@ -472,10 +488,10 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 });
 
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
-  // bind to $scope for easier access
+	// bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
 	
-  // initilize time picker
+	// initilize time picker
 	$('form[name="newTimeslot"] input[name="date"]').pickadate({
 		clear: '',
 		format: 'dd. mmmm',
@@ -507,7 +523,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
 		
-    $rootScope.config.addTimeslot(Date.parse(date + ' ' + startTime), Date.parse(date + ' ' + endTime));
+		$rootScope.config.addTimeslot(Date.parse(date + ' ' + startTime), Date.parse(date + ' ' + endTime));
 	};
 	
 	
@@ -521,8 +537,9 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 app.controller('contactCtrl', function($rootScope, $scope) {
 	//TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
 	$scope.contacts = $rootScope.config.model.contacts;
-	$scope.groups = $rootScope.config.model.groups;
+	// $scope.groups = $rootScope.config.model.groups;
 
+/*
 	generateGroups = function() {
 		var allGroupNames = [];
 		for (var pos in $scope.contacts) {
@@ -542,42 +559,20 @@ app.controller('contactCtrl', function($rootScope, $scope) {
 			}
 		}
 		console.log("Found " + allGroupNames.length + " groups.");
-	};
-
-	//cordova code copied for groups (not needed for final native app)
-	var ContactField = function(type, value, pref) {
-	    this.id = null;
-	    this.type = (type && type.toString()) || null;
-	    this.value = (value && value.toString()) || null;
-	    this.pref = (typeof pref != 'undefined' ? pref : false);
-	};
+	};*/
 
 	$scope.importContacts = function() {
-		// Zunächst alle Kontakte & Gruppen löschen
+		// Zunächst alle Kontakte löschen
 		$scope.contacts.splice(0, $scope.contacts.length);
-		$scope.groups.splice(0, $scope.groups.length);
-
-		//Mit cordova später über navigator.contacts.find() und deren success-callback function alle kontakte in scope.contacts importieren
-		var studentsGroup = [
-			new ContactField("group", "Students", "")
-		]
-
-		var homieGroup = [
-			new ContactField("group", "Homies", ""),
-			new ContactField("group", "Students", "")
-		]
-
-		var profGroup = [
-			new ContactField("group", "Profs", "")
-		]
 
 		// Dummy-Kontakte anlegen
-	    $rootScope.config.addContact("Mike Mülhaupt", "0170123456789", homieGroup);
-	    $rootScope.config.addContact("Jo", "0170987645321", homieGroup);
-	    $rootScope.config.addContact("Peter Idiot", "017000000001", studentsGroup);
-	    $rootScope.config.addContact("Jörg Baumgart", "0170123123123", profGroup);
+			$rootScope.config.addContact("Mike Mülhaupt", "0170123456789");
+			$rootScope.config.addContact("Jo", "0170987645321");
+			$rootScope.config.addContact("Peter Idiot", "017000000001");
+			$rootScope.config.addContact("Jörg Baumgart", "0170123123123");
 		
-		generateGroups();
+		//TODO validate groups
+
 		// Die Contacts müssen in Model.contacts gepushed werden
 		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
 		//
@@ -590,7 +585,7 @@ app.controller('contactCtrl', function($rootScope, $scope) {
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
-  // TODO: Mike content-for yield-to
+	// TODO: Mike content-for yield-to
 	$rootScope.currentView = 'initialize';
 
 	$scope.signUp = function() {
