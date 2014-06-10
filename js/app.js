@@ -605,14 +605,27 @@ app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 	$scope.signUp = function() {
 		var name = $scope.profile.name;
 		var phonenr = $scope.profile.phonenr;
-
+		var returnValue = true;
+		
+		$(profile.name).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+			$(this).removeClass('animated shake');
+		});
+		
+		$(profile.phonenr).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+			$(this).removeClass('animated shake');
+		});
+		
 		// dirty validation
 		if (!name.$modelValue) {
-			return false;
+			$(profile.name).addClass("animated shake");
+			returnValue = false;
 		}
 		if (phonenr.$modelValue === '' || isNaN(phonenr.$modelValue)) {
-			return false;
+			$(profile.phonenr).addClass("animated shake");
+			returnValue = false;
 		}
+		
+		if (!returnValue) return false;
 
 		// set identity
 		$rootScope.config.setIdentity(name.$modelValue, phonenr.$modelValue);
