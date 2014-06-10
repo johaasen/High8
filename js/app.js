@@ -370,11 +370,21 @@ app.service('Config', function($localStorage) {
 
 	this.isGroupInvited = function(group) {
 		//if one contact is found which is not currently invited, the whole group is not invited
-			for(var pos in group.contacts){
-				if(this.isInvitee(this.getContactById(group.contacts[pos])))
-					return false;
+		for(var pos in group.members){
+			if(!(this.isInvitee(this.getContactById(group.members[pos])))){
+				group.invited = false;
+				return false;
 			}
+		}
+
+		group.invited = true;
 		return true;
+	};
+
+	this.checkGroups = function() {
+		for(var pos in this.model.groups){
+			this.isGroupInvited(this.model.groups[pos]);
+		}
 	};
 
 	this.toggleInvitee = function(contact) {
@@ -391,9 +401,12 @@ app.service('Config', function($localStorage) {
 	};
 
 	this.toggleInviteeGroup = function(group) {
-		//group.invited is instantly true after clicking the switch
-		for(var con in group.contacts){
-			contact = this.getContactById(group.contacts[con]);
+		if(group.invited)
+			group.invited = false;
+		else
+			group.invited = true;
+		for(var con in group.members){
+			contact = this.getContactById(group.members[con]);
 			var pos = this.model.requests[0].invitees.indexOf(contact.id);
 				if (pos > -1 ) {
 					// is invitee -> remove if group is deactivated
