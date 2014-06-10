@@ -610,7 +610,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
   $scope.sortByPopularity = function(contact){
   	var counter = 0;
-    for(var i = 0; i < $rootScope.config.model.requests.length; i++){
+    for(var i = 1; i < $rootScope.config.model.requests.length; i++){
       var request = $rootScope.config.model.requests[i];
       for(var j = 0; j < request.invitees.length; j++){
         if(contact.id===request.invitees[j]){
