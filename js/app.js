@@ -607,6 +607,19 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			console.log(response);
 		});
 	};
+	
+  $scope.sortByPopularity = function(contact){
+  	var counter = 0;
+    for(var i = 0; i < $rootScope.config.model.requests.length; i++){
+      var request = $rootScope.config.model.requests[i];
+      for(var j = 0; j < request.invitees.length; j++){
+        if(contact.id===request.invitees[j]){
+          counter++;
+        }
+      }
+    }
+    return counter;
+  };
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, $window) {

@@ -28,22 +28,32 @@
       </div>
 
       <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
-        <div class="tab-pane" 
-            toggleable 
-            active-class="active"
-            default="active" 
-            id="Recent"
-            exclusion-group="myTabs">
-            TODO
-         <!--<ul class="list-group">
-              <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
+        <div class="tab-pane" toggleable active-class="active" default="active" id="Recent" exclusion-group="myTabs">
+         <ul class="list-group">
+              <li ng-repeat="contact in config.model.contacts | orderBy:sortByPopularity:true | filter:contactSearch" class="list-group-item">
                 <h3 style="margin-bottom:0px;">
                   <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
                 </h3>
-                  <switch ng-model="contact.invited" ng-click="config.toggleInvitee(contact)" style="position: absolute; right: 0; top: 6px;"></switch>                
-              </li>
-          </ul>  -->     
+                  <!-- Fake switch directive with ng-switch -->
+                <div ng-switch on="config.isInvitee(contact)"> 
 
+                  <div ng-switch-when="false">
+                    <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                          ng-click="config.toggleInvitee(contact)"
+                          style="position: absolute; right: 0; top: 6px;">
+                    <div class="switch-handle"></div></div>
+                  </div>
+
+                  <div ng-switch-when="true">
+                    <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                          ng-click="config.toggleInvitee(contact)" 
+                          style="position: absolute; right: 0; top: 6px;">
+                    <div class="switch-handle"></div></div>
+                  </div>
+
+               </div>               
+              </li>
+          </ul> 
         </div>
 
         <div class="tab-pane" 
