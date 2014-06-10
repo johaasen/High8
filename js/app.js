@@ -155,7 +155,7 @@ app.factory('Location', function() {
 					console.log("The request to get user location timed out.");
 					break;
 				case error.UNKNOWN_ERROR:
-					console.log("An unknown error occurred.");
+					console.log("An unknown error occurred."); 
 					break;
 			}
 		},
