@@ -52,6 +52,8 @@
 				    z-index: 1030;
 				    right: 8px;"><i class="fa fa-plus fa-3"></i>  CREATE</a>
 
+            <h2 ng-show="config.model.groups.length < 1"><small>No groups defined. Press<a class="btn btn-navbar" href="#/addGroup"><i class="fa fa-plus fa-3"></i>  CREATE</a></small></h2>
+
             <div ng-repeat="group in config.model.groups" style="position:relative;">
               <h2>
               	<small>{{group.name}}
