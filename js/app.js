@@ -415,6 +415,10 @@ app.service('Config', function($localStorage) {
 	};
 
 	this.addTimeslot = function(startTime, endTime) {
+		console.log(startTime, endTime);
+		if(isNaN(startTime)){
+			return;
+		}
 		var timeslot = {
 			startTime: startTime,
 			endTime: endTime
