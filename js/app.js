@@ -494,6 +494,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
+	$scope.location = Location;
 	
 	// initilize time picker
 	$('form[name="newTimeslot"] input[name="date"]').pickadate({
@@ -515,11 +516,20 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		hiddenName: true
 	});
 
-	$scope.getCurrentPosition = function() {
+	$scope.setCurrentPosition = function() {
 		Location.getCurrentPosition(function(pos){
-			$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
-			$rootScope.$apply();
+			$scope.setPosition(pos);
 		});
+	};
+	
+	$scope.setPosition = function(pos) {
+		$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
+		//$rootScope.$apply();
+	};
+	
+	$scope.setNewPosition = function() {
+		$scope.setPosition($('#location-add').data().pos);
+		window.location.href = '#/QuickLunch';
 	};
 	
 	$scope.addTimeslotToRequest = function() {

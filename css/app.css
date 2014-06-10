@@ -98,14 +98,6 @@ border-radius: 5px;
 	font-size: 13px;
 	font-weight: 300;
 }
-	  
-.app #location #location-add {
-	position: absolute;
-	right: 10px;
-	bottom: 40px;
-	opacity: 0.9;
-	display: none;
-}
 
 /*
 	QuickLunch Screen

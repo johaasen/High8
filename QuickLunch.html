@@ -42,7 +42,12 @@
     first update takes some seconds in some cases - delay of API or does the model not update?
     -->
   <div bs-panel title="Location">
-    <button class="btn btn-default" ng-click="getCurrentPosition()"><i class="fa fa-location-arrow"></i> Aktueller Standort</button>
+    <button class="btn btn-default" ng-click="setCurrentPosition()"><i class="fa fa-location-arrow"></i> Current position</button>
+		<button class="btn btn-default" onclick="window.location.href='#/location'">Custom</button>
+		<div class="form-control-wrapper">
+			<label for="location" class="sr-only">location</label>
+			<input type="text" class="form-control" name="location" placeholder="Current location" onfocus="window.location.href='#/location'">
+		</div>
 		<div>Lat: {{config.model.requests[0].currentPosition.latitude}}</div>
 		<div>Lon: {{config.model.requests[0].currentPosition.longitude}}</div>
     

@@ -28,12 +28,22 @@ function initialize(pos) {
   var marker = new google.maps.Marker({
     map: map,
 		draggable: true,
-    anchorPoint: new google.maps.Point(0, -29)
+    anchorPoint: new google.maps.Point(0, -29),
+		position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
   });
+	
+	$("#location-add").data({
+		pos: {
+			coords: {
+				latitude: marker.position.k,
+				longitude: marker.position.A
+			}
+		}
+	});
 
   google.maps.event.addListener(autocomplete, 'place_changed', function() {
     infowindow.close();
-    marker.setVisible(false);
+    //marker.setVisible(false);
     var place = autocomplete.getPlace();
     if (!place.geometry) {
       return;
@@ -48,7 +58,11 @@ function initialize(pos) {
     }
     
 		marker.setPosition(place.geometry.location);
-    marker.setVisible(true);
+		$("#location-add").data().pos.coords = {
+				latitude: marker.position.k,
+				longitude: marker.position.A
+		};		
+    //marker.setVisible(true);
 
     var address = '';
     if (place.address_components) {
