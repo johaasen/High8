@@ -25,7 +25,7 @@
 	        
 	        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active"  style="border-radius: 0;">Groups</a>
 	      </div>
-	  </div>
+      </div>
 
       <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
         <div class="tab-pane" 
@@ -77,12 +77,6 @@
                </div>               
               </li>
           </ul>
-      <!--		
-          <ul>
-            <li ng-click="toggleContact(contacts[0])">{{contacts[0].name}} <i ng-show="isInvitee(contacts[0])" class="fa fa-check fa-2"></i></li>
-            <li ng-click="toggleContact(contacts[1])">{{contacts[1].name}} <i ng-show="isInvitee(contacts[1])" class="fa fa-check fa-2"></i></li>
-          </ul>
-        -->
         </div>
 
         <div class="tab-pane" 
@@ -93,7 +87,23 @@
 
             <div ng-repeat="group in config.model.groups" style="position:relative;">
               <h2><small>{{group.name}}</small></h2>
-                <switch ng-model="group.invited" ng-click="config.toggleInviteeGroup(group)" style="position: absolute; right: 0; top: 5px; z-index:100;"></switch> 
+                <div ng-switch on="config.isGroupInvited(group)"> 
+
+                  <div ng-switch-when="false">
+                    <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                          ng-click="config.toggleInviteeGroup(group)"
+                          style="position: absolute; right: 0; top: 6px;">
+                    <div class="switch-handle"></div></div>
+                  </div>
+
+                  <div ng-switch-when="true">
+                    <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                          ng-click="config.toggleInviteeGroup(group)" 
+                          style="position: absolute; right: 0; top: 6px;">
+                    <div class="switch-handle"></div></div>
+                  </div>
+
+               </div> 
                 <ul class="list-group">
                   <li ng-repeat="contact in group.contacts | filter:contactSearch" class="list-group-item">
                     <h3 style="margin-bottom:0px;">

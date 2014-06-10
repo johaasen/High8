@@ -136,6 +136,9 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/selectInvitees', {
 		templateUrl : 'selectInvitees.html',
 		controller : 'quicklunchCtrl'
+	}).when('/addGroup', {
+		templateUrl : "addGroup.html",
+		controller : 'contactCtrl'
 	}).otherwise({
 		redirectTo : '/QuickLunch'
 	});
@@ -202,7 +205,7 @@ app.service('Config', function($localStorage) {
 		//[{ name: "", phone: "", id: ""}]
 
 	this.model.groups = $localStorage.groups || [];
-		//[{ groupname: "", invited : boolean, contacts : [{id}]}]
+		//[{ groupname: "", invited : boolean, members : [{id}]}]
 
 	this.model.requests = $localStorage.requests || [{
 			currentPosition : {},	//{longitude: 0, latitude: 0}
@@ -270,22 +273,35 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.addGroup = function(name, contacts) {
-		if( typeof contacts === 'string' ) {
-			contacts = [ contacts ];
+	this.addGroup = function(name, members) {
+		if( typeof members === 'string' ) {
+			members = [ members ];
+		}
+		if( !name ) {
+			name ="Unnamed Group";
 		}
 
 		//check if group already existing
 		if (this.getGroupByName(name) === undefined) {
 			var group = {
 				name : name,
-				contacts : contacts
+				members : members
 			};
 
 			this.model.groups.push(group);
 			return true;
 		} else {
 			console.log("Group already existing...");
+			return false;
+		}
+	};
+
+	this.remGroup = function(group) {
+		var pos = this.model.groups.indexOf(group);
+		if (pos > -1) {
+			this.model.groups.splice(pos, 1);
+			return true;
+		} else {
 			return false;
 		}
 	};
@@ -548,32 +564,37 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 });
 
-app.controller('contactCtrl', function($rootScope, $scope) {
+app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	//TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
 	$scope.contacts = $rootScope.config.model.contacts;
 	// $scope.groups = $rootScope.config.model.groups;
 
-/*
-	generateGroups = function() {
-		var allGroupNames = [];
-		for (var pos in $scope.contacts) {
-			if ($scope.contacts[pos].hasOwnProperty("groups")) {
-				for (var pos2 in $scope.contacts[pos].groups) {
-					var name = $scope.contacts[pos].groups[pos2].value;
-					var index = allGroupNames.indexOf(name);
-					if(index < 0){
-						allGroupNames.push(name);
-						$scope.groups.push({name : name, contacts : [$scope.contacts[pos]], invited : false });
-					}
-					else {
-						var group = $rootScope.config.getGroupByName(name);
-						group.contacts.push($scope.contacts[pos]);
-					}
-				}
-			}
+	var members = [];
+
+	$scope.toggleMember = function(contact) {
+		var pos = members.indexOf(contact.id);
+		if (pos > -1) {
+			members.splice(pos, 1);
+		} else {
+			members.push(contact.id);
 		}
-		console.log("Found " + allGroupNames.length + " groups.");
-	};*/
+	};
+
+	$scope.addGroupToModel = function(name){
+		if(!name) return false;
+		
+		$rootScope.config.addGroup(name, members);
+		$window.history.back();
+	};
+	
+	$scope.inMembers = function (contact) {
+		var pos = members.indexOf(contact.id);
+		if (pos > -1) {
+			return true;
+		} else {
+			return false;
+		}
+	};
 
 	$scope.importContacts = function() {
 		// Zunächst alle Kontakte löschen
