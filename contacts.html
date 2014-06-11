@@ -2,84 +2,72 @@
 <div class="scrollable-content">
 	<div class="section container-fluid">
 
-      <div class="navbar navbar-app navbar-absolute-bottom">
-	      <div class="btn-group justified nav-tabs">        
-	        <a class="btn btn-default" href="#All" toggle="on" active-class="active"  style="border-radius: 0;">All</a>
-	        
-	        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active"  style="border-radius: 0;">Groups</a>
-	      </div>
+    <div class="navbar navbar-app navbar-absolute-bottom">
+      <div class="btn-group justified nav-tabs">        
+        <a class="btn btn-default" href="#All" toggle="on" active-class="active"  style="border-radius: 0;">All</a>
+        
+        <a class="btn btn-default" href="#Groups" toggle="on" active-class="active"  style="border-radius: 0;">Groups</a>
+      </div>
+    </div>
+
+    <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
+
+    	<div class="tab-pane" toggleable active-class="active" default="active" id="All" exclusion-group="myTabs">
+  		  <a class="btn btn-navbar" ng-click="importContacts()"
+          style="
+    	    position: fixed;
+    	    top: 8px;
+    	    z-index: 1030;
+    	    right: 8px;">
+          <i class="fa fa-download fa-3"></i>  IMPORT</a>
+
+      	<ul class="list-group">
+          <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
+            <h3 style="margin-bottom:0px;">
+              <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+            </h3>
+          </li>
+        </ul>
       </div>
 
-      <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
+      <div class="tab-pane" toggleable active-class="active" id="Groups" exclusion-group="myTabs">
+          <a class="btn btn-navbar" href="#/addGroup" style="
+      	    position: fixed;
+      	    top: 8px;
+      	    z-index: 1030;
+      	    right: 8px;">
+            <i class="fa fa-plus fa-3"></i>  CREATE</a>
 
-      	<div class="tab-pane" 
-            toggleable 
-            active-class="active" 
-            default="active"
-            id="All" 
-            exclusion-group="myTabs">
+          <h2 ng-show="config.model.groups.length < 1">
+            <small>
+              No groups defined. Press
+              <a class="btn btn-navbar" href="#/addGroup">
+                <i class="fa fa-plus fa-3"></i>  CREATE</a>
+            </small>
+          </h2>
 
-					  <a class="btn btn-navbar" ng-click="importContacts()" style="
-				    position: fixed;
-				    top: 8px;
-				    z-index: 1030;
-				    right: 8px;"><i class="fa fa-download fa-3"></i>  IMPORT</a>
+          <ul class="list-group">
+            <li ng-repeat="group in config.model.groups | orderBy:'name'"  class="list-group-item">
+              <h2 ng-click="config.expandGroup(group)" style="position: relative; margin-bottom: 0px;">
+                <small>
+                  {{group.name}}
+                  </small>
+    							<i class="fa fa-minus-circle" ng-click="config.remGroup(group)" style="position: absolute; right: 0px; top: 2px; color:red;"></i>
+              </h2>
 
-          	<ul class="list-group">
-              <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
-                <h3 style="margin-bottom:0px;">
-                  <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
-                </h3>
-                
-              </li>
+                <ul class="list-group" ng-show="group.show" style="margin-bottom: -11px;">
+                  <li ng-repeat="id in group.members | filter:contactSearch" class="list-group-item">
+                    <h3 style="margin-bottom:0px;">
+                      <small>{{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small>
+                      </small>
+                    </h3>    
+                  </li>
+                </ul>
+            </li>
           </ul>
-        </div>
-
-        <div class="tab-pane" 
-            toggleable 
-            active-class="active" 
-            id="Groups"
-            exclusion-group="myTabs">
-
-            <a class="btn btn-navbar" href="#/addGroup" style="
-				    position: fixed;
-				    top: 8px;
-				    z-index: 1030;
-				    right: 8px;"><i class="fa fa-plus fa-3"></i>  CREATE</a>
-
-            <h2 ng-show="config.model.groups.length < 1">
-              <small>
-                No groups defined. Press
-                <a class="btn btn-navbar" href="#/addGroup">
-                  <i class="fa fa-plus fa-3"></i>  CREATE</a>
-              </small>
-            </h2>
-
-            <ul class="list-group">
-              <li ng-repeat="group in config.model.groups | orderBy:'name'"  class="list-group-item">
-                <h2 ng-click="config.expandGroup(group)" style="position: relative; margin-bottom: 0px;">
-                  <small>
-                    {{group.name}}
-                    </small>
-  									<i class="fa fa-minus-circle" ng-click="config.remGroup(group)" style="position: absolute; right: 0px; top: 2px; color:red;"></i>
-  								
-                </h2>
-
-                  <ul class="list-group" ng-show="group.show" style="margin-bottom: -11px;">
-                    <li ng-repeat="id in group.members | filter:contactSearch" class="list-group-item">
-                      <h3 style="margin-bottom:0px;">
-                        <small>
-                          {{config.getContactById(id).name}} - 
-                          <small>{{config.getContactById(id).phoneNumbers[0]}}</small>
-                        </small>
-                      </h3>    
-                    </li>
-                  </ul>
-              </li>
-            </ul>
-
-        </div>
       </div>
+      
+    </div>
 
 	</div>
 </div>
