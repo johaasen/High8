@@ -83,8 +83,8 @@ border-radius: 5px;
 
 .app #location #pac-input {
 	background-color: #fff;
-	padding: 0 11px 0 13px;
-	width: 400px;
+	padding: 0 38px 0 13px;
+	width: 100%;
 	font-family: Roboto;
 	font-size: 15px;
 	font-weight: 300;
@@ -95,7 +95,7 @@ border-radius: 5px;
 	border-color: #4d90fe;
 	margin-left: -1px;
 	padding-left: 14px;  /* Regular padding-left + 1. */
-	width: 401px;
+	/*width: 401px;*/
 }
 
 .app #location .pac-container {
@@ -112,6 +112,49 @@ border-radius: 5px;
 	font-family: Roboto;
 	font-size: 13px;
 	font-weight: 300;
+}
+
+.app #location #map-canvas img {
+	max-width: none;
+}
+
+.app #location .cancel {
+	width: 19.5px; 
+	height: 19.5px; 
+	overflow: hidden; 
+	position: absolute; 
+	opacity: 0.7; 
+	right: 12px; 
+	top: 22px; 
+	z-index: 10000;
+}
+
+.app #location .cancel img {
+	position: absolute; 
+	left: -3px; 
+	top: -504px; 
+	width: 88.5px; 
+	height: 738px; 
+	-webkit-user-select: none; 
+	border: 0px; 
+	padding: 0px; 
+	margin: 0px;
+	max-width: none;
+}
+
+.app #location .cancel + img {
+	width: 35.5px; 
+	height: 35.5px; 
+	-webkit-user-select: none; 
+	border: 0px; 
+	padding: 0px; 
+	margin: 0px; 
+	position: 
+	absolute; 
+	right: 4px; 
+	top: 14px; 
+	z-index: 10001; 
+	cursor: pointer;
 }
 
 /*

@@ -683,6 +683,11 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		window.location.href = '#/QuickLunch';
 	};
 	
+	$scope.onCancel = function() {
+		$("#pac-input").val('');
+		$("#pac-input").blur();
+	};
+	
 	$scope.addTimeslotToRequest = function() {
 		var date = newTimeslot.date.value;
 		var startTime = newTimeslot.startTime.value;
