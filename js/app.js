@@ -558,10 +558,14 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 		$rootScope.config.model.contacts.splice(0, $rootScope.config.model.contacts.length);
 
 		// Dummy-Kontakte anlegen
-		$rootScope.config.addContact("Mike Mülhaupt", "0170123456789");
-		$rootScope.config.addContact("Jo", "0170987645321");
-		$rootScope.config.addContact("Peter Idiot", "017000000001");
-		$rootScope.config.addContact("Jörg Baumgart", "0170123123123");
+		$rootScope.config.addContact("Julian Gimbel",	"01741111111");
+		$rootScope.config.addContact("Jan Sosulski",	"01742222222");
+		$rootScope.config.addContact("Johannes Haasen", "01743333333");
+		$rootScope.config.addContact("Jonas Sladek",	"01744444444");
+		$rootScope.config.addContact("Robert Pinsler",	"0175555555");
+		$rootScope.config.addContact("Mike Mülhaupt",	"01746666666");
+		$rootScope.config.addContact("Simon Liebeton",	"01747777777");
+		$rootScope.config.addContact("Kai Sieben",		"01748888888");
 		
 		//TODO validate groups
 
