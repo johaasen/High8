@@ -510,6 +510,23 @@ app.service('Config', function($localStorage) {
 
 		return popularContacts;
 	};
+
+	this.validateGroups = function() {
+		var tempIds = [];
+
+		for (var i = 0; i < this.model.contacts.length; i++) {
+			tempIds.push(this.model.contacts[i].id);
+		}
+
+		for (i = 0; i < this.model.groups.length; i++) {
+			for (var j = 0; j < this.model.groups[i].members.length; j++) {
+				if(tempIds.indexOf(this.model.groups[i].members[j]) === -1){
+					this.model.groups[i].members.splice(
+						this.model.groups[i].members.indexOf(this.model.groups[i].members[j]),1);
+				}
+			}
+		}
+	};
 });
 
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
@@ -562,7 +579,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 		$rootScope.config.addContact("Jan Sosulski",	"01742222222");
 		$rootScope.config.addContact("Johannes Haasen", "01743333333");
 		$rootScope.config.addContact("Jonas Sladek",	"01744444444");
-		$rootScope.config.addContact("Robert Pinsler",	"0175555555");
+		$rootScope.config.addContact("Robert Pinsler",	"01755555555");
 		$rootScope.config.addContact("Mike Mülhaupt",	"01746666666");
 		$rootScope.config.addContact("Simon Liebeton",	"01747777777");
 		$rootScope.config.addContact("Kai Sieben",		"01748888888");
