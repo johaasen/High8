@@ -552,6 +552,24 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 			$scope.toggle("responseOverlay");
 		});
 	};
+	
+	$rootScope.importContacts = function() {
+		// Zunächst alle Kontakte löschen
+		$rootScope.config.model.contacts.splice(0, $rootScope.config.model.contacts.length);
+
+		// Dummy-Kontakte anlegen
+		$rootScope.config.addContact("Mike Mülhaupt", "0170123456789");
+		$rootScope.config.addContact("Jo", "0170987645321");
+		$rootScope.config.addContact("Peter Idiot", "017000000001");
+		$rootScope.config.addContact("Jörg Baumgart", "0170123123123");
+		
+		//TODO validate groups
+
+		// Die Contacts müssen in Model.contacts gepushed werden
+		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
+		//
+		// navigator.contacts.create(contacts[i]);
+	};
 });
 
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
@@ -695,28 +713,6 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			return false;
 		}
 	};
-
-	$rootScope.importContacts = function() {
-		// Zunächst alle Kontakte löschen
-		$scope.contacts.splice(0, $scope.contacts.length);
-
-		// Dummy-Kontakte anlegen
-			$rootScope.config.addContact("Mike Mülhaupt", "0170123456789");
-			$rootScope.config.addContact("Jo", "0170987645321");
-			$rootScope.config.addContact("Peter Idiot", "017000000001");
-			$rootScope.config.addContact("Jörg Baumgart", "0170123123123");
-		
-		//TODO validate groups
-
-		// Die Contacts müssen in Model.contacts gepushed werden
-		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
-		//
-		// navigator.contacts.create(contacts[i]);
-	};
-
-	
-
-	
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
