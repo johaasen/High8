@@ -61,6 +61,7 @@
             active-class="active" 
             id="All" 
             exclusion-group="myTabs">
+
           	<ul class="list-group">
               <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
                 <h3 style="margin-bottom:0px;">
@@ -94,8 +95,12 @@
             id="Groups"
             exclusion-group="myTabs">
 
-            <div ng-repeat="group in config.model.groups" style="position:relative;">
-              <h2><small>{{group.name}}</small></h2>
+            <ul class="list-group">
+              <li ng-repeat="group in config.model.groups | orderBy:'name'" style="position:relative;" class="list-group-item">
+                <h2 ng-click="config.expandGroup(group)" style="margin-bottom: 4px;">
+                  <small>{{group.name}}</small>
+                </h2>
+
                 <div ng-switch on="config.isGroupInvited(group)"> 
 
                   <div ng-switch-when="false">
@@ -112,15 +117,18 @@
                     <div class="switch-handle"></div></div>
                   </div>
 
-               </div> 
-                <ul class="list-group">
-                  <li ng-repeat="id in group.members | filter:contactSearch" class="list-group-item">
-                    <h3 style="margin-bottom:0px;">
-                      <small>{{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small></small>
-                    </h3>    
-                  </li>
-                </ul>
-            </div>
+                 </div> 
+                  <ul class="list-group" style="margin-bottom: -11px;">
+                    <li ng-repeat="id in group.members | filter:contactSearch" ng-show="group.show" class="list-group-item">
+                      <h3 style="margin-bottom:0px;">
+                        <small>
+                          {{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small>
+                        </small>
+                      </h3>    
+                    </li>
+                  </ul>
+              </li>
+            </ul>
 
         </div>
       </div>
