@@ -2,18 +2,12 @@
 <div class="scrollable-content">
 	<div class="section container-fluid">
 
-      <!--<ul class="nav nav-tabs">
-          <li><a href="#Recent" toggle="on" parent-active-class="active">Recent</a></li>
-          <li><a href="#All" toggle="on" parent-active-class="active">All</a></li>
-          <li><a href="#Groups" toggle="on" parent-active-class="active">Groups</a></li>
-      </ul>-->
-
     <a class="btn btn-navbar" onclick="window.history.back()" style="
-    position: fixed;
-    top: 8px;
-    z-index: 1030;
-    right: 8px;"><i class="fa fa-check fa-3"></i>  DONE</a>
-    
+      position: fixed;
+      top: 8px;
+      z-index: 1030;
+      right: 8px;">
+      <i class="fa fa-check fa-3"></i>  DONE</a>
 
       <input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
 
@@ -30,116 +24,101 @@
       <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
         <div class="tab-pane" toggleable active-class="active" default="active" id="Recent" exclusion-group="myTabs">
          <ul class="list-group">
-              <li ng-repeat="contact in config.model.contacts | orderBy:sortByPopularity:true | filter:contactSearch" class="list-group-item">
-                <h3 style="margin-bottom:0px;">
-                  <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
-                </h3>
-                  <!-- Fake switch directive with ng-switch -->
-                <div ng-switch on="config.isInvitee(contact)"> 
+            <li ng-repeat="contact in config.model.contacts | orderBy:sortByPopularity:true | filter:contactSearch" class="list-group-item">
+              <h3 style="margin-bottom:0px;">
+                <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+              </h3>
+                <!-- Fake switch directive with ng-switch -->
+              <div ng-switch on="config.isInvitee(contact)"> 
 
-                  <div ng-switch-when="false">
-                    <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
-                          ng-click="config.toggleInvitee(contact)"
-                          style="position: absolute; right: 0; top: 6px;">
-                    <div class="switch-handle"></div></div>
-                  </div>
+                <div ng-switch-when="false">
+                  <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleInvitee(contact)"
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
 
-                  <div ng-switch-when="true">
-                    <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
-                          ng-click="config.toggleInvitee(contact)" 
-                          style="position: absolute; right: 0; top: 6px;">
-                    <div class="switch-handle"></div></div>
-                  </div>
+                <div ng-switch-when="true">
+                  <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleInvitee(contact)" 
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
 
-               </div>               
-              </li>
+              </div>               
+            </li>
           </ul> 
         </div>
 
-        <div class="tab-pane" 
-            toggleable 
-            active-class="active" 
-            id="All" 
-            exclusion-group="myTabs">
+        <div class="tab-pane" toggleable active-class="active" id="All" exclusion-group="myTabs">
 
-          	<ul class="list-group">
-              <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
-                <h3 style="margin-bottom:0px;">
-                  <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
-                </h3>
-                  <!-- Fake switch directive with ng-switch -->
-                <div ng-switch on="config.isInvitee(contact)"> 
+        	<ul class="list-group">
+            <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
+              <h3 style="margin-bottom:0px;">
+                <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+              </h3>
 
-                  <div ng-switch-when="false">
-                    <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
-                          ng-click="config.toggleInvitee(contact)"
-                          style="position: absolute; right: 0; top: 6px;">
-                    <div class="switch-handle"></div></div>
-                  </div>
+              <div ng-switch on="config.isInvitee(contact)"> 
 
-                  <div ng-switch-when="true">
-                    <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
-                          ng-click="config.toggleInvitee(contact)" 
-                          style="position: absolute; right: 0; top: 6px;">
-                    <div class="switch-handle"></div></div>
-                  </div>
+                <div ng-switch-when="false">
+                  <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleInvitee(contact)"
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
 
-               </div>               
-              </li>
+                <div ng-switch-when="true">
+                  <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleInvitee(contact)" 
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
+
+             </div>               
+            </li>
           </ul>
         </div>
 
-        <div class="tab-pane" 
-            toggleable 
-            active-class="active" 
-            id="Groups"
-            exclusion-group="myTabs">
+        <div class="tab-pane" toggleable active-class="active" id="Groups" exclusion-group="myTabs">
 
-            <ul class="list-group">
-              <li ng-repeat="group in config.model.groups | orderBy:'name'" style="position:relative;" class="list-group-item">
-                <h2 ng-click="config.expandGroup(group)" style="margin-bottom: 4px;">
-                  <small>{{group.name}}</small>
-                </h2>
+          <ul class="list-group">
+            <li ng-repeat="group in config.model.groups | orderBy:'name'" style="position:relative;" class="list-group-item">
+              <h2 ng-click="config.expandGroup(group)" style="margin-bottom: 4px;">
+                <small>{{group.name}}</small>
+              </h2>
 
-                <div ng-switch on="config.isGroupInvited(group)"> 
+              <div ng-switch on="config.isGroupInvited(group)"> 
 
-                  <div ng-switch-when="false">
-                    <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
-                          ng-click="config.toggleInviteeGroup(group)"
-                          style="position: absolute; right: 0; top: 6px;">
-                    <div class="switch-handle"></div></div>
-                  </div>
+                <div ng-switch-when="false">
+                  <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleInviteeGroup(group)"
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
 
-                  <div ng-switch-when="true">
-                    <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
-                          ng-click="config.toggleInviteeGroup(group)" 
-                          style="position: absolute; right: 0; top: 6px;">
-                    <div class="switch-handle"></div></div>
-                  </div>
+                <div ng-switch-when="true">
+                  <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleInviteeGroup(group)" 
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
 
-                 </div> 
-                  <ul class="list-group" style="margin-bottom: -11px;">
-                    <li ng-repeat="id in group.members | filter:contactSearch" ng-show="group.show" class="list-group-item">
-                      <h3 style="margin-bottom:0px;">
-                        <small>
-                          {{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small>
-                        </small>
-                      </h3>    
-                    </li>
-                  </ul>
-              </li>
-            </ul>
+               </div> 
+                <ul class="list-group" style="margin-bottom: -11px;">
+                  <li ng-repeat="id in group.members | filter:contactSearch" ng-show="group.show" class="list-group-item">
+                    <h3 style="margin-bottom:0px;">
+                      <small>
+                        {{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small>
+                      </small>
+                    </h3>    
+                  </li>
+                </ul>
+            </li>
+          </ul>
 
         </div>
       </div>
 
-
-		<!--
-    <p toggle="off" bubble target="selectInvitees">
-      <span class="btn btn-primary">Ok</span>
-      <span class="btn btn-default">Cancel</span>
-    </p> 
-		-->
 	</div>
 </div>
 </div>
