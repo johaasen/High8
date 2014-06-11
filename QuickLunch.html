@@ -30,7 +30,9 @@
 				</div>
 				<div style="clear: left;"></div>
 			</form>
-			<li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime | date : 'EEEE, dd.MM.yyyy'}}: {{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}} </li>
+  		  <li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime | date : 'EEEE, dd.MM.yyyy'}}: {{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}} 
+         <a class="pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime)"><i class="fa fa-minus-circle fa-3"></i></a>
+      </li>
 		</ul>
   </div>
 </div>

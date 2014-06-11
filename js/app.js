@@ -448,7 +448,6 @@ app.service('Config', function($localStorage) {
 	};
 
 	this.addTimeslot = function(startTime, endTime) {
-		console.log(startTime, endTime);
 		if(isNaN(startTime)){
 			return;
 		}
@@ -619,17 +618,26 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			var date = new Date();
         	this.set('select', [date.getHours(), date.getMinutes()]);
         	if(date.getMinutes()>30){
-        		var minute = 00;
+        		var minute = '00';
         		var hour = date.getHours()+1
         	}
         	else{
-        		var minute = 30;
+        		var minute = '30';
         		var hour = date.getHours();
         	}
         	$('#form-control-startTime').attr("placeholder", ""+hour+":"+minute);
-   		}
+   		},
+   		onClose: function() {
+   			var picker = endTimePicker.pickatime('picker');
+   			var hour = this.get('select','HH');
+   			var hour = parseInt(hour)+1;
+   			var minute = this.get('select','i');
+   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' })
+       	 	console.log(hour);
+    	}
+
 	});
-	$('form[name="newTimeslot"] input[name="endTime"]').pickatime({
+	var endTimePicker = 	$('form[name="newTimeslot"] input[name="endTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -638,16 +646,17 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			var date = new Date();
         	this.set('select', [date.getHours() + 1, date.getMinutes()]);
         	if(date.getMinutes()>30){
-        		var minute = 00;
+        		var minute = '00';
         		var hour = date.getHours()+2
         	}
         	else{
-        		var minute = 30;
+        		var minute = '30';
         		var hour = date.getHours()+1;
         	}
         	$('#form-control-endTime').attr("placeholder", ""+hour+":"+minute);
    		}
 	});
+
 
 	$scope.setCurrentPosition = function() {
 		Location.getCurrentPosition(function(pos){
