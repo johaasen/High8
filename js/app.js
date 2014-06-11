@@ -755,13 +755,21 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 		}
 	};
 
-	$scope.toggleHiddenButton = function (tabID){
-		$('div#yieldTo-button').html($('div#'+tabID+' div.hidden-button').html());
+	$scope.tabAllActivated = true;
+	$scope.tabGroupsActivated = false;
 
-		// $rootScope.$apply();
+	$scope.toggleHiddenButton = function (tabID){
+		if(tabID==='Groups'){
+			$scope.tabGroupsActivated = true;
+			$scope.tabAllActivated = false;
+		}
+		if(tabID==='All'){
+			$scope.tabGroupsActivated = false;
+			$scope.tabAllActivated = true;
+		}
 	};
 
-	$scope.toggleHiddenButton('All');
+	// $scope.toggleHiddenButton('All');
 
 });
 
