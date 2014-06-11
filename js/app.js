@@ -306,6 +306,10 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	this.expandGroup = function(group) {
+       group.show = !group.show;
+  };
+
 	this.getContactByPhone = function(phone) {
 		for (var pos in this.model.contacts) {
 			if (this.model.contacts[pos].hasOwnProperty("phone")) {
