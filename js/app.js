@@ -735,10 +735,19 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	$scope.addGroupToModel = function(name){
 		$("input[name=groupName]").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
 				$(this).removeClass('animated bounce');
-			});
+		});
+
+		$("ul[id=groupList]").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+				$(this).removeClass('animated shake');
+		});
 
 		if(!name){
 			$("input[name=groupName]").addClass("animated bounce");
+			return false;
+		}
+
+		if(members.length<1){
+			$("ul[id=groupList]").addClass("animated shake");
 			return false;
 		}
 
@@ -768,8 +777,6 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			$scope.tabAllActivated = true;
 		}
 	};
-
-	// $scope.toggleHiddenButton('All');
 
 });
 
