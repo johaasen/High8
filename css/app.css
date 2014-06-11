@@ -1,5 +1,8 @@
 @import url(http://fonts.googleapis.com/css?family=Lobster);
 
+.hidden-button{
+	display: none;
+}
 
 .app#initialize {
 	background: rgb(169,3,41); /* Old browsers */

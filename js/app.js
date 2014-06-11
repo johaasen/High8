@@ -734,6 +734,12 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			return false;
 		}
 	};
+
+	$scope.toggleHiddenButton = function (tabID){
+		$('div#yieldTo-button').html($('div#'+tabID+' div.hidden-button').html());
+	};
+
+	$scope.toggleHiddenButton('All');
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
