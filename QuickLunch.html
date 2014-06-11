@@ -61,18 +61,22 @@
   <div class="panel">
   <div class="panel-heading">
     <h2 style="margin-bottom:0px;" class="panel-title">
-      Contacts
+      <span ng-click="showList()">Contacts 
+        <i ng-show="showInvitees" class="fa fa-chevron-circle-down button-grey"></i>
+        <i ng-show="!showInvitees" class="fa fa-chevron-circle-right button-grey"></i>
+        <small>({{config.model.requests[0].invitees.length}} invitees)</small>
+      </span>
       <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/selectInvitees">
     	Add Invitees
-    	<i class="fa fa-plus-circle fa-3" style="color: green;"></i>
+    	<i class="fa fa-plus-circle fa-3 button-green"></i>
       </a>
     </h2>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" ng-show="showInvitees">
   <ul class="list-group">
     <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item">
       <h3 style="margin-bottom:0px;"><small>{{invitee.name}} 
-      <a class="btn pull-right" ng-click="config.toggleInvitee(invitee)"><i class="fa fa-minus-circle fa-3"></i></a></small></h3>
+      <a class="btn pull-right" ng-click="config.toggleInvitee(invitee)"><i class="fa fa-minus-circle fa-3 button-red"></i></a></small></h3>
     </li>
   </ul>
   </div>

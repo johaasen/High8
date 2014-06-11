@@ -1,11 +1,10 @@
-<a class="btn btn-navbar" ng-click="addGroupToModel(groupName)" style="
-position: fixed;
-top: 8px;
-z-index: 1030;
-right: 8px;"><i class="fa fa-check fa-3"></i>  DONE</a>
-
 <div class="scrollable">
 <div class="scrollable-content">
+
+  <div content-for="rightNav">
+    <div class="btn btn-navbar" ng-click="addGroupToModel(groupName)">
+      <i class="fa fa-check fa-3"></i>  DONE</div>
+  </div>
 
 	<input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
 

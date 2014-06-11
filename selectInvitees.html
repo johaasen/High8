@@ -82,7 +82,11 @@
           <ul class="list-group">
             <li ng-repeat="group in config.model.groups | orderBy:'name'" style="position:relative;" class="list-group-item">
               <h2 ng-click="config.expandGroup(group)" style="margin-bottom: 4px;">
-                <small>{{group.name}}</small>
+                <small>
+                  {{group.name}}
+                </small>
+                <i class="fa fa-chevron-circle-down pull-left button-grey" ng-show="group.show"></i>
+                <i class="fa fa-chevron-circle-right pull-left button-grey" ng-show="!group.show"></i>
               </h2>
 
               <div ng-switch on="config.isGroupInvited(group)"> 

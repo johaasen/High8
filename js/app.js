@@ -526,6 +526,29 @@ app.service('Config', function($localStorage) {
 			}
 		}
 	};
+
+	this.importContacts = function() {
+		// Zunächst alle Kontakte löschen
+		this.model.contacts.splice(0, this.model.contacts.length);
+
+		// Dummy-Kontakte anlegen
+		this.addContact("Julian Gimbel",	"01741111111");
+		this.addContact("Jan Sosulski",	"01742222222");
+		this.addContact("Johannes Haasen", "01743333333");
+		this.addContact("Jonas Sladek",	"01744444444");
+		this.addContact("Robert Pinsler",	"01755555555");
+		this.addContact("Mike Mülhaupt",	"01746666666");
+		this.addContact("Simon Liebeton",	"01747777777");
+		this.addContact("Kai Sieben",		"01748888888");
+		
+		this.validateGroups();
+		//TODO validate groups
+
+		// Die Contacts müssen in Model.contacts gepushed werden
+		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
+		//
+		// navigator.contacts.create(contacts[i]);
+	};
 });
 
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
@@ -569,33 +592,17 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 		});
 	};
 	
-	$rootScope.importContacts = function() {
-		// Zunächst alle Kontakte löschen
-		$rootScope.config.model.contacts.splice(0, $rootScope.config.model.contacts.length);
-
-		// Dummy-Kontakte anlegen
-		$rootScope.config.addContact("Julian Gimbel",	"01741111111");
-		$rootScope.config.addContact("Jan Sosulski",	"01742222222");
-		$rootScope.config.addContact("Johannes Haasen", "01743333333");
-		$rootScope.config.addContact("Jonas Sladek",	"01744444444");
-		$rootScope.config.addContact("Robert Pinsler",	"01755555555");
-		$rootScope.config.addContact("Mike Mülhaupt",	"01746666666");
-		$rootScope.config.addContact("Simon Liebeton",	"01747777777");
-		$rootScope.config.addContact("Kai Sieben",		"01748888888");
-		
-		//TODO validate groups
-
-		// Die Contacts müssen in Model.contacts gepushed werden
-		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
-		//
-		// navigator.contacts.create(contacts[i]);
-	};
 });
 
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
 	$scope.location = Location;
+	$scope.showInvitees = false;
+
+	$scope.showList = function(){
+		$scope.showInvitees = !$scope.showInvitees;
+	};
 	
 	// initilize time picker
 	$('form[name="newTimeslot"] input[name="date"]').pickadate({
@@ -710,6 +717,10 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	$scope.contacts = $rootScope.config.model.contacts;
 	// $scope.groups = $rootScope.config.model.groups;
 
+	$scope.importContacts = function(){
+		$rootScope.config.importContacts();
+	};
+
 	var members = [];
 
 	$scope.toggleMember = function(contact) {
@@ -746,9 +757,12 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 
 	$scope.toggleHiddenButton = function (tabID){
 		$('div#yieldTo-button').html($('div#'+tabID+' div.hidden-button').html());
+
+		// $rootScope.$apply();
 	};
 
 	$scope.toggleHiddenButton('All');
+
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
@@ -781,7 +795,7 @@ app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 		if (!returnValue) return false;
 
 		// import contacts
-		$rootScope.importContacts();
+		$rootScope.config.importContacts();
 
 		// set identity
 		$rootScope.config.setIdentity(name.$modelValue, phonenr.$modelValue);
