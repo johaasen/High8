@@ -9,7 +9,7 @@
 
 	<input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
 
-  <ul class="list-group">
+  <ul class="list-group" style="margin-bottom:55px;">
     <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
       <h3 style="margin-bottom:0px;">
         <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
@@ -20,14 +20,14 @@
         <div ng-switch-when="false">
           <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
                 ng-click="toggleMember(contact)"
-                style="position: absolute; right: 0; top: 6px;">
+                style="position: absolute; right: 10px; top: 6px;">
           <div class="switch-handle"></div></div>
         </div>
 
         <div ng-switch-when="true">
           <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
                 ng-click="toggleMember(contact)" 
-                style="position: absolute; right: 0; top: 6px;">
+                style="position: absolute; right: 10px; top: 6px;">
           <div class="switch-handle"></div></div>
         </div>
 
