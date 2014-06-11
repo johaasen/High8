@@ -356,7 +356,7 @@ app.service('Config', function($localStorage) {
 	this.setIdentity = function(name, phone) {
 		this.model.identity.name = name;
 		this.model.identity.phone = phone;
-		this.model.identity.id = phoneNumberToMd5(phone);
+		this.model.identity.id = phoneNumberToMd5("" + phone);
 	};
 
 	//only the last request can be changed with these functions
