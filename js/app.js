@@ -480,7 +480,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.getPopularContacts = function() {
+	this.getPopularContacts = function(n) {
 	// returns an array of all once invited contacts, sorted descending by the number of invites
 		var counts = {};
 
@@ -507,6 +507,8 @@ app.service('Config', function($localStorage) {
 			popularContacts.push(this.getContactById(popularIds[i]));
 		}
 
+		// reduce to first n elements
+		popularContacts.slice(0,n);
 		return popularContacts;
 	};
 
@@ -597,6 +599,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
+	$scope.popularContacts = $rootScope.config.getPopularContacts(5);
 	$scope.location = Location;
 	$scope.showInvitees = false;
 
@@ -604,19 +607,59 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$scope.showInvitees = !$scope.showInvitees;
 	};
 	
+	$scope.checkRequest = function() {
+		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+			$('#form-control-date').prop('disabled', true);
+			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
+			var startTime = new Date(startTimeMil);
+			//set Placeholder and value
+			$('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
+		}
+		else{
+			$('#form-control-date').prop('disabled', false);
+		}
+	};
+	
 	// initilize time picker
-	$('form[name="newTimeslot"] input[name="date"]').pickadate({
+	// initilize time picker
+	var datePicker = $('form[name="newTimeslot"] input[name="date"]').pickadate({
 		clear: '',
-		format: 'dd. mmmm',
+		format: 'dd.mm.yyyy',
 		formatSubmit: 'yyyy-mm-dd',
 		hiddenName: true,
 		onStart: function() {
 			var date = new Date();
-        	this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
-        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear());
-   		}
+			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+        		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
+        		var date = new Date(startTimeMil);
+        		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
+        	}
+        	else{
+        		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
+        	}
+        	$('#form-control-date').attr("placeholder", 'today');
+        	//if request has already entries
+        	$scope.checkRequest();
+        	
+   		},
+  		onSet: function(context) {
+        	var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
+        	//console.log(currentPick);
+        	//no pick option before today
+        	var pickerDate = this.get('select', 'yyyy-mm-dd');
+        	var aktDate = new Date();
+        	var aktString = aktDate.toISOString().substr(0,10);
+
+        	
+        	if(pickerDate == aktString){
+        		
+        		console.log("hier")
+        	}
+				//this.set('min', [date.getHours(),date.getMinutes()]);
+    	}
 	});
-	$('form[name="newTimeslot"] input[name="startTime"]').pickatime({
+
+	var startTimePicker = $('form[name="newTimeslot"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -637,10 +680,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
    		onClose: function() {
    			var picker = endTimePicker.pickatime('picker');
    			var hour = this.get('select','HH');
-   			var hour = parseInt(hour)+1;
    			var minute = this.get('select','i');
-   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' })
-       	 	console.log(hour);
+   			picker.set('min', [hour,minute]);
+   			var hour = parseInt(hour)+1;
+   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' });
     	}
 
 	});
