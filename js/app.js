@@ -561,7 +561,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.showList = function(){
-		$scope.showInvitees = !$scope.showInvitees;
+		if($rootScope.config.model.requests[0].invitees.length>1)
+			$scope.showInvitees = !$scope.showInvitees;
 	};
 	
 	$scope.showMap = function() {
