@@ -272,6 +272,14 @@ app.service('Config', function($localStorage) {
 		return true;
 	};
 
+	this.isEvrbdyInvited = function(){
+		for(var pos in this.model.contacts){
+			if(!this.isInvitee(this.model.contacts[pos]))
+				return false;
+		}
+		return true;
+	};
+
 	this.checkGroups = function() {
 		for(var pos in this.model.groups){
 			this.isGroupInvited(this.model.groups[pos]);
@@ -283,6 +291,7 @@ app.service('Config', function($localStorage) {
 		if (pos > -1) {
 			// is invitee -> remove
 			this.model.requests[0].invitees.splice(pos,1);
+
 			return false;
 		} else {
 			// is no invitee -> add
@@ -310,6 +319,20 @@ app.service('Config', function($localStorage) {
 						this.model.requests[0].invitees.push(contact.id);
 					}
 				}
+		}
+	};
+
+	this.toggleAll = function(){
+		if(this.isEvrbdyInvited()){
+			for(var pos in this.model.contacts){
+				this.toggleInvitee(this.model.contacts[pos]);
+			}
+		}
+		else{
+			for(var pos2 in this.model.contacts){
+				if(!this.isInvitee(this.model.contacts[pos2]))
+					this.toggleInvitee(this.model.contacts[pos2]);
+			}
 		}
 	};
 
@@ -694,12 +717,17 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	var members = [];
 
 	$scope.toggleMember = function(contact) {
-		var pos = members.indexOf(contact.id);
+		var pos = members.indexOf(contact);
 		if (pos > -1) {
 			members.splice(pos, 1);
 		} else {
-			members.push(contact.id);
+			members.push(contact);
 		}
+	};
+
+	function nameSort (a, b) {
+	  if (a.name < b.name) return -1;
+		if (a.name > b.name) return 1;
 	};
 
 	$scope.addGroupToModel = function(name){
@@ -721,12 +749,20 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			return false;
 		}
 
-		$rootScope.config.addGroup(name, members);
+		members.sort(nameSort);
+
+		var memberIDs = [];
+
+		for(var pos in members){
+			memberIDs.push(members[pos].id);
+		}
+
+		$rootScope.config.addGroup(name, memberIDs);
 		$window.history.back();
 	};
 	
 	$scope.inMembers = function (contact) {
-		var pos = members.indexOf(contact.id);
+		var pos = members.indexOf(contact);
 		if (pos > -1) {
 			return true;
 		} else {
