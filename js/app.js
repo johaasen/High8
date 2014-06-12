@@ -523,7 +523,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	else{
         		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
         	}
-        	$('#form-control-date').attr("placeholder", 'today');
+
+        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+date.getMonth()+"."+date.getFullYear()+"");
         	//if request has already entries
         	$scope.checkRequest();
         	
@@ -568,7 +569,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
    			var hour = this.get('select','HH');
    			var minute = this.get('select','i');
    			picker.set('min', [hour,minute]);
-   			var hour = parseInt(hour)+1;
+   			var hour = (parseInt(hour)+1)%24;
    		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' });
     	}
 
@@ -618,11 +619,23 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.addTimeslotToRequest = function() {
-		var date = newTimeslot.date.value;
+
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
-		
-		$rootScope.config.addTimeslot(Date.parse(date + "T" + startTime), Date.parse(date + "T" + endTime));
+
+		var startdate = new Date(newTimeslot.date.value);
+		var enddate = new Date(newTimeslot.date.value);
+
+		//Create startdate Date
+		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));
+		startdate.setMinutes(startTime.substr((startTime.indexOf(":")+1),startTime.length));
+
+		//Create endtime Date
+		enddate.setHours(endTime.substr(0,endTime.indexOf(":")));
+		enddate.setMinutes(endTime.substr((endTime.indexOf(":")+1),endTime.length));
+
+		// add it to Timeslot in Milliseconds
+		$rootScope.config.addTimeslot(startdate.getTime(), enddate.getTime());
 	};
 	
 	
