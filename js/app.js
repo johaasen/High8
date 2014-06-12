@@ -446,11 +446,9 @@ app.service('Config', function($localStorage) {
 		var that = this;
 
 
-		var clientId = '68944230699-6des2tsh55d3qqpbeb4sunprov5ajdu2.apps.googleusercontent.com';
-		var apiKey = '';
+		var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
 		var scopes = 'https://www.google.com/m8/feeds';
 
-   		gapi.client.setApiKey(apiKey);
    		window.setTimeout(checkAuth,3);
 	
 		function checkAuth() {
