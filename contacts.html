@@ -34,13 +34,13 @@
             <i class="fa fa-plus fa-3"></i>  CREATE</a>
         </div>
 
-          <h2 ng-show="config.model.groups.length < 1">
+          <h3 ng-show="config.model.groups.length < 1">
             <small>
               No groups defined. Press
               <a class="btn btn-navbar" href="#/addGroup">
                 <i class="fa fa-plus fa-3"></i>  CREATE</a>
             </small>
-          </h2>
+          </h3>
 
           <ul class="list-group">
             <li ng-repeat="group in config.model.groups | orderBy:'name'"  class="list-group-item">
