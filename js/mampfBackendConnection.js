@@ -1,6 +1,6 @@
 //To be moved to another file
 function phoneNumberToMd5(phoneNumber){
-    phoneNumber = phoneNumber.replace(/[+\- ,\.]/g,"");
+    phoneNumber = phoneNumber.replace(/[+\- ,\.\/]/g,"");
     
     if(phoneNumber.indexOf("00") === 0) {
         phoneNumber = phoneNumber.slice(2);

@@ -1,0 +1,43 @@
+<div class="scrollable">
+<div class="scrollable-content">
+
+  <div content-for="rightNav">
+    <div class="btn btn-navbar" ng-click="addGroupToModel(groupName)">
+      <i class="fa fa-check fa-3"></i>  DONE</div>
+  </div>
+
+	<input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
+
+  <ul class="list-group" id="groupList" style="margin-bottom:55px;">
+    <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
+      <h3 style="margin-bottom:0px;">
+        <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+      </h3>
+        <!-- Fake switch directive with ng-switch -->
+      <div ng-switch on="inMembers(contact)"> 
+
+        <div ng-switch-when="false">
+          <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                ng-click="toggleMember(contact)"
+                style="position: absolute; right: 10px; top: 6px;">
+          <div class="switch-handle"></div></div>
+        </div>
+
+        <div ng-switch-when="true">
+          <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                ng-click="toggleMember(contact)" 
+                style="position: absolute; right: 10px; top: 6px;">
+          <div class="switch-handle"></div></div>
+        </div>
+
+     </div>
+
+    </li>
+	</ul>
+
+  <div class="navbar navbar-app navbar-absolute-bottom" style="padding:10px;">
+    <input type="text" name="groupName" ng-model="groupName" class="form-control" placeholder="Enter name for group.." style="border-color:#E2001A; font-size: 15pt;"/>
+  </div>
+
+</div>
+</div>

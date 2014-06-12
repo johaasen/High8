@@ -123,3 +123,7 @@ this.newRequest()
 - "archiviert" den aktuellen request und erzeugt einen neuen als Klon
 - response wird null gesetzt
 - im callback des findMatches als letztes aufrufen
+
+#Download
+
+[Current Android .apk](https://github.com/johaasi/High8/raw/master/cordova/platforms/android/ant-build/Mampf-debug.apk)

@@ -24,19 +24,19 @@
 					<label for="startTime" class="sr-only">von</label>
 					<input type="text" id="form-control-startTime" class="form-control" ng-model="startTime" name="startTime" placeholder="von"> 
 				</div>
-				<div class="form-control-wrapper endTime">
+				<div class="form-control-wrapper pull-right endTime">
 					<label for="endTime" class="sr-only">bis</label>
 					<input type="text" id="form-control-endTime" class="form-control" ng-model="endTime" name="endTime" placeholder="bis">
 				</div>
-				<div class="form-control-wrapper">
-					<button type="submit" class="btn btn-default" ng-click="addTimeslotToRequest()">
+				<div style="clear: left;"></div>
+          <center>
+          <button type="submit" id="buttonPicker"class="btn btn-default" ng-click="addTimeslotToRequest(); checkRequest()">
             <i class="fa fa-plus"></i>
           </button>
-				</div>
-				<div style="clear: left;"></div>
+        </center>
 			</form>
   		  <li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime | date : 'EEEE, dd.MM.yyyy'}}: {{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}} 
-         <a class="pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime)"><i class="fa fa-minus-circle fa-3"></i></a>
+         <a class="pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime); checkRequest()"><i class="fa fa-minus-circle fa-3"></i></a>
       </li>
 		</ul>
   </div>
