@@ -221,7 +221,7 @@ border-radius: 5px;
 
 .app #quicklunch #form-control-date {
 	background: none !important;
-	border: 1px solid white !important;
+	border: transparent;
 	color: black !important;
 }
 	

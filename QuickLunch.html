@@ -5,7 +5,7 @@
 
 <div class="scrollable" id="quicklunch">
 <div class="scrollable-content">
-<div style="margin-bottom:30px;margin-top:30px">
+<div style="margin-top:30px">
   <div class="panel">
   <div class="panel-heading">
     <h2 style="margin-bottom:0px;" class="panel-title">
@@ -14,12 +14,14 @@
         <i ng-show="!showDates" class="fa fa-chevron-circle-right button-grey"></i>
 				When? 
       </span>
-      <div class="pull-right" style="margin-bottom:0px; padding-top: 0px; font-size:14px">
-    	<form name="newTimeslot" class="ng-pristine ng-valid"><div class="form-control-wrapper date">
-					<label for="date" class="sr-only">Datum</label>
-					<input type="text" id="form-control-date" class="form-control" ng-model="date" name="date" placeholder="Datum">
-			</div></form>
-			<img src="res/clock.png" style="width:15px"></img>
+      <i class="fa fa-clock-o pull-right" style="padding-right:10px;"></i>
+      <div class="pull-right" style="margin-top:-6px;margin-bottom:0px; padding-top: 0px; font-size:14px">
+      	<form name="newTimeslot" class="ng-pristine ng-valid">
+          <div class="form-control-wrapper date">
+  					<label for="date" class="sr-only">Datum</label>
+  					<input type="text" id="form-control-date" class="form-control" ng-model="date" name="date" placeholder="Datum" size="7">
+          </div>
+        </form>
       </div>
     </h2>
   </div>
