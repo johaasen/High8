@@ -480,7 +480,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.getPopularContacts = function() {
+	this.getPopularContacts = function(n) {
 	// returns an array of all once invited contacts, sorted descending by the number of invites
 		var counts = {};
 
@@ -507,6 +507,8 @@ app.service('Config', function($localStorage) {
 			popularContacts.push(this.getContactById(popularIds[i]));
 		}
 
+		// reduce to first n elements
+		popularContacts.slice(0,n);
 		return popularContacts;
 	};
 
@@ -597,6 +599,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
+	$scope.popularContacts = $rootScope.config.getPopularContacts(5);
 	$scope.location = Location;
 	$scope.showInvitees = false;
 
