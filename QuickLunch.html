@@ -1,6 +1,6 @@
 <div class="scrollable" id="quicklunch">
 <div class="scrollable-content">
-<div style="margin-bottom:30px">
+<div style="margin-bottom:50px">
 	<!-- Timeslots -->
 	<div class="panel" id="timeslots">
   <div class="panel-heading">
@@ -61,15 +61,15 @@
   <div class="panel">
   <div class="panel-heading">
     <h2 style="margin-bottom:0px;" class="panel-title">
+      <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/selectInvitees">
+      Add Invitees
+      <i class="fa fa-plus-circle fa-3 button-green"></i>
+      </a>
       <span ng-click="showList()">Contacts 
         <i ng-show="showInvitees" class="fa fa-chevron-circle-down button-grey"></i>
         <i ng-show="!showInvitees" class="fa fa-chevron-circle-right button-grey"></i>
         <small>({{config.model.requests[0].invitees.length}} invitees)</small>
       </span>
-      <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/selectInvitees">
-    	Add Invitees
-    	<i class="fa fa-plus-circle fa-3 button-green"></i>
-      </a>
     </h2>
   </div>
   <div class="panel-body" ng-show="showInvitees">
