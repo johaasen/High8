@@ -484,7 +484,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
 
 	// call Mampf API
-	$rootScope.findMatches = function(requestIndex) {
+	$rootScope.findMatches = function(requestIndex, checkAgain) {
 		$rootScope.loading = true;
 
 		requestIndex = requestIndex || 0;
@@ -495,10 +495,16 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 			$rootScope.config.setResponse(requestIndex, response);
 
 			// init new request after successfull call and save of response
-			$rootScope.config.newRequest();
+			if (requestIndex === 0) {
+				$rootScope.config.newRequest();
+			}
 
 			$rootScope.loading = false;
-			$location.path("/response");
+			if ($location.$$path !== "/response") {
+				$location.path("/response");
+			} else if(checkAgain){
+				checkAgain();
+			}
 			$rootScope.$apply();
 		});
 	};
@@ -790,45 +796,47 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 app.controller('responseCtrl', function($rootScope, $scope) {
 	$rootScope.currentView = 'response';
 
-	$scope.responseValid = true;
-	if (!$rootScope.config.model.requests[1].response.subjects ||
-		!$rootScope.config.model.requests[1].response.timeslot) {
+	$scope.checkAgain = function() {
+		$scope.responseValid = true;
+		if (!$rootScope.config.model.requests[1].response.subjects ||
+			!$rootScope.config.model.requests[1].response.timeslot) {
 
-		$scope.responseValid = false;
-	}else{	
+			$scope.responseValid = false;
+		}else{	
 
-		function formatHours(epoch){
-			var date = new Date(epoch);
-			return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
-		}
-
-		function formatDate(epoch){
-			var date = new Date(epoch);
-			return date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
-		}
-
-		$scope.response = {
-			subjects: function(){
-					var subjects = [];
-					for (var i = 0; i < $rootScope.config.model.requests[1].response.subjects.length; i++){
-						subjects.push($rootScope.config.getContactById($rootScope.config.model.requests[1].response.subjects[i]));
-					}
-					return subjects;
-				}(),
-			timeslot: {
-					date: formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
-					startTime: formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
-					endTime: formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
-				},
-			location: {
-				name: "",
-				latitude: $rootScope.config.model.requests[1].currentPosition.latitude,
-				longitude: $rootScope.config.model.requests[1].currentPosition.longitude
+			function formatHours(epoch){
+				var date = new Date(epoch);
+				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
 			}
-		};
 
-		console.log($scope.response);
-	} //if
+			function formatDate(epoch){
+				var date = new Date(epoch);
+				return date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+			}
+
+			$scope.response = {
+				subjects: function(){
+						var subjects = [];
+						for (var i = 0; i < $rootScope.config.model.requests[1].response.subjects.length; i++){
+							subjects.push($rootScope.config.getContactById($rootScope.config.model.requests[1].response.subjects[i]));
+						}
+						return subjects;
+					}(),
+				timeslot: {
+						date: formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
+						startTime: formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
+						endTime: formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
+					},
+				location: {
+					name: "",
+					latitude: $rootScope.config.model.requests[1].currentPosition.latitude,
+					longitude: $rootScope.config.model.requests[1].currentPosition.longitude
+				}
+			};
+		} //if
+	} //checkAgain
+
+	$scope.checkAgain();
 
 });
 
