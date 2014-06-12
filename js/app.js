@@ -442,6 +442,41 @@ app.service('Config', function($localStorage) {
 		// Zunächst alle Kontakte löschen
 		this.model.contacts.splice(0, this.model.contacts.length);
 
+		var that = this;
+
+
+		var clientId = '68944230699-6des2tsh55d3qqpbeb4sunprov5ajdu2.apps.googleusercontent.com';
+		var apiKey = 'XXX';
+		var scopes = 'https://www.google.com/m8/feeds';
+
+   		gapi.client.setApiKey(apiKey);
+   		window.setTimeout(checkAuth,3);
+	
+		function checkAuth() {
+  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+		}
+
+		function handleAuthResult(authResult) {
+
+  			if (authResult && !authResult.error) {
+    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
+      				function(response){
+         				//Handle Response
+         				for(var i = 0;i < response.feed.entry.length; i++){
+         					var contact = response.feed.entry[i];
+         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
+         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
+         							var phoneNumber = contact.gd$phoneNumber[j];
+         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
+         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
+         							}
+         						}
+         					}
+         	
+         				}
+      				});
+  			}
+		}
 		// Dummy-Kontakte anlegen
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
