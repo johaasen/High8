@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<!-- 
+  Mampf Application - DHBW Mannheim - mobile dev project
+  
+  ** NOTE **
+  Angular loads files with AJAX, to test the application locally you can:
+  
+  - Start chrome with "--allow-file-access-from-files” flag
+  or
+  - Start a simple http server (e.g. "npm install -g http-server" followed by "http-server")
+
+  -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <!-- <base href="/" /> -->
+    <title>Mampf</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    
+    <link rel="shortcut icon" href="res/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="res/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="57x57" href="res/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="res/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="res/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="res/apple-icon-144x144.png" />
+
+    <link rel="stylesheet" href="css/mobile-angular-ui-base.css" />
+    <link rel="stylesheet" href="css/mobile-angular-ui-desktop.css" />
+    <link rel="stylesheet" href="css/font-awesome.css" />
+		<link rel="stylesheet" href="css/animate.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+	<link rel="stylesheet" href="css/animate.css" />
+		
+		<!-- pickadate -->
+    <!-- TODO: ref to bower_components(?) -->
+		<link rel="stylesheet" href="bower_components/pickadate/lib/compressed/themes/default.css" id="theme_base" />
+		<link rel="stylesheet" href="bower_components/pickadate/lib/compressed/themes/default.time.css" id="theme_time" />
+		<link rel="stylesheet" href="bower_components/pickadate/lib/compressed/themes/default.date.css" id="theme_date" />
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-route.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-touch.min.js"></script>
+    <script src="js/mobile-angular-ui.min.js"></script>
+    <script src="js/ngStorage.min.js"></script>
+
+		<script src="js/jquery.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+	
+    <script src="js/mampfBackendConnection.js"></script>
+    <script src="js/md5.js"></script>
+    <script src="js/app.js"></script>
+
+  </head>
+  <body ng-app="Mampf-Angular" ng-controller="MainController">
+	
+    
+    <!-- Sidebars -->
+    <div ng-include="'sidebar.html'" class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar"></div>
+
+    <!-- App -->
+    <div class="app" id="{{currentView}}">
+
+      <!-- Navbar Top -->
+      <div class="navbar navbar-app navbar-absolute-top" ng-show="config.model.isInitialized">
+        <div class="navbar-brand navbar-brand-center" yield-to="title">
+          <span>DHBW Mampf</span>
+        </div>
+        <div class="btn-group pull-left">
+          <div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
+            <i class="fa fa-bars"></i> Menu
+          </div>
+        </div>
+        <div yield-to="rightNav" class="btn-group pull-right">
+          <!-- empty for button-->
+        </div>
+        <div yield-to="rightNav2" class="btn-group pull-right">
+          <!-- empty for button-->
+        </div>
+      </div>
+
+      <!-- Navbar Bottom -->
+			<!--
+      <div class="navbar navbar-app navbar-absolute-bottom" ng-show="config.model.isInitialized">
+        <div class="btn-group justified">
+          <a href="#/" class="btn btn-navbar">
+            <i class="fa fa-home fa-navbar"></i> Home</a>
+
+          <a href="#/details" class="btn btn-navbar">
+            <i class="fa fa-bomb fa-navbar"></i> Details</a>
+
+          <a href="#/testBackend" class="btn btn-navbar">
+            <i class="fa fa-spoon fa-navbar"></i> Lunch</a>
+        </div>
+      </div>
+			-->
+      
+      <!-- App Body -->
+      <div class="app-body" ng-class="{loading: loading}">
+        <div ng-show="loading" class="app-content-loading">
+          <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+
+        <ng-view class="app-content" ng-hide="loading"></ng-view>
+      </div>
+
+    </div><!-- ~ App -->
+		
+		<!-- pickadate -->
+		<script src="bower_components/pickadate/lib/compressed/picker.js"></script>
+		<script src="bower_components/pickadate/lib/compressed/picker.date.js"></script>
+		<script src="bower_components/pickadate/lib/compressed/picker.time.js"></script>
+		<script src="bower_components/pickadate/lib/compressed/legacy.js"></script>
+  </body>
+</html>

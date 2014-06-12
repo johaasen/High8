@@ -1,3 +1,4 @@
 .zedstate
 tags
 node_modules
+cordova/platforms
