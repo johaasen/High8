@@ -213,10 +213,16 @@ border-radius: 5px;
 	color: white;
 }
 
-.app #quicklunch li {
+.app #quicklunch .round-list li {
 	border-radius: 10px;
 	margin-top: 5px;
 	background-color: rgba(255,255,255,0.7)
+}
+
+.app #quicklunch #form-control-date {
+	background: none !important;
+	border: 1px solid white !important;
+	color: black !important;
 }
 	
 .app #quicklunch #timeslots ul#slotlist {
