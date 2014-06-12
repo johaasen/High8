@@ -301,6 +301,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cdeb8e', end
 	padding-left: 30px;
 }
 
+/*
+	Response Screen
+
+	*/
+
+.app#response .subject {
+	border-bottom: 0;
+	border-top: 1px solid #DDD;
+}
+
+.app#response .subject:first-child {
+	padding-top: 0;
+	border-top: 0;
+} 
+
 /* mainly from demo.css of mobile-angular-ui demo application*/
 #shuttle {
   font-size: 100px;

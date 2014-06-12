@@ -442,6 +442,41 @@ app.service('Config', function($localStorage) {
 		// Zunächst alle Kontakte löschen
 		this.model.contacts.splice(0, this.model.contacts.length);
 
+		var that = this;
+
+
+		var clientId = '68944230699-6des2tsh55d3qqpbeb4sunprov5ajdu2.apps.googleusercontent.com';
+		var apiKey = 'XXX';
+		var scopes = 'https://www.google.com/m8/feeds';
+
+   		gapi.client.setApiKey(apiKey);
+   		window.setTimeout(checkAuth,3);
+	
+		function checkAuth() {
+  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+		}
+
+		function handleAuthResult(authResult) {
+
+  			if (authResult && !authResult.error) {
+    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
+      				function(response){
+         				//Handle Response
+         				for(var i = 0;i < response.feed.entry.length; i++){
+         					var contact = response.feed.entry[i];
+         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
+         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
+         							var phoneNumber = contact.gd$phoneNumber[j];
+         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
+         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
+         							}
+         						}
+         					}
+         	
+         				}
+      				});
+  			}
+		}
 		// Dummy-Kontakte anlegen
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
@@ -484,7 +519,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
 
 	// call Mampf API
-	$rootScope.findMatches = function(requestIndex) {
+	$rootScope.findMatches = function(requestIndex, checkAgain) {
 		$rootScope.loading = true;
 
 		requestIndex = requestIndex || 0;
@@ -495,12 +530,17 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 			$rootScope.config.setResponse(requestIndex, response);
 
 			// init new request after successfull call and save of response
-			$rootScope.config.newRequest();
+			if (requestIndex === 0) {
+				$rootScope.config.newRequest();
+			}
 
 			$rootScope.loading = false;
+			if ($location.$$path !== "/response") {
+				$location.path("/response");
+			} else if(checkAgain){
+				checkAgain();
+			}
 			$rootScope.$apply();
-
-			$scope.toggle("responseOverlay");
 		});
 	};
 	
@@ -521,7 +561,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.showList = function(){
-		$scope.showInvitees = !$scope.showInvitees;
+		if($rootScope.config.model.requests[0].invitees.length>1)
+			$scope.showInvitees = !$scope.showInvitees;
 	};
 	
 	$scope.showMap = function() {
@@ -788,10 +829,57 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 
 });
 
-app.controller('responseCtrl', function($rootScope, $scope, $location) {
+app.controller('responseCtrl', function($rootScope, $scope) {
 	$rootScope.currentView = 'response';
 
-	
+	$scope.checkAgain = function() {
+		$scope.matchFound = true;
+		$scope.responseValid = true;
+
+		if ($rootScope.config.model.requests[1].response.subjects.length === 0){
+			// response does not contain any subjects
+			$scope.matchFound = false;
+		}else if(!$rootScope.config.model.requests[1].response.timeslot){
+			// response contains a subject, but no timeslot
+			$scope.matchFound = false;
+			$scope.responseValid = false;
+		}else{	
+			// response contains subject(s) and a timeslot
+
+			function formatHours(epoch){
+				var date = new Date(epoch);
+				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
+			}
+
+			function formatDate(epoch){
+				var date = new Date(epoch);
+				return date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+			}
+
+			$scope.response = {
+				subjects: function(){
+						var subjects = [];
+						for (var i = 0; i < $rootScope.config.model.requests[1].response.subjects.length; i++){
+							subjects.push($rootScope.config.getContactById($rootScope.config.model.requests[1].response.subjects[i]));
+						}
+						return subjects;
+					}(),
+				timeslot: {
+						date: formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
+						startTime: formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
+						endTime: formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
+					},
+				location: {
+					name: "",
+					latitude: $rootScope.config.model.requests[1].currentPosition.latitude,
+					longitude: $rootScope.config.model.requests[1].currentPosition.longitude
+				}
+			};
+		} //if
+	} //checkAgain
+
+	$scope.checkAgain();
+
 });
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
