@@ -24,7 +24,7 @@
 		</div>
 		<!--
 		<div>Lat: {{config.model.requests[0].currentPosition.latitude}}</div>
-		<div>Lon: {{config.model.requests[0].currentPosition.longitude}}</div>
+		<div>Lon: {{config.model.requests[0].currentPosition.longitude}}</div> 
 		-->
   </div>
   
@@ -36,7 +36,6 @@
 			  <i ng-show="showDates" class="fa fa-chevron-circle-down button-grey"></i>
         <i ng-show="!showDates" class="fa fa-chevron-circle-right button-grey"></i>
 				When? 
-        <span>({{config.model.requests[0].invitees.length}})</span>
       </span>
       <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/selectInvitees">
     	Now
@@ -47,7 +46,7 @@
   </div>
   <div class="panel-body" ng-show="showDates">
   	<!-- Timeslots -->
-<div class="panel" id="timeslots">
+	<!-- Timeslots -->
   <div class="panel-body">
 		<ul class="col-xs-12" id="slotlist">
 			<form name="newTimeslot">
@@ -103,7 +102,7 @@
   </div>
 	
   <!-- Invitees -->
-  <div class="panel">
+  <div class="panel div-has-navbar-bottom-large">
   <div class="panel-heading">
     <h2 style="margin-bottom:0px;" class="panel-title">
       <span ng-click="showList()">
@@ -119,7 +118,7 @@
     </h2>
   </div>
   <div class="panel-body" ng-show="showInvitees">
-  <ul class="list-group">
+  <ul class="list-group" style="margin-bottom:0px">
     <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item">
       <h3 style="margin-bottom:0px;"><small>{{invitee.name}} 
       <a class="btn pull-right" ng-click="config.toggleInvitee(invitee)"><i class="fa fa-minus-circle fa-3 button-red"></i></a></small></h3>
