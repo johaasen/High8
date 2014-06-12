@@ -21,6 +21,11 @@
 	margin-bottom:40px;
 }
 
+.div-has-navbar-bottom-large{
+	margin-bottom:70px;
+}
+
+
 .app#initialize {
 	background: rgb(169,3,41); /* Old browsers */
 	background: -moz-linear-gradient(top, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%); /* FF3.6+ */

@@ -114,7 +114,7 @@
   </div>
 	
   <!-- Invitees -->
-  <div class="panel">
+  <div class="panel div-has-navbar-bottom-large">
   <div class="panel-heading">
     <h2 style="margin-bottom:0px;" class="panel-title">
       <span ng-click="showList()">
@@ -129,8 +129,8 @@
       </a>
     </h2>
   </div>
-  <div class="panel-body div-has-navbar-bottom" ng-show="showInvitees">
-  <ul class="list-group">
+  <div class="panel-body" ng-show="showInvitees">
+  <ul class="list-group" style="margin-bottom:0px">
     <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item">
       <h3 style="margin-bottom:0px;"><small>{{invitee.name}} 
       <a class="btn pull-right" ng-click="config.toggleInvitee(invitee)"><i class="fa fa-minus-circle fa-3 button-red"></i></a></small></h3>
