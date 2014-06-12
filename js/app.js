@@ -272,6 +272,14 @@ app.service('Config', function($localStorage) {
 		return true;
 	};
 
+	this.isEvrbdyInvited = function(){
+		for(var pos in this.model.contacts){
+			if(!this.isInvitee(this.model.contacts[pos]))
+				return false;
+		}
+		return true;
+	};
+
 	this.checkGroups = function() {
 		for(var pos in this.model.groups){
 			this.isGroupInvited(this.model.groups[pos]);
@@ -283,6 +291,7 @@ app.service('Config', function($localStorage) {
 		if (pos > -1) {
 			// is invitee -> remove
 			this.model.requests[0].invitees.splice(pos,1);
+
 			return false;
 		} else {
 			// is no invitee -> add
@@ -310,6 +319,20 @@ app.service('Config', function($localStorage) {
 						this.model.requests[0].invitees.push(contact.id);
 					}
 				}
+		}
+	};
+
+	this.toggleAll = function(){
+		if(this.isEvrbdyInvited()){
+			for(var pos in this.model.contacts){
+				this.toggleInvitee(this.model.contacts[pos]);
+			}
+		}
+		else{
+			for(var pos2 in this.model.contacts){
+				if(!this.isInvitee(this.model.contacts[pos2]))
+					this.toggleInvitee(this.model.contacts[pos2]);
+			}
 		}
 	};
 
@@ -442,6 +465,7 @@ app.service('Config', function($localStorage) {
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
 	// bind Config service to $rootScope, so that it is available everywhere
 	$rootScope.config = Config;
+	$rootScope.isLocationCustom = false;
 
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
@@ -487,10 +511,21 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.popularContacts = $rootScope.config.getPopularContacts(5);
 	$scope.location = Location;
 	$scope.showInvitees = false;
+	$scope.showLocation = false;
+	$scope.showDates = false;
+	$scope.isLocationInit = !$rootScope.config.model.requests[0].currentPosition.latitude;
 
+	$scope.showTimeList = function(){
+		$scope.showDates = !$scope.showDates;
+	};
+	
 	$scope.showList = function(){
 		$scope.showInvitees = !$scope.showInvitees;
 	};
+	
+	$scope.showMap = function() {
+		$scope.showLocation = !$scope.showLocation;
+	}
 	
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
@@ -504,8 +539,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			$('#form-control-date').prop('disabled', false);
 		}
 	};
-	
-	// initilize time picker
+
 	// initilize time picker
 	var datePicker = $('form[name="newTimeslot"] input[name="date"]').pickadate({
 		clear: '',
@@ -522,7 +556,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	else{
         		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
         	}
-        	$('#form-control-date').attr("placeholder", 'today');
+
+        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+date.getMonth()+"."+date.getFullYear()+"");
         	//if request has already entries
         	$scope.checkRequest();
         	
@@ -567,7 +602,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
    			var hour = this.get('select','HH');
    			var minute = this.get('select','i');
    			picker.set('min', [hour,minute]);
-   			var hour = parseInt(hour)+1;
+   			var hour = (parseInt(hour)+1)%24;
    		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' });
     	}
 
@@ -609,6 +644,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$scope.setPosition(pos);
 		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
 		window.location.href = '#/QuickLunch';
+		$rootScope.isLocationCustom = true;
 	};
 	
 	$scope.onCancel = function() {
@@ -616,12 +652,28 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$("#pac-input").blur();
 	};
 	
+	$scope.setInitLocation = function() {
+		if ($scope.isLocationInit && !$rootScope.isLocationCustom) $scope.setCurrentPosition();
+	};
+	
 	$scope.addTimeslotToRequest = function() {
-		var date = newTimeslot.date.value;
+
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
-		
-		$rootScope.config.addTimeslot(Date.parse(date + "T" + startTime), Date.parse(date + "T" + endTime));
+
+		var startdate = new Date(newTimeslot.date.value);
+		var enddate = new Date(newTimeslot.date.value);
+
+		//Create startdate Date
+		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));
+		startdate.setMinutes(startTime.substr((startTime.indexOf(":")+1),startTime.length));
+
+		//Create endtime Date
+		enddate.setHours(endTime.substr(0,endTime.indexOf(":")));
+		enddate.setMinutes(endTime.substr((endTime.indexOf(":")+1),endTime.length));
+
+		// add it to Timeslot in Milliseconds
+		$rootScope.config.addTimeslot(startdate.getTime(), enddate.getTime());
 	};
 	
 	
@@ -666,12 +718,17 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	var members = [];
 
 	$scope.toggleMember = function(contact) {
-		var pos = members.indexOf(contact.id);
+		var pos = members.indexOf(contact);
 		if (pos > -1) {
 			members.splice(pos, 1);
 		} else {
-			members.push(contact.id);
+			members.push(contact);
 		}
+	};
+
+	function nameSort (a, b) {
+	  if (a.name < b.name) return -1;
+		if (a.name > b.name) return 1;
 	};
 
 	$scope.addGroupToModel = function(name){
@@ -693,12 +750,20 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			return false;
 		}
 
-		$rootScope.config.addGroup(name, members);
+		members.sort(nameSort);
+
+		var memberIDs = [];
+
+		for(var pos in members){
+			memberIDs.push(members[pos].id);
+		}
+
+		$rootScope.config.addGroup(name, memberIDs);
 		$window.history.back();
 	};
 	
 	$scope.inMembers = function (contact) {
-		var pos = members.indexOf(contact.id);
+		var pos = members.indexOf(contact);
 		if (pos > -1) {
 			return true;
 		} else {

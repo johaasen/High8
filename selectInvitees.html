@@ -1,13 +1,14 @@
+<input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
 <div class="scrollable">
 <div class="scrollable-content">
-	<div class="section container-fluid">
+	<div class="section container-fluid" style="padding-top: 0px;">
 
       <div content-for="rightNav">
         <a class="btn btn-navbar" onclick="window.history.back()">
           <i class="fa fa-check fa-3"></i>  DONE</a>
       </div>
 
-      <input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
+      
 
       <div class="navbar navbar-app navbar-absolute-bottom">
 	      <div class="btn-group justified nav-tabs">
@@ -19,9 +20,9 @@
 	      </div>
       </div>
 
-      <div class="tab-content" style="margin-top: 10px; margin-bottom: 40px;">
+      <div class="tab-content div-has-navbar-bottom">
         <div class="tab-pane" toggleable active-class="active" default="active" id="Popular" exclusion-group="myTabs">
-         <ul class="list-group">
+          <ul class="list-group">
             <li ng-repeat="contact in popularContacts | filter:contactSearch" class="list-group-item">
               <h3 style="margin-bottom:0px;">
                 <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
@@ -51,6 +52,30 @@
         <div class="tab-pane" default={{allContactsDefault()}} toggleable active-class="active" id="All" exclusion-group="myTabs">
 
         	<ul class="list-group">
+            <li class="list-group-item">
+              <h3 style="margin-bottom:0px;">
+                <small><b>All</b></small>
+              </h3>
+                <!-- Fake switch directive with ng-switch -->
+              <div ng-switch on="config.isEvrbdyInvited()"> 
+
+                <div ng-switch-when="false">
+                  <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleAll()"
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
+
+                <div ng-switch-when="true">
+                  <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                        ng-click="config.toggleAll()" 
+                        style="position: absolute; right: 0; top: 6px;">
+                  <div class="switch-handle"></div></div>
+                </div>
+
+              </div>               
+            </li>
+
             <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
               <h3 style="margin-bottom:0px;">
                 <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
@@ -107,7 +132,7 @@
 
                </div> 
                 <ul class="list-group" style="margin-bottom: -11px;">
-                  <li ng-repeat="id in group.members | filter:contactSearch" ng-show="group.show" class="list-group-item">
+                  <li ng-repeat="id in group.members | orderBy:'name' |filter:contactSearch" ng-show="group.show" class="list-group-item">
                     <h3 style="margin-bottom:0px;">
                       <small>
                         {{config.getContactById(id).name}} - <small>{{config.getContactById(id).phoneNumbers[0]}}</small>

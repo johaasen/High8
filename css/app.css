@@ -9,12 +9,22 @@
 }
 
 .button-red{
-	color:red;
+	/*color:red;*/
+	color: #E2001A;
 }
 
 .button-green{
 	color:green;
 }
+
+.div-has-navbar-bottom{
+	margin-bottom:40px;
+}
+
+.div-has-navbar-bottom-large{
+	margin-bottom:70px;
+}
+
 
 .app#initialize {
 	background: rgb(169,3,41); /* Old browsers */
@@ -149,8 +159,7 @@ border-radius: 5px;
 	border: 0px; 
 	padding: 0px; 
 	margin: 0px; 
-	position: 
-	absolute; 
+	position: absolute; 
 	right: 4px; 
 	top: 14px; 
 	z-index: 10001; 
@@ -161,6 +170,54 @@ border-radius: 5px;
 	QuickLunch Screen
 
 	*/
+	
+.app #quicklunch {
+  background-image: url("../res/iStock_000020695852Medium.jpg");
+  background-size: cover;
+  background-position-x: -280px;
+}
+
+.app #quicklunch .panel {
+	background: rgba(255,255,255,0.6);
+}
+
+.app #quicklunch .panel-body {
+	background: none;
+}
+
+.app #quicklunch .panel-title {
+	color: black;
+}
+
+.app #quicklunch #timeslots ul#slotlist {
+	border: none !important;
+}
+
+.app #quicklunch #timeslots ul#slotlist form {
+	background: none !important;
+}
+
+.app #quicklunch .panel-heading {
+	border: none !important;
+}
+
+.app #findmatches {
+	/*bottom: 20px;*/
+}
+
+.app #findmatches:hover {
+	background: #E2001A;
+}
+
+.app #findmatches:hover button {
+	color: white;
+}
+
+.app #quicklunch li {
+	border-radius: 10px;
+	margin-top: 5px;
+	background-color: rgba(255,255,255,0.7)
+}
 	
 .app #quicklunch #timeslots ul#slotlist {
 	overflow: hidden;
@@ -225,7 +282,17 @@ background: -o-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1
 background: -ms-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* IE10+ */
 background: linear-gradient(135deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cdeb8e', endColorstr='#a5c956',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
 
+.app #quicklunch #location-select img {
+	width: 15px;
+  position: relative;
+  bottom: 30px;
+  left: 5px;
+}
+
+.app #quicklunch #location-select input {
+	padding-left: 30px;
 }
 
 /*

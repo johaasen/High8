@@ -9,7 +9,7 @@
 	<input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
 
   <ul class="list-group" id="groupList" style="margin-bottom:55px;">
-    <li ng-repeat="contact in config.model.contacts | filter:contactSearch" class="list-group-item">
+    <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
       <h3 style="margin-bottom:0px;">
         <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
       </h3>
