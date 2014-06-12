@@ -1,121 +1,5 @@
 var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui"]);
 
-//TODO: In entsprechenden Controller kapseln
-if (navigator.contacts === undefined) {
-	navigator.contacts = {};
-
-	navigator.contacts.create = function(contact) {
-	//check if phone no. already in contacts
-		var onSuccess = function() {
-		console.log("Phone number already used...");
-		};
-		var onError = function() {
-			var contacts = JSON.parse(localStorage.getItem("contacts"));
-			if(contacts===null){
-				contacts=[];
-			}
-			contacts.push(contact);
-			localStorage.setItem("contacts", JSON.stringify(contacts));
-		};
-		// var contact = {
-			// name : name,
-			// phoneNumbers : [phone],
-			// id : md5(phone).toUpperCase()
-		// };
-		navigator.contacts.find(onSuccess, onError, contact);
-		return true;
-	};
-
-	navigator.contacts.find = function(onSuccess, onError, fields, options, filter, multiple) {
-		var savedContacts = JSON.parse(localStorage.getItem("ngStorage-contacts"));
-		if(savedContacts===undefined||savedContacts===null){
-			onError("No contacts yet");
-			return;
-		}
-		if (multiple === undefined) {
-			multiple = false;
-		}
-		if (filter == "*") {
-			return [].concat(savedContacts);
-		};
-		var contacts = [];
-		if (fields.id !== undefined) {
-			for (var i = 0; i < savedContacts.length; i++) {
-				var contact = savedContacts[i];
-				if (contact.id == fields.id) {
-					contacts.push(contact);
-				}
-			}
-			if(contacts.length==0){
-				onError();
-				return;
-			}
-			if (multiple) {
-				console.log("Found Contacts: " + contacts);
-				onSuccess(contacts);
-				return;
-			}
-			console.log("Found Contact: " + contacts[0]);
-			onSuccess([contacts[0]]);
-			return;
-		}
-		if (fields.phoneNumbers !== undefined) {
-			for (var i = 0; i < savedContacts.length; i++) {
-				var contact = savedContacts[i];
-				for (var k = 0; k < fields.phoneNumbers.length; k++) {
-					for (var j = 0; j < contact.phoneNumbers.length; j++) {
-						if (contact.phoneNumbers[j] == fields.phoneNumbers[k]) {
-							contacts.push(contact);
-							break;
-						}
-					}
-				}
-			}
-			if(contacts.length==0){
-				onError();
-				return;
-			}
-			if (multiple) {
-				console.log("Found Contacts: " + contacts);
-				onSuccess(contacts);
-				return;
-			}
-			console.log("Found Contact: " + contacts[0]);
-			onSuccess([contacts[0]]);
-			return;
-		}
-		if (fields.categories !== undefined) {
-			for (var i = 0; i < savedContacts.length; i++) {
-				var contact = savedContacts[i];
-				for (var k = 0; k < fields.categories.length; k++) {
-					for (var j = 0; j < contact.categories.length; j++) {
-						if (contact.categories[j] == fields.categories[k]) {
-							contacts.push(contact);
-							break;
-						}
-					}
-				}
-			}
-			if(contacts.length==0){
-				onError();
-				return;
-			}
-			if (multiple) {
-				console.log("Found Contacts: " + contacts);
-				onSuccess(contacts);
-				return;
-			}
-			console.log("Found Contact: " + contacts[0]);
-			onSuccess([contacts[0]]);
-			return;
-		}
-		
-	};
-	//available in 
-	//navigator.contacts.pickContact = function() {
-	//};
-}
-
 app.config(function($routeProvider, $locationProvider) {
 	$locationProvider.html5Mode(false);
 	//TODO effects of (true)?
@@ -139,6 +23,9 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/addGroup', {
 		templateUrl : "addGroup.html",
 		controller : 'contactCtrl'
+	}).when('/response', {
+		templateUrl : "response.html",
+		controller : 'responseCtrl'
 	}).otherwise({
 		redirectTo : '/QuickLunch'
 	});
@@ -835,6 +722,9 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	};
 
 });
+
+app.controller('responseCtrl', function($rootScope, $scope, $location) {
+};
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 	// TODO: Mike content-for yield-to
