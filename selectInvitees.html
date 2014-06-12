@@ -48,7 +48,7 @@
           </ul> 
         </div>
 
-        <div class="tab-pane" toggleable active-class="active" id="All" exclusion-group="myTabs">
+        <div class="tab-pane" default={{allContactsDefault()}} toggleable active-class="active" id="All" exclusion-group="myTabs">
 
         	<ul class="list-group">
             <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">

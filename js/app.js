@@ -757,6 +757,15 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     }
     return counter;
   };
+  
+  	$scope.allContactsDefault = function(){
+		if($rootScope.config.model.requests.length>1){
+			return "inactive";
+		}
+		else{
+			return "active";
+		}
+	};
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, $window) {
