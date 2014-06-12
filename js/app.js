@@ -735,7 +735,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
 		
-		$rootScope.config.addTimeslot(Date.parse(date + ' ' + startTime), Date.parse(date + ' ' + endTime));
+		$rootScope.config.addTimeslot(Date.parse(date + "T" + startTime), Date.parse(date + "T" + endTime));
 	};
 	
 	
