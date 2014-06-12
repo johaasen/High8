@@ -65,11 +65,15 @@
 </div> <!-- ~matchFound -->
 
 <div ng-switch-when="invalid">
-  invalid request
+  <div bs-panel>
+    <h3>Invalid Response from Backend<h3>
+  </div>
 </div> <!-- ~invalid -->
 
 <div ng-switch-when="noMatch">
-  no match found
+    <div bs-panel>
+    <h3>No Match found, yet...<h3>
+  </div>
 </div> <!-- ~noMatch -->
 
 <div ng-switch-when="noRequest">
