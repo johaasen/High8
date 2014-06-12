@@ -724,7 +724,10 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 });
 
 app.controller('responseCtrl', function($rootScope, $scope, $location) {
-};
+	$rootScope.currentView = 'response';
+
+	
+});
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 	// TODO: Mike content-for yield-to
