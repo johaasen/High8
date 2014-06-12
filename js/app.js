@@ -465,6 +465,7 @@ app.service('Config', function($localStorage) {
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
 	// bind Config service to $rootScope, so that it is available everywhere
 	$rootScope.config = Config;
+	$rootScope.isLocationCustom = false;
 
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
@@ -644,6 +645,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$scope.setPosition(pos);
 		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
 		window.location.href = '#/QuickLunch';
+		$rootScope.isLocationCustom = true;
 	};
 	
 	$scope.onCancel = function() {
@@ -652,7 +654,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.setInitLocation = function() {
-		if ($scope.isLocationInit) $scope.setCurrentPosition();
+		if ($scope.isLocationInit && !$rootScope.isLocationCustom) $scope.setCurrentPosition();
 	};
 	
 	$scope.addTimeslotToRequest = function() {
