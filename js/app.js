@@ -447,7 +447,7 @@ app.service('Config', function($localStorage) {
 
 
 		var clientId = '68944230699-6des2tsh55d3qqpbeb4sunprov5ajdu2.apps.googleusercontent.com';
-		var apiKey = 'P2AADif0FWgYiltF8QbGvsPR';
+		var apiKey = '';
 		var scopes = 'https://www.google.com/m8/feeds';
 
    		gapi.client.setApiKey(apiKey);
