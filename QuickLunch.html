@@ -1,11 +1,16 @@
+<div content-for="rightNav">
+	<a class="btn btn-navbar" ng-click="findMatches(0)">
+	<i class="fa fa-check fa-3"></i>  SEND</a>
+</div>
+
 <div class="scrollable" id="quicklunch">
 <div class="scrollable-content">
-<div style="margin-bottom:30px">
+<div style="margin-bottom:30px;margin-top:30px">
 	<!-- Timeslots -->
-	<div class="panel" id="timeslots">
+	<div class="panel" id="timeslots" style="display:none">
   <div class="panel-heading">
     <h2 class="panel-title">
-      Timeslots
+      When
     </h2>
   </div>
   <div class="panel-body">
@@ -43,31 +48,83 @@
     TODO:
     first update takes some seconds in some cases - delay of API or does the model not update?
     -->
-  <div bs-panel title="Location">
+  <div bs-panel title="Where" style="display:none">
     <!--
 		<button class="btn btn-default" ng-click="setCurrentPosition()"><i class="fa fa-location-arrow"></i> Current position</button>
 		<button class="btn btn-default" onclick="window.location.href='#/location'">Custom</button>
 		-->
-		<div class="form-control-wrapper">
+		<div id="location-select" class="form-control-wrapper">
 			<label for="location" class="sr-only">location</label>
 			<input type="text" class="form-control" ng-model="position" name="location" placeholder="Current location" onfocus="window.location.href='#/location'">
+			<img src="http://maps.google.com/mapfiles/marker.png" draggable="false"></img>
 		</div>
+		<!--
 		<div>Lat: {{config.model.requests[0].currentPosition.latitude}}</div>
 		<div>Lon: {{config.model.requests[0].currentPosition.longitude}}</div>
+		-->
   </div>
   
-  
+	  <!-- Timeslots -->
+  <div class="panel">
+  <div class="panel-heading">
+    <h2 style="margin-bottom:0px;" class="panel-title">
+      <span ng-click="showTimeList()">
+			  <i ng-show="showDates" class="fa fa-chevron-circle-down button-grey"></i>
+        <i ng-show="!showDates" class="fa fa-chevron-circle-right button-grey"></i>
+				When? 
+        <span>({{config.model.requests[0].invitees.length}})</span>
+      </span>
+      <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/selectInvitees">
+    	Now
+    	<!--<i class="fa fa-plus-circle fa-3 button-green"></i>-->
+			<img src="res/clock.png" style="width:15px"></img>
+      </a>
+    </h2>
+  </div>
+  <div class="panel-body" ng-show="showDates">
+  <ul class="list-group">
+		<li ng-repeat="timeslot in config.model.requests[0].timeslots">{{timeslot.startTime | date : 'EEEE, dd.MM.yyyy'}}: {{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}} 
+			<a class="pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime)"><i class="fa fa-minus-circle fa-3"></i></a>
+    </li>
+  </ul>
+  </div>
+  </div>
+	
+	<!-- Location -->
+  <div class="panel" ng-init="setInitLocation()">
+  <div class="panel-heading">
+    <h2 style="margin-bottom:0px;" class="panel-title">
+      <span ng-click="showMap()">
+			  <i ng-show="showLocation" class="fa fa-chevron-circle-down button-grey"></i>
+        <i ng-show="!showLocation" class="fa fa-chevron-circle-right button-grey"></i>
+				Where? 
+      </span>
+      <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/location">
+    	<span ng-show="isLocationInit">Current location</span>
+			<span ng-show="!isLocationInit">Custom...</span>
+			<img src="http://maps.google.com/mapfiles/marker.png" draggable="false" style="width:15px"></img>
+      </a>
+    </h2>
+  </div>
+  <div class="panel-body" ng-show="showLocation">
+		<a href="#/location">
+			<img src="http://maps.googleapis.com/maps/api/staticmap?center={{config.model.requests[0].currentPosition.latitude}},{{config.model.requests[0].currentPosition.longitude}}&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:%7C{{config.model.requests[0].currentPosition.latitude}},{{config.model.requests[0].currentPosition.longitude}}" draggable="false" style="border: 1px solid black"></img>
+		</a>
+  </div>
+  </div>
+	
   <!-- Invitees -->
   <div class="panel">
   <div class="panel-heading">
     <h2 style="margin-bottom:0px;" class="panel-title">
-      <span ng-click="showList()">Contacts 
-        <i ng-show="showInvitees" class="fa fa-chevron-circle-down button-grey"></i>
+      <span ng-click="showList()">
+				<i ng-show="showInvitees" class="fa fa-chevron-circle-down button-grey"></i>
         <i ng-show="!showInvitees" class="fa fa-chevron-circle-right button-grey"></i>
-        <small>({{config.model.requests[0].invitees.length}} invitees)</small>
+				Who? 
+        <span>({{config.model.requests[0].invitees.length}})</span>
       </span>
       <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/selectInvitees">
-    	Add Invitees
+    	Add contacts
     	<i class="fa fa-plus-circle fa-3 button-green"></i>
       </a>
     </h2>
@@ -100,6 +157,6 @@
 </div>
 </div>
 </div>
-<div class="navbar navbar-app navbar-absolute-bottom">
-  	<button class="btn btn-default justified" ng-click="findMatches(0)">Find Matches!</button>
-  </div>
+<div id="findmatches" class="navbar navbar-app navbar-absolute-bottom">
+  	<button class="btn btn-default justified" ng-click="findMatches(0)"><b>Send Request!</b></button>
+</div>

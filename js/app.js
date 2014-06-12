@@ -599,10 +599,21 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.contacts = $rootScope.config.model.contacts;
 	$scope.location = Location;
 	$scope.showInvitees = false;
+	$scope.showLocation = false;
+	$scope.showDates = false;
+	$scope.isLocationInit = !$rootScope.config.model.requests[0].currentPosition.latitude;
 
+	$scope.showTimeList = function(){
+		$scope.showDates = !$scope.showDates;
+	};
+	
 	$scope.showList = function(){
 		$scope.showInvitees = !$scope.showInvitees;
 	};
+	
+	$scope.showMap = function() {
+		$scope.showLocation = !$scope.showLocation;
+	}
 	
 	// initilize time picker
 	$('form[name="newTimeslot"] input[name="date"]').pickadate({
@@ -686,6 +697,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.onCancel = function() {
 		$("#pac-input").val('');
 		$("#pac-input").blur();
+	};
+	
+	$scope.setInitLocation = function() {
+		if ($scope.isLocationInit) $scope.setCurrentPosition();
 	};
 	
 	$scope.addTimeslotToRequest = function() {
