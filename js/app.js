@@ -797,12 +797,18 @@ app.controller('responseCtrl', function($rootScope, $scope) {
 	$rootScope.currentView = 'response';
 
 	$scope.checkAgain = function() {
+		$scope.matchFound = true;
 		$scope.responseValid = true;
-		if (!$rootScope.config.model.requests[1].response.subjects ||
-			!$rootScope.config.model.requests[1].response.timeslot) {
 
+		if ($rootScope.config.model.requests[1].response.subjects.length === 0){
+			// response does not contain any subjects
+			$scope.matchFound = false;
+		}else if(!$rootScope.config.model.requests[1].response.timeslot){
+			// response contains a subject, but no timeslot
+			$scope.matchFound = false;
 			$scope.responseValid = false;
 		}else{	
+			// response contains subject(s) and a timeslot
 
 			function formatHours(epoch){
 				var date = new Date(epoch);

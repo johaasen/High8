@@ -2,7 +2,7 @@
 <div class="scrollable-content">
 <div style="margin-bottom:50px">
 
-<div ng-switch on="responseValid"> 
+<div ng-switch on="matchFound"> 
 <div ng-switch-when="true">
 
 <div class="list-group">
@@ -66,9 +66,17 @@
 </div> <!-- ~true -->
 <div ng-switch-when="false">
 
-	SCHADE
+<div ng-switch on="responseValid"> 
+<div ng-switch-when="true">
+  no match found
+</div> <!-- ~true -->
 
-</div>
+<div ng-switch-when="false">
+  invalid response
+</div> <!-- ~false -->
+</div> <!-- ~ng-switch -->
+
+</div> <!-- ~false -->
 </div> <!-- ~ng-switch -->
 
 <div class="navbar navbar-app navbar-absolute-bottom">
