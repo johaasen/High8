@@ -508,8 +508,7 @@ app.service('Config', function($localStorage) {
 		}
 
 		// reduce to first n elements
-		popularContacts.slice(0,n);
-		return popularContacts;
+		return popularContacts.slice(0,n);
 	};
 
 	this.validateGroups = function() {
