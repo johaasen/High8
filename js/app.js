@@ -829,22 +829,26 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 
 });
 
-app.controller('responseCtrl', function($rootScope, $scope) {
+app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	$rootScope.currentView = 'response';
-
+	
 	$scope.checkAgain = function() {
-		$scope.matchFound = true;
-		$scope.responseValid = true;
+		if (!$rootScope.config.model.requests[1]) {
+			// no request sent yet
+			$scope.responseStatus = "noRequest";
 
-		if ($rootScope.config.model.requests[1].response.subjects.length === 0){
+		}else if ($rootScope.config.model.requests[1].response.subjects.length === 0){
 			// response does not contain any subjects
-			$scope.matchFound = false;
+			$scope.responseStatus = "noMatch";
+
 		}else if(!$rootScope.config.model.requests[1].response.timeslot){
 			// response contains a subject, but no timeslot
-			$scope.matchFound = false;
-			$scope.responseValid = false;
+
+			$scope.responseStatus = "invalid";
 		}else{	
 			// response contains subject(s) and a timeslot
+
+			$scope.responseStatus = "matchFound";
 
 			function formatHours(epoch){
 				var date = new Date(epoch);

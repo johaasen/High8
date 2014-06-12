@@ -2,8 +2,8 @@
 <div class="scrollable-content">
 <div style="margin-bottom:50px">
 
-<div ng-switch on="matchFound"> 
-<div ng-switch-when="true">
+<div ng-switch on="responseStatus"> 
+<div ng-switch-when="matchFound">
 
 <div class="list-group">
       <!-- Header -->
@@ -62,21 +62,23 @@
 
 </div>
 
+</div> <!-- ~matchFound -->
 
-</div> <!-- ~true -->
-<div ng-switch-when="false">
+<div ng-switch-when="invalid">
+  invalid request
+</div> <!-- ~invalid -->
 
-<div ng-switch on="responseValid"> 
-<div ng-switch-when="true">
+<div ng-switch-when="noMatch">
   no match found
-</div> <!-- ~true -->
+</div> <!-- ~noMatch -->
 
-<div ng-switch-when="false">
-  invalid response
-</div> <!-- ~false -->
-</div> <!-- ~ng-switch -->
+<div ng-switch-when="noRequest">
+  <div bs-panel>
+    <h3>Please send a request first!</h3>
+    <a class="btn btn-default justified" href="#/Quicklunch">Quicklunch</a>
+  </div>
+</div> <!-- ~noRequest -->
 
-</div> <!-- ~false -->
 </div> <!-- ~ng-switch -->
 
 <div class="navbar navbar-app navbar-absolute-bottom">
