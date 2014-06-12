@@ -438,15 +438,16 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.importContacts = function() {
+	this.importContacts = function(scopeApply) {
 		// Zunächst alle Kontakte löschen
-		this.model.contacts.splice(0, this.model.contacts.length);
-
+		if(this.model.contacts){
+			this.model.contacts.splice(0, this.model.contacts.length);
+		}
 		var that = this;
 
 
 		var clientId = '68944230699-6des2tsh55d3qqpbeb4sunprov5ajdu2.apps.googleusercontent.com';
-		var apiKey = 'XXX';
+		var apiKey = 'P2AADif0FWgYiltF8QbGvsPR';
 		var scopes = 'https://www.google.com/m8/feeds';
 
    		gapi.client.setApiKey(apiKey);
@@ -474,6 +475,7 @@ app.service('Config', function($localStorage) {
          					}
          	
          				}
+         				if(scopeApply){scopeApply();}
       				});
   			}
 		}
@@ -754,7 +756,7 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	// $scope.groups = $rootScope.config.model.groups;
 
 	$scope.importContacts = function(){
-		$rootScope.config.importContacts();
+		$rootScope.config.importContacts($scope.$apply);
 	};
 
 	var members = [];
