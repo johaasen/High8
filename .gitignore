@@ -1,4 +1,7 @@
 .zedstate
 tags
 node_modules
-cordova/platforms
+cordova/platforms/android/*
+!cordova/platforms/android/ant-build
+cordova/platforms/android/ant-build/*
+!cordova/platforms/android/ant-build/Mampf-debug.apk
