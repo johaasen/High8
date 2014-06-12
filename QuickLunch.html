@@ -5,7 +5,7 @@
 
 <div class="scrollable" id="quicklunch">
 <div class="scrollable-content">
-<div style="margin-bottom:30px;margin-top:30px">
+<div style="margin-top:30px;">
 	<!-- Timeslots -->
 	<div class="panel" id="timeslots" style="display:none">
   <div class="panel-heading">
@@ -129,7 +129,7 @@
       </a>
     </h2>
   </div>
-  <div class="panel-body" ng-show="showInvitees">
+  <div class="panel-body div-has-navbar-bottom" ng-show="showInvitees">
   <ul class="list-group">
     <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item">
       <h3 style="margin-bottom:0px;"><small>{{invitee.name}} 
