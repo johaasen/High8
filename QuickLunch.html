@@ -51,10 +51,16 @@
 			</form>
 				<ul class="list-group" style="margin-bottom:0px">
 					<li class="list-group-item round-list" ng-repeat="timeslot in config.model.requests[0].timeslots">
-						<h3 style="margin-bottom:0px"><small>
-							{{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}} 							
-							<a class="btn pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime); checkRequest()"><i class="fa fa-minus-circle fa-3 button-red"></i></a>							
-						</small></h3>
+						<h3 style="margin-bottom:0px">
+              <small>
+							{{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}}
+              </small>
+							<a class="pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime); checkRequest()">
+                <small>
+                  <i class="fa fa-minus-circle fa-3 button-red"></i>
+                </small>
+              </a>							
+						</h3>
 					</li>
 				</ul>
   </div>
@@ -103,8 +109,16 @@
   <div class="panel-body" ng-show="showInvitees">
   <ul class="list-group" style="margin-bottom:0px">
     <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item round-list">
-      <h3 style="margin-bottom:0px;"><small>{{invitee.name}} 
-      <a class="btn pull-right" ng-click="config.toggleInvitee(invitee)"><i class="fa fa-minus-circle fa-3 button-red"></i></a></small></h3>
+      <h3 style="margin-bottom:0px;">
+        <small>
+          {{invitee.name}}
+        </small>
+        <a class="pull-right" ng-click="config.toggleInvitee(invitee)">
+          <small>
+            <i class="fa fa-minus-circle fa-3 button-red"></i>
+          </small>
+        </a>
+      </h3>
     </li>
   </ul>
   </div>
