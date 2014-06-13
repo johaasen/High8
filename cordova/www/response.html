@@ -1,0 +1,95 @@
+<div class="scrollable" id="response">
+<div class="scrollable-content">
+<div style="margin-bottom:50px">
+
+<div ng-switch on="responseStatus"> 
+<div ng-switch-when="matchFound">
+
+<div class="list-group">
+      <!-- Header -->
+      <!--
+      <div class="list-group-item">
+        <h3>Found a Match!</h3>
+      </div> -->
+
+      <!-- Timeslot -->
+      <div class="list-group-item media">
+        <div class="pull-left">
+          <i class="fa fa-calendar feature-icon text-primary"></i>
+        </div>
+        <div class="media-body">
+            <h3 class="media-heading">When?</h3>
+            <h3 style="padding-left: 15px"><small>
+            	{{response.timeslot.date + ", " + response.timeslot.startTime + " - " + response.timeslot.endTime}}
+            </small></h3>
+        </div>
+      </div>
+
+      <!-- Invitees -->
+      <div class="list-group-item media">
+        <div class="pull-left">
+          <i class="fa fa-group feature-icon text-primary"></i>
+        </div>
+        <div class="media-body">
+            <h3 class="media-heading">Who?</h3>
+            <ul class="list-group" style="margin-bottom: 0">
+	            <li ng-repeat="subject in response.subjects" class="list-group-item subject">
+	              <h3 style="margin-bottom:0px;">
+	              	<small>{{subject.name}}</small>
+	                	<a class="btn btn-small pull-right" href="tel:{{subject.phoneNumbers[0]}}">
+	                		<i class="fa fa-phone" style="font-size: 1.6em"></i>
+	                	</a>
+	              </h3>
+	            </li>
+	        </ul>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="list-group-item media">
+        <div class="pull-left">
+          <i class="fa fa-map-marker feature-icon text-primary"></i>
+        </div>
+        <div class="media-body">
+            <h3 class="media-heading">Where?</h3>
+            <h3 style="padding-left: 15px"><small>
+            	DHBW Mannheim
+            </small></h3>
+        </div>
+      </div>
+
+      <div><img src="http://placehold.it/300x300" /></div>
+
+</div>
+
+</div> <!-- ~matchFound -->
+
+<div ng-switch-when="invalid">
+  <div bs-panel>
+    <h3>Invalid Response from Backend<h3>
+  </div>
+</div> <!-- ~invalid -->
+
+<div ng-switch-when="noMatch">
+    <div bs-panel>
+    <h3>No Match found, yet...<h3>
+  </div>
+</div> <!-- ~noMatch -->
+
+<div ng-switch-when="noRequest">
+  <div bs-panel>
+    <h3>Please send a request first!</h3>
+    <a class="btn btn-default justified" href="#/Quicklunch">Quicklunch</a>
+  </div>
+</div> <!-- ~noRequest -->
+
+</div> <!-- ~ng-switch -->
+
+<div class="navbar navbar-app navbar-absolute-bottom">
+  	<button class="btn btn-default justified" ng-click="findMatches(1, checkAgain)">
+  		<i class="fa fa-refresh fa-navbar"></i>&nbsp;&nbsp;&nbsp;Check Again!
+  	</button>
+</div>
+
+</div>
+</div>

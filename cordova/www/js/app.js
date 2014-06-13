@@ -445,8 +445,10 @@ app.service('Config', function($localStorage) {
 		}
 		var that = this;
 
-
 		var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
+		if(window.location.origin===null){
+			clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
+		}
 		var scopes = 'https://www.google.com/m8/feeds';
 
    		window.setTimeout(checkAuth,3);
@@ -561,7 +563,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.showList = function(){
-		if($rootScope.config.model.requests[0].invitees.length>1)
+		if($rootScope.config.model.requests[0].invitees.length>0)
 			$scope.showInvitees = !$scope.showInvitees;
 	};
 	
@@ -583,7 +585,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 
 	// initilize time picker
-	var datePicker = $('form[name="newTimeslot"] input[name="date"]').pickadate({
+	var datePicker = $('form[name="newTimeslotDate"] input[name="date"]').pickadate({
 		clear: '',
 		format: 'dd.mm.yyyy',
 		formatSubmit: 'yyyy-mm-dd',
@@ -621,7 +623,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	}
 	});
 
-	var startTimePicker = $('form[name="newTimeslot"] input[name="startTime"]').pickatime({
+	var startTimePicker = $('form[name="newTimeslotTime"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -649,7 +651,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	}
 
 	});
-	var endTimePicker = 	$('form[name="newTimeslot"] input[name="endTime"]').pickatime({
+	var endTimePicker = 	$('form[name="newTimeslotTime"] input[name="endTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -700,11 +702,11 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
 	$scope.addTimeslotToRequest = function() {
 
-		var startTime = newTimeslot.startTime.value;
-		var endTime = newTimeslot.endTime.value;
+		var startTime = newTimeslotTime.startTime.value;
+		var endTime = newTimeslotTime.endTime.value;
 
-		var startdate = new Date(newTimeslot.date.value);
-		var enddate = new Date(newTimeslot.date.value);
+		var startdate = new Date(newTimeslotDate.date.value);
+		var enddate = new Date(newTimeslotDate.date.value);
 
 		//Create startdate Date
 		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));

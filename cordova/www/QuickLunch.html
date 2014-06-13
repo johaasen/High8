@@ -16,7 +16,7 @@
       </span>
       <i class="fa fa-clock-o pull-right" style="padding-right:10px;"></i>
       <div class="pull-right" style="margin-top:-6px;margin-bottom:0px; padding-top: 0px; font-size:14px">
-      	<form name="newTimeslot" class="ng-pristine ng-valid">
+      	<form name="newTimeslotDate" class="ng-pristine ng-valid">
           <div class="form-control-wrapper date">
   					<label for="date" class="sr-only">Datum</label>
   					<input type="text" id="form-control-date" class="form-control" ng-model="date" name="date" placeholder="Datum" size="7">
@@ -27,12 +27,13 @@
   </div>
  
 	<div class="panel-body" ng-show="showDates">
-			<form name="newTimeslot">
+			<form name="newTimeslotTime" style="margin-bottom: 10px;">
 				<div>
 				<div class="form-control-wrapper startTime pull-left" style="width: 45%; padding-top: 3px;">
 					<label for="startTime" class="sr-only">von</label>
 					<input type="text" id="form-control-startTime" class="form-control" ng-model="startTime" name="startTime" placeholder="von"> 
 				</div>
+
 				<div class="form-control-wrapper pull-right endTime" style="
     width: 45%;
     padding-top: 3px;
@@ -50,10 +51,16 @@
 			</form>
 				<ul class="list-group" style="margin-bottom:0px">
 					<li class="list-group-item round-list" ng-repeat="timeslot in config.model.requests[0].timeslots">
-						<h3 style="margin-bottom:0px"><small>
-							{{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}} 							
-							<a class="btn pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime); checkRequest()"><i class="fa fa-minus-circle fa-3 button-red"></i></a>							
-						</small></h3>
+						<h3 style="margin-bottom:0px">
+              <small>
+							{{timeslot.startTime | date : 'HH:mm'}} - {{timeslot.endTime | date : 'HH:mm'}}
+              </small>
+							<a class="pull-right" ng-click="config.remTimeslot(timeslot.startTime, timeslot.endTime); checkRequest()">
+                <small>
+                  <i class="fa fa-minus-circle fa-3 button-red"></i>
+                </small>
+              </a>							
+						</h3>
 					</li>
 				</ul>
   </div>
@@ -102,8 +109,16 @@
   <div class="panel-body" ng-show="showInvitees">
   <ul class="list-group" style="margin-bottom:0px">
     <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item round-list">
-      <h3 style="margin-bottom:0px;"><small>{{invitee.name}} 
-      <a class="btn pull-right" ng-click="config.toggleInvitee(invitee)"><i class="fa fa-minus-circle fa-3 button-red"></i></a></small></h3>
+      <h3 style="margin-bottom:0px;">
+        <small>
+          {{invitee.name}}
+        </small>
+        <a class="pull-right" ng-click="config.toggleInvitee(invitee)">
+          <small>
+            <i class="fa fa-minus-circle fa-3 button-red"></i>
+          </small>
+        </a>
+      </h3>
     </li>
   </ul>
   </div>
