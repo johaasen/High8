@@ -16,7 +16,7 @@
       </span>
       <i class="fa fa-clock-o pull-right" style="padding-right:10px;"></i>
       <div class="pull-right" style="margin-top:-6px;margin-bottom:0px; padding-top: 0px; font-size:14px">
-      	<form name="newTimeslot" class="ng-pristine ng-valid">
+      	<form name="newTimeslotDate" class="ng-pristine ng-valid">
           <div class="form-control-wrapper date">
   					<label for="date" class="sr-only">Datum</label>
   					<input type="text" id="form-control-date" class="form-control" ng-model="date" name="date" placeholder="Datum" size="7">
@@ -27,12 +27,13 @@
   </div>
  
 	<div class="panel-body" ng-show="showDates">
-			<form name="newTimeslot">
+			<form name="newTimeslotTime" style="margin-bottom: 10px;">
 				<div>
 				<div class="form-control-wrapper startTime pull-left" style="width: 45%; padding-top: 3px;">
 					<label for="startTime" class="sr-only">von</label>
 					<input type="text" id="form-control-startTime" class="form-control" ng-model="startTime" name="startTime" placeholder="von"> 
 				</div>
+
 				<div class="form-control-wrapper pull-right endTime" style="
     width: 45%;
     padding-top: 3px;

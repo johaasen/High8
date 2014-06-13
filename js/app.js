@@ -561,7 +561,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.showList = function(){
-		if($rootScope.config.model.requests[0].invitees.length>1)
+		if($rootScope.config.model.requests[0].invitees.length>0)
 			$scope.showInvitees = !$scope.showInvitees;
 	};
 	
@@ -583,7 +583,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 
 	// initilize time picker
-	var datePicker = $('form[name="newTimeslot"] input[name="date"]').pickadate({
+	var datePicker = $('form[name="newTimeslotDate"] input[name="date"]').pickadate({
 		clear: '',
 		format: 'dd.mm.yyyy',
 		formatSubmit: 'yyyy-mm-dd',
@@ -621,7 +621,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	}
 	});
 
-	var startTimePicker = $('form[name="newTimeslot"] input[name="startTime"]').pickatime({
+	var startTimePicker = $('form[name="newTimeslotTime"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -649,7 +649,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	}
 
 	});
-	var endTimePicker = 	$('form[name="newTimeslot"] input[name="endTime"]').pickatime({
+	var endTimePicker = 	$('form[name="newTimeslotTime"] input[name="endTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -700,11 +700,11 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
 	$scope.addTimeslotToRequest = function() {
 
-		var startTime = newTimeslot.startTime.value;
-		var endTime = newTimeslot.endTime.value;
+		var startTime = newTimeslotTime.startTime.value;
+		var endTime = newTimeslotTime.endTime.value;
 
-		var startdate = new Date(newTimeslot.date.value);
-		var enddate = new Date(newTimeslot.date.value);
+		var startdate = new Date(newTimeslotDate.date.value);
+		var enddate = new Date(newTimeslotDate.date.value);
 
 		//Create startdate Date
 		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));
