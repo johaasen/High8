@@ -108,7 +108,7 @@
   </div>
   <div class="panel-body" ng-show="showInvitees">
   <ul class="list-group" style="margin-bottom:0px">
-    <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item round-list">
+    <li ng-repeat="invitee in contacts | orderBy:'name' | filter:config.isInvitee" class="list-group-item round-list">
       <h3 style="margin-bottom:0px;">
         <small>
           {{invitee.name}}
