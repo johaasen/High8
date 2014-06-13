@@ -79,13 +79,13 @@
       <a class="btn pull-right" style="margin-bottom:0px; padding-top: 0px;" href="#/location">
     	<span ng-show="!isLocationCustom">Current location</span>
 			<span ng-show="isLocationCustom">Custom...</span>
-			<img src="http://maps.google.com/mapfiles/marker.png" draggable="false" style="width:15px"></img>
+			<img src="https://maps.google.com/mapfiles/marker.png" draggable="false" style="width:15px"></img>
       </a>
     </h2>
   </div>
   <div class="panel-body" ng-show="showLocation">
 		<a href="#/location">
-			<img src="http://maps.googleapis.com/maps/api/staticmap?center={{config.model.requests[0].currentPosition.latitude}},{{config.model.requests[0].currentPosition.longitude}}&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:%7C{{config.model.requests[0].currentPosition.latitude}},{{config.model.requests[0].currentPosition.longitude}}" draggable="false" style="border: 1px solid black"></img>
+			<img src="https://maps.googleapis.com/maps/api/staticmap?center={{config.model.requests[0].currentPosition.latitude}},{{config.model.requests[0].currentPosition.longitude}}&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:%7C{{config.model.requests[0].currentPosition.latitude}},{{config.model.requests[0].currentPosition.longitude}}" draggable="false" style="border: 1px solid black"></img>
 		</a>
   </div>
   </div>
@@ -108,7 +108,7 @@
   </div>
   <div class="panel-body" ng-show="showInvitees">
   <ul class="list-group" style="margin-bottom:0px">
-    <li ng-repeat="invitee in contacts | filter:config.isInvitee" class="list-group-item round-list">
+    <li ng-repeat="invitee in contacts | orderBy:'name' | filter:config.isInvitee" class="list-group-item round-list">
       <h3 style="margin-bottom:0px;">
         <small>
           {{invitee.name}}
@@ -143,5 +143,5 @@
 </div>
 </div>
 <div id="findmatches" class="navbar navbar-app navbar-absolute-bottom">
-  	<button class="btn btn-default justified" ng-click="findMatches(0)"><b>Send Request!</b></button>
+  	<button class="btn btn-default justified" ng-click="sendRequest()"><b>Send Request!</b></button>
 </div>
