@@ -213,7 +213,7 @@ border-radius: 5px;
 	color: white;
 }
 
-.app #quicklunch .round-list li {
+.app #quicklunch .round-list {
 	border-radius: 10px;
 	margin-top: 5px;
 	background-color: rgba(255,255,255,0.7)
