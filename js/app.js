@@ -555,7 +555,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.location = Location;
 	$scope.showInvitees = false;
 	$scope.showLocation = false;
-	$scope.showDates = false;
+	$scope.showDates = true;
 	$scope.isLocationInit = !$rootScope.config.model.requests[0].currentPosition.latitude;
 
 	$scope.showTimeList = function(){
@@ -702,6 +702,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
 	$scope.addTimeslotToRequest = function() {
 
+
 		var startTime = newTimeslotTime.startTime.value;
 		var endTime = newTimeslotTime.endTime.value;
 
@@ -722,9 +723,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
 	
 	$scope.sendRequest = function() {
-		$rootScope.mampfAPI.findMatches(function(response) {
-			console.log(response);
-		});
+		if($rootScope.config.model.requests[0].timeslots.length === 0){
+			$scope.addTimeslotToRequest();
+		}
+		$rootScope.findMatches(0);
 	};
 	
   $scope.sortByPopularity = function(contact){
