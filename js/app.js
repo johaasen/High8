@@ -445,8 +445,10 @@ app.service('Config', function($localStorage) {
 		}
 		var that = this;
 
-
 		var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
+		if(window.location.origin===null){
+			clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
+		}
 		var scopes = 'https://www.google.com/m8/feeds';
 
    		window.setTimeout(checkAuth,3);
