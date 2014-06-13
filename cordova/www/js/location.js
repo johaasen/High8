@@ -75,6 +75,8 @@ function initialize(pos) {
 
     infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
     //infowindow.open(map, marker);
+		
+		debugger;
   });
 			
 	// google.maps.event.addListener(marker, 'click', function() {

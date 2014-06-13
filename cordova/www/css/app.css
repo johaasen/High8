@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Lobster);
+@import url(https://fonts.googleapis.com/css?family=Lobster);
 
 .hidden-button{
 	display: none;
@@ -9,12 +9,22 @@
 }
 
 .button-red{
-	color:red;
+	/*color:red;*/
+	color: #E2001A;
 }
 
 .button-green{
 	color:green;
 }
+
+.div-has-navbar-bottom{
+	margin-bottom:40px;
+}
+
+.div-has-navbar-bottom-large{
+	margin-bottom:70px;
+}
+
 
 .app#initialize {
 	background: rgb(169,3,41); /* Old browsers */
@@ -149,8 +159,7 @@ border-radius: 5px;
 	border: 0px; 
 	padding: 0px; 
 	margin: 0px; 
-	position: 
-	absolute; 
+	position: absolute; 
 	right: 4px; 
 	top: 14px; 
 	z-index: 10001; 
@@ -162,12 +171,66 @@ border-radius: 5px;
 
 	*/
 	
+.app #quicklunch {
+  background-image: url("../res/iStock_000020695852Medium.jpg");
+  background-size: cover;
+  background-position-x: -280px;
+}
+
+.app #quicklunch .panel {
+	background: rgba(255,255,255,0.6);
+}
+
+.app #quicklunch .panel-body {
+	background: none;
+}
+
+.app #quicklunch .panel-title {
+	color: black;
+}
+
+.app #quicklunch #timeslots ul#slotlist {
+	border: none !important;
+}
+
+.app #quicklunch #timeslots ul#slotlist form {
+	background: none !important;
+}
+
+.app #quicklunch .panel-heading {
+	border: none !important;
+}
+
+.app #findmatches {
+	/*bottom: 20px;*/
+}
+
+.app #findmatches:hover {
+	background: #E2001A;
+}
+
+.app #findmatches:hover button {
+	color: white;
+}
+
+.app #quicklunch .round-list li {
+	border-radius: 10px;
+	margin-top: 5px;
+	background-color: rgba(255,255,255,0.7)
+}
+
+.app #quicklunch #form-control-date {
+	background: none !important;
+	border: transparent;
+	color: black !important;
+}
+	
 .app #quicklunch #timeslots ul#slotlist {
 	overflow: hidden;
 	margin-top: 1em;
 	list-style-type: none;
 	padding: 0;
-	border: 1px solid #799bc8;
+	border: 1px solid grey;
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -176,14 +239,9 @@ border-radius: 5px;
 .app #quicklunch #timeslots ul#slotlist form {
 	padding: 1em 1em;
 	min-height: 3em;
-	border-bottom: 1px solid #eee;
-background: rgb(210,223,237); /* Old browsers */
-background: -moz-linear-gradient(-45deg,  rgba(210,223,237,1) 0%, rgba(200,215,235,1) 26%, rgba(190,208,234,1) 51%, rgba(166,192,227,1) 51%, rgba(175,199,232,1) 62%, rgba(186,208,239,1) 75%, rgba(153,181,219,1) 88%, rgba(121,155,200,1) 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(210,223,237,1)), color-stop(26%,rgba(200,215,235,1)), color-stop(51%,rgba(190,208,234,1)), color-stop(51%,rgba(166,192,227,1)), color-stop(62%,rgba(175,199,232,1)), color-stop(75%,rgba(186,208,239,1)), color-stop(88%,rgba(153,181,219,1)), color-stop(100%,rgba(121,155,200,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(-45deg,  rgba(210,223,237,1) 0%,rgba(200,215,235,1) 26%,rgba(190,208,234,1) 51%,rgba(166,192,227,1) 51%,rgba(175,199,232,1) 62%,rgba(186,208,239,1) 75%,rgba(153,181,219,1) 88%,rgba(121,155,200,1) 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(-45deg,  rgba(210,223,237,1) 0%,rgba(200,215,235,1) 26%,rgba(190,208,234,1) 51%,rgba(166,192,227,1) 51%,rgba(175,199,232,1) 62%,rgba(186,208,239,1) 75%,rgba(153,181,219,1) 88%,rgba(121,155,200,1) 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(-45deg,  rgba(210,223,237,1) 0%,rgba(200,215,235,1) 26%,rgba(190,208,234,1) 51%,rgba(166,192,227,1) 51%,rgba(175,199,232,1) 62%,rgba(186,208,239,1) 75%,rgba(153,181,219,1) 88%,rgba(121,155,200,1) 100%); /* IE10+ */
-background: linear-gradient(135deg,  rgba(210,223,237,1) 0%,rgba(200,215,235,1) 26%,rgba(190,208,234,1) 51%,rgba(166,192,227,1) 51%,rgba(175,199,232,1) 62%,rgba(186,208,239,1) 75%,rgba(153,181,219,1) 88%,rgba(121,155,200,1) 100%); /* W3C */
+	border-bottom: 1px solid grey;
+
+
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d2dfed', endColorstr='#799bc8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 
 }
@@ -193,12 +251,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d2dfed', end
 }
 
 .app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper.date {
-	width: 40%;
+	width: 100%;
 }
 
 .app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper.startTime,
 .app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper.endTime {
-	width: 20%;
+	margin-top:10px;
+	width: 40%;
+}
+
+#buttonPicker{
+	margin-top:10px;
+	width:80%;
+	background: #f7f7f7;
+	border-color: #cccccc;
+	color: #E2001A;
 }
 
 .app #quicklunch #timeslots ul#slotlist>li {
@@ -221,8 +288,33 @@ background: -o-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1
 background: -ms-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* IE10+ */
 background: linear-gradient(135deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cdeb8e', endColorstr='#a5c956',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-
 }
+
+.app #quicklunch #location-select img {
+	width: 15px;
+  position: relative;
+  bottom: 30px;
+  left: 5px;
+}
+
+.app #quicklunch #location-select input {
+	padding-left: 30px;
+}
+
+/*
+	Response Screen
+
+	*/
+
+.app#response .subject {
+	border-bottom: 0;
+	border-top: 1px solid #DDD;
+}
+
+.app#response .subject:first-child {
+	padding-top: 0;
+	border-top: 0;
+} 
 
 /* mainly from demo.css of mobile-angular-ui demo application*/
 #shuttle {

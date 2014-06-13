@@ -1,121 +1,5 @@
 var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui"]);
 
-//TODO: In entsprechenden Controller kapseln
-if (navigator.contacts === undefined) {
-	navigator.contacts = {};
-
-	navigator.contacts.create = function(contact) {
-	//check if phone no. already in contacts
-		var onSuccess = function() {
-		console.log("Phone number already used...");
-		};
-		var onError = function() {
-			var contacts = JSON.parse(localStorage.getItem("contacts"));
-			if(contacts===null){
-				contacts=[];
-			}
-			contacts.push(contact);
-			localStorage.setItem("contacts", JSON.stringify(contacts));
-		};
-		// var contact = {
-			// name : name,
-			// phoneNumbers : [phone],
-			// id : md5(phone).toUpperCase()
-		// };
-		navigator.contacts.find(onSuccess, onError, contact);
-		return true;
-	};
-
-	navigator.contacts.find = function(onSuccess, onError, fields, options, filter, multiple) {
-		var savedContacts = JSON.parse(localStorage.getItem("ngStorage-contacts"));
-		if(savedContacts===undefined||savedContacts===null){
-			onError("No contacts yet");
-			return;
-		}
-		if (multiple === undefined) {
-			multiple = false;
-		}
-		if (filter == "*") {
-			return [].concat(savedContacts);
-		};
-		var contacts = [];
-		if (fields.id !== undefined) {
-			for (var i = 0; i < savedContacts.length; i++) {
-				var contact = savedContacts[i];
-				if (contact.id == fields.id) {
-					contacts.push(contact);
-				}
-			}
-			if(contacts.length==0){
-				onError();
-				return;
-			}
-			if (multiple) {
-				console.log("Found Contacts: " + contacts);
-				onSuccess(contacts);
-				return;
-			}
-			console.log("Found Contact: " + contacts[0]);
-			onSuccess([contacts[0]]);
-			return;
-		}
-		if (fields.phoneNumbers !== undefined) {
-			for (var i = 0; i < savedContacts.length; i++) {
-				var contact = savedContacts[i];
-				for (var k = 0; k < fields.phoneNumbers.length; k++) {
-					for (var j = 0; j < contact.phoneNumbers.length; j++) {
-						if (contact.phoneNumbers[j] == fields.phoneNumbers[k]) {
-							contacts.push(contact);
-							break;
-						}
-					}
-				}
-			}
-			if(contacts.length==0){
-				onError();
-				return;
-			}
-			if (multiple) {
-				console.log("Found Contacts: " + contacts);
-				onSuccess(contacts);
-				return;
-			}
-			console.log("Found Contact: " + contacts[0]);
-			onSuccess([contacts[0]]);
-			return;
-		}
-		if (fields.categories !== undefined) {
-			for (var i = 0; i < savedContacts.length; i++) {
-				var contact = savedContacts[i];
-				for (var k = 0; k < fields.categories.length; k++) {
-					for (var j = 0; j < contact.categories.length; j++) {
-						if (contact.categories[j] == fields.categories[k]) {
-							contacts.push(contact);
-							break;
-						}
-					}
-				}
-			}
-			if(contacts.length==0){
-				onError();
-				return;
-			}
-			if (multiple) {
-				console.log("Found Contacts: " + contacts);
-				onSuccess(contacts);
-				return;
-			}
-			console.log("Found Contact: " + contacts[0]);
-			onSuccess([contacts[0]]);
-			return;
-		}
-		
-	};
-	//available in 
-	//navigator.contacts.pickContact = function() {
-	//};
-}
-
 app.config(function($routeProvider, $locationProvider) {
 	$locationProvider.html5Mode(false);
 	//TODO effects of (true)?
@@ -139,6 +23,9 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/addGroup', {
 		templateUrl : "addGroup.html",
 		controller : 'contactCtrl'
+	}).when('/response', {
+		templateUrl : "response.html",
+		controller : 'responseCtrl'
 	}).otherwise({
 		redirectTo : '/QuickLunch'
 	});
@@ -385,6 +272,14 @@ app.service('Config', function($localStorage) {
 		return true;
 	};
 
+	this.isEvrbdyInvited = function(){
+		for(var pos in this.model.contacts){
+			if(!this.isInvitee(this.model.contacts[pos]))
+				return false;
+		}
+		return true;
+	};
+
 	this.checkGroups = function() {
 		for(var pos in this.model.groups){
 			this.isGroupInvited(this.model.groups[pos]);
@@ -396,6 +291,7 @@ app.service('Config', function($localStorage) {
 		if (pos > -1) {
 			// is invitee -> remove
 			this.model.requests[0].invitees.splice(pos,1);
+
 			return false;
 		} else {
 			// is no invitee -> add
@@ -423,6 +319,20 @@ app.service('Config', function($localStorage) {
 						this.model.requests[0].invitees.push(contact.id);
 					}
 				}
+		}
+	};
+
+	this.toggleAll = function(){
+		if(this.isEvrbdyInvited()){
+			for(var pos in this.model.contacts){
+				this.toggleInvitee(this.model.contacts[pos]);
+			}
+		}
+		else{
+			for(var pos2 in this.model.contacts){
+				if(!this.isInvitee(this.model.contacts[pos2]))
+					this.toggleInvitee(this.model.contacts[pos2]);
+			}
 		}
 	};
 
@@ -480,7 +390,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.getPopularContacts = function() {
+	this.getPopularContacts = function(n) {
 	// returns an array of all once invited contacts, sorted descending by the number of invites
 		var counts = {};
 
@@ -507,7 +417,8 @@ app.service('Config', function($localStorage) {
 			popularContacts.push(this.getContactById(popularIds[i]));
 		}
 
-		return popularContacts;
+		// reduce to first n elements
+		return popularContacts.slice(0,n);
 	};
 
 	this.validateGroups = function() {
@@ -527,10 +438,45 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	this.importContacts = function() {
+	this.importContacts = function(scopeApply) {
 		// Zunächst alle Kontakte löschen
-		this.model.contacts.splice(0, this.model.contacts.length);
+		if(this.model.contacts){
+			this.model.contacts.splice(0, this.model.contacts.length);
+		}
+		var that = this;
 
+
+		var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
+		var scopes = 'https://www.google.com/m8/feeds';
+
+   		window.setTimeout(checkAuth,3);
+	
+		function checkAuth() {
+  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+		}
+
+		function handleAuthResult(authResult) {
+
+  			if (authResult && !authResult.error) {
+    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
+      				function(response){
+         				//Handle Response
+         				for(var i = 0;i < response.feed.entry.length; i++){
+         					var contact = response.feed.entry[i];
+         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
+         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
+         							var phoneNumber = contact.gd$phoneNumber[j];
+         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
+         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
+         							}
+         						}
+         					}
+         	
+         				}
+         				if(scopeApply){scopeApply();}
+      				});
+  			}
+		}
 		// Dummy-Kontakte anlegen
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
@@ -554,6 +500,7 @@ app.service('Config', function($localStorage) {
 app.controller('MainController', function($rootScope, $scope, $timeout, $location, Config) {
 	// bind Config service to $rootScope, so that it is available everywhere
 	$rootScope.config = Config;
+	$rootScope.isLocationCustom = false;
 
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
@@ -572,7 +519,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
 
 	// call Mampf API
-	$rootScope.findMatches = function(requestIndex) {
+	$rootScope.findMatches = function(requestIndex, checkAgain) {
 		$rootScope.loading = true;
 
 		requestIndex = requestIndex || 0;
@@ -583,12 +530,17 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 			$rootScope.config.setResponse(requestIndex, response);
 
 			// init new request after successfull call and save of response
-			$rootScope.config.newRequest();
+			if (requestIndex === 0) {
+				$rootScope.config.newRequest();
+			}
 
 			$rootScope.loading = false;
+			if ($location.$$path !== "/response") {
+				$location.path("/response");
+			} else if(checkAgain){
+				checkAgain();
+			}
 			$rootScope.$apply();
-
-			$scope.toggle("responseOverlay");
 		});
 	};
 	
@@ -597,26 +549,79 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// bind to $scope for easier access
 	$scope.contacts = $rootScope.config.model.contacts;
+	$scope.popularContacts = $rootScope.config.getPopularContacts(5);
 	$scope.location = Location;
 	$scope.showInvitees = false;
+	$scope.showLocation = false;
+	$scope.showDates = false;
+	$scope.isLocationInit = !$rootScope.config.model.requests[0].currentPosition.latitude;
 
-	$scope.showList = function(){
-		$scope.showInvitees = !$scope.showInvitees;
+	$scope.showTimeList = function(){
+		$scope.showDates = !$scope.showDates;
 	};
 	
+	$scope.showList = function(){
+		if($rootScope.config.model.requests[0].invitees.length>1)
+			$scope.showInvitees = !$scope.showInvitees;
+	};
+	
+	$scope.showMap = function() {
+		$scope.showLocation = !$scope.showLocation;
+	}
+	
+	$scope.checkRequest = function() {
+		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+			$('#form-control-date').prop('disabled', true);
+			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
+			var startTime = new Date(startTimeMil);
+			//set Placeholder and value
+			$('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
+		}
+		else{
+			$('#form-control-date').prop('disabled', false);
+		}
+	};
+
 	// initilize time picker
-	$('form[name="newTimeslot"] input[name="date"]').pickadate({
+	var datePicker = $('form[name="newTimeslot"] input[name="date"]').pickadate({
 		clear: '',
-		format: 'dd. mmmm',
+		format: 'dd.mm.yyyy',
 		formatSubmit: 'yyyy-mm-dd',
 		hiddenName: true,
 		onStart: function() {
 			var date = new Date();
-        	this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
-        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear());
-   		}
+			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+        		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
+        		var date = new Date(startTimeMil);
+        		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
+        	}
+        	else{
+        		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
+        	}
+
+        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+date.getMonth()+"."+date.getFullYear()+"");
+        	//if request has already entries
+        	$scope.checkRequest();
+        	
+   		},
+  		onSet: function(context) {
+        	var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
+        	//console.log(currentPick);
+        	//no pick option before today
+        	var pickerDate = this.get('select', 'yyyy-mm-dd');
+        	var aktDate = new Date();
+        	var aktString = aktDate.toISOString().substr(0,10);
+
+        	
+        	if(pickerDate == aktString){
+        		
+        		console.log("hier")
+        	}
+				//this.set('min', [date.getHours(),date.getMinutes()]);
+    	}
 	});
-	$('form[name="newTimeslot"] input[name="startTime"]').pickatime({
+
+	var startTimePicker = $('form[name="newTimeslot"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
@@ -637,10 +642,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
    		onClose: function() {
    			var picker = endTimePicker.pickatime('picker');
    			var hour = this.get('select','HH');
-   			var hour = parseInt(hour)+1;
    			var minute = this.get('select','i');
-   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' })
-       	 	console.log(hour);
+   			picker.set('min', [hour,minute]);
+   			var hour = (parseInt(hour)+1)%24;
+   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' });
     	}
 
 	});
@@ -681,6 +686,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$scope.setPosition(pos);
 		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
 		window.location.href = '#/QuickLunch';
+		$rootScope.isLocationCustom = true;
 	};
 	
 	$scope.onCancel = function() {
@@ -688,12 +694,28 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$("#pac-input").blur();
 	};
 	
+	$scope.setInitLocation = function() {
+		if ($scope.isLocationInit && !$rootScope.isLocationCustom) $scope.setCurrentPosition();
+	};
+	
 	$scope.addTimeslotToRequest = function() {
-		var date = newTimeslot.date.value;
+
 		var startTime = newTimeslot.startTime.value;
 		var endTime = newTimeslot.endTime.value;
-		
-		$rootScope.config.addTimeslot(Date.parse(date + ' ' + startTime), Date.parse(date + ' ' + endTime));
+
+		var startdate = new Date(newTimeslot.date.value);
+		var enddate = new Date(newTimeslot.date.value);
+
+		//Create startdate Date
+		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));
+		startdate.setMinutes(startTime.substr((startTime.indexOf(":")+1),startTime.length));
+
+		//Create endtime Date
+		enddate.setHours(endTime.substr(0,endTime.indexOf(":")));
+		enddate.setMinutes(endTime.substr((endTime.indexOf(":")+1),endTime.length));
+
+		// add it to Timeslot in Milliseconds
+		$rootScope.config.addTimeslot(startdate.getTime(), enddate.getTime());
 	};
 	
 	
@@ -715,6 +737,15 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     }
     return counter;
   };
+  
+  	$scope.allContactsDefault = function(){
+		if($rootScope.config.model.requests.length>1){
+			return "inactive";
+		}
+		else{
+			return "active";
+		}
+	};
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, $window) {
@@ -723,18 +754,23 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 	// $scope.groups = $rootScope.config.model.groups;
 
 	$scope.importContacts = function(){
-		$rootScope.config.importContacts();
+		$rootScope.config.importContacts($scope.$apply);
 	};
 
 	var members = [];
 
 	$scope.toggleMember = function(contact) {
-		var pos = members.indexOf(contact.id);
+		var pos = members.indexOf(contact);
 		if (pos > -1) {
 			members.splice(pos, 1);
 		} else {
-			members.push(contact.id);
+			members.push(contact);
 		}
+	};
+
+	function nameSort (a, b) {
+	  if (a.name < b.name) return -1;
+		if (a.name > b.name) return 1;
 	};
 
 	$scope.addGroupToModel = function(name){
@@ -756,12 +792,20 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			return false;
 		}
 
-		$rootScope.config.addGroup(name, members);
+		members.sort(nameSort);
+
+		var memberIDs = [];
+
+		for(var pos in members){
+			memberIDs.push(members[pos].id);
+		}
+
+		$rootScope.config.addGroup(name, memberIDs);
 		$window.history.back();
 	};
 	
 	$scope.inMembers = function (contact) {
-		var pos = members.indexOf(contact.id);
+		var pos = members.indexOf(contact);
 		if (pos > -1) {
 			return true;
 		} else {
@@ -782,6 +826,63 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			$scope.tabAllActivated = true;
 		}
 	};
+
+});
+
+app.controller('responseCtrl', function($rootScope, $scope, $location) {
+	$rootScope.currentView = 'response';
+	
+	$scope.checkAgain = function() {
+		if (!$rootScope.config.model.requests[1]) {
+			// no request sent yet
+			$scope.responseStatus = "noRequest";
+
+		}else if ($rootScope.config.model.requests[1].response.subjects.length === 0){
+			// response does not contain any subjects
+			$scope.responseStatus = "noMatch";
+
+		}else if(!$rootScope.config.model.requests[1].response.timeslot){
+			// response contains a subject, but no timeslot
+
+			$scope.responseStatus = "invalid";
+		}else{	
+			// response contains subject(s) and a timeslot
+
+			$scope.responseStatus = "matchFound";
+
+			function formatHours(epoch){
+				var date = new Date(epoch);
+				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
+			}
+
+			function formatDate(epoch){
+				var date = new Date(epoch);
+				return date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+			}
+
+			$scope.response = {
+				subjects: function(){
+						var subjects = [];
+						for (var i = 0; i < $rootScope.config.model.requests[1].response.subjects.length; i++){
+							subjects.push($rootScope.config.getContactById($rootScope.config.model.requests[1].response.subjects[i]));
+						}
+						return subjects;
+					}(),
+				timeslot: {
+						date: formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
+						startTime: formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
+						endTime: formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
+					},
+				location: {
+					name: "",
+					latitude: $rootScope.config.model.requests[1].currentPosition.latitude,
+					longitude: $rootScope.config.model.requests[1].currentPosition.longitude
+				}
+			};
+		} //if
+	} //checkAgain
+
+	$scope.checkAgain();
 
 });
 
