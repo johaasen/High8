@@ -912,7 +912,7 @@ app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 			$(profile.name).addClass("animated shake");
 			returnValue = false;
 		}
-		if (phonenr.$modelValue === '' || isNaN(phonenr.$modelValue)) {
+		if (phonenr.$modelValue === '' || (phonenr.$modelValue.length !== phonenr.$modelValue.match(/[0-9\+\-\/\ \#\*]/g).length) {
 			$(profile.phonenr).addClass("animated shake");
 			returnValue = false;
 		}
