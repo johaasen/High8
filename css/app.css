@@ -75,13 +75,13 @@ border-radius: 5px;
 }
 
 .app #location #map-canvas {
-	height: 100%;
+  height: 100%;
   margin: 0px;
   padding: 0px;
 }
 
 .app #location .controls {
-	margin-top: 16px;
+  margin-top: 16px;
   border: 1px solid transparent;
   border-radius: 2px 0 0 2px;
   box-sizing: border-box;
@@ -173,8 +173,11 @@ border-radius: 5px;
 	
 .app #quicklunch {
   background-image: url("../res/iStock_000020695852Medium.jpg");
+  /*background-image: url("../res/bg_small.jpg");*/
   background-size: cover;
-  background-position-x: -280px;
+  -ms-background-position-x: center;
+  -ms-background-position-y: bottom;
+  background-position: center bottom;
 }
 
 .app #quicklunch .panel {
@@ -189,20 +192,8 @@ border-radius: 5px;
 	color: black;
 }
 
-.app #quicklunch #timeslots ul#slotlist {
-	border: none !important;
-}
-
-.app #quicklunch #timeslots ul#slotlist form {
-	background: none !important;
-}
-
 .app #quicklunch .panel-heading {
 	border: none !important;
-}
-
-.app #findmatches {
-	/*bottom: 20px;*/
 }
 
 .app #findmatches:hover {
@@ -230,20 +221,11 @@ border-radius: 5px;
 	margin-top: 1em;
 	list-style-type: none;
 	padding: 0;
-	border: 1px solid grey;
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 }
 
 .app #quicklunch #timeslots ul#slotlist form {
 	padding: 1em 1em;
 	min-height: 3em;
-	border-bottom: 1px solid grey;
-
-
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d2dfed', endColorstr='#799bc8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-
 }
 
 .app #quicklunch #timeslots ul#slotlist>form .form-control-wrapper {
@@ -277,17 +259,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d2dfed', end
 .app #quicklunch #timeslots ul#slotlist>li:not(:last-child) {
 	
 	border-bottom: 1px solid #e9e9e9;
-}
-
-.app #quicklunch #timeslots ul#slotlist>button {
-	background: rgb(205,235,142); /* Old browsers */
-background: -moz-linear-gradient(-45deg,  rgba(205,235,142,1) 0%, rgba(165,201,86,1) 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(205,235,142,1)), color-stop(100%,rgba(165,201,86,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(-45deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* IE10+ */
-background: linear-gradient(135deg,  rgba(205,235,142,1) 0%,rgba(165,201,86,1) 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cdeb8e', endColorstr='#a5c956',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
 .app #quicklunch #location-select img {

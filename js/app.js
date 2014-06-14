@@ -63,9 +63,6 @@ app.factory('Location', function() {
 					initialize(pos);
 				});
 			});
-		},
-		select: function() {
-			alert($("#location-add").data().marker.position);
 		}
 	};
 
@@ -595,13 +592,13 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
         		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
         		var date = new Date(startTimeMil);
-        		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
+        		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
         	}
         	else{
-        		this.set('select', [date.getFullYear(), date.getMonth() , date.getDate()]);
+        		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
         	}
 
-        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+date.getMonth()+"."+date.getFullYear()+"");
+        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+"");
         	//if request has already entries
         	$scope.checkRequest();
         	
@@ -614,11 +611,6 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	var aktDate = new Date();
         	var aktString = aktDate.toISOString().substr(0,10);
 
-        	
-        	if(pickerDate == aktString){
-        		
-        		console.log("hier")
-        	}
 				//this.set('min', [date.getHours(),date.getMinutes()]);
     	}
 	});
@@ -680,7 +672,6 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
 	$scope.setPosition = function(pos) {
 		$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
-		//$rootScope.$apply();
 	};
 	
 	$scope.setNewPosition = function() {
