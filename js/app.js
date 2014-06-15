@@ -598,9 +598,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.showMap = function() {
 		$scope.showLocation = !$scope.showLocation;
 	};
-	
+	// check if their are Timeslots in the request
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+			´//disable datepicker to pick only one date per request
 			$('#form-control-date').prop('disabled', true);
 			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
 			var startTime = new Date(startTimeMil);
@@ -608,11 +609,12 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			$('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
 		}
 		else{
+			//enable datepicker if the request has no timslots
 			$('#form-control-date').prop('disabled', false);
 		}
 	};
 
-	// initilize time picker
+	// initilize time picker for date
 	var datePicker = $('form[name="newTimeslotDate"] input[name="date"]').pickadate({
 		clear: '',
 		format: 'dd.mm.yyyy',
@@ -623,12 +625,13 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
         		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
         		var date = new Date(startTimeMil);
+        		//set current date
         		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
         	}
         	else{
         		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
         	}
-
+        	//set placeolder
         	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+"");
         	//if request has already entries
         	$scope.checkRequest();
@@ -641,17 +644,17 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	var pickerDate = this.get('select', 'yyyy-mm-dd');
         	var aktDate = new Date();
         	var aktString = aktDate.toISOString().substr(0,10);
-
-				//this.set('min', [date.getHours(),date.getMinutes()]);
     	}
 	});
-
+	
+	//set Picker for starttime
 	var startTimePicker = $('form[name="newTimeslotTime"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
 		hiddenName: true,
 		onStart: function() {
+			// get only 30 Minutes slots fpr the Timepicker
 			var date = new Date();
         	this.set('select', [date.getHours(), date.getMinutes()]);
         	if(date.getMinutes()>30){
@@ -662,9 +665,11 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         		var minute = '30';
         		var hour = date.getHours();
         	}
+        	//set Placehoolder
         	$('#form-control-startTime').attr("placeholder", ""+hour+":"+minute);
    		},
    		onClose: function() {
+   			//set entpicker one hour after the picked startdate
    			var picker = endTimePicker.pickatime('picker');
    			var hour = this.get('select','HH');
    			var minute = this.get('select','i');
@@ -674,6 +679,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	}
 
 	});
+
+	//set Picker for endtime
 	var endTimePicker = 	$('form[name="newTimeslotTime"] input[name="endTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
@@ -681,6 +688,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		hiddenName: true,
 		onStart: function() {
 			var date = new Date();
+        	// get only 30 Minutes slots fpr the Timepicker
         	this.set('select', [date.getHours() + 1, date.getMinutes()]);
         	if(date.getMinutes()>30){
         		var minute = '00';
@@ -690,6 +698,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         		var minute = '30';
         		var hour = (date.getHours()+1)%24;
         	}
+        	//set Placeholder
         	$('#form-control-endTime').attr("placeholder", ""+hour+":"+minute);
    		}
 	});
