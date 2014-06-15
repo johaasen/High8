@@ -2,7 +2,6 @@ var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "m
 
 app.config(function($routeProvider, $locationProvider) {
 	$locationProvider.html5Mode(false);
-	//TODO effects of (true)?
 	$routeProvider.when('/contacts', {
 		templateUrl : "contacts.html",
 		controller : 'contactCtrl'
@@ -72,37 +71,39 @@ app.factory('Location', function() {
 app.service('Config', function($localStorage) {
 	// service that holds the global model and provides update functions
 
-	// in case this context is not correct
+	// in case the "this" context is not correct
 	var that = this;
 	
 	// bind to localStorage
 	this.model = $localStorage;
 
-	// initilized flag
+	// initialized flag to check if the user needs to do a full sign up
 	this.model.isInitialized = $localStorage.isInitialized || false;
 
-	// init model object
+	// initialize model object
 	this.model.identity = $localStorage.identity || {};
-		//{name: "", phone: "", id: ""}
+		// {name: "", phone: "", id: ""}
 
 	this.model.contacts = $localStorage.contacts || [];
-		//[{ name: "", phone: "", id: ""}]
+		// [{ name: "", phone: "", id: ""}]
 
 	this.model.groups = $localStorage.groups || [];
-		//[{ groupname: "", invited : boolean, members : [{id}]}]
+		// [{ groupname: "", invited : boolean, members : [{id}]}]
 
 	this.model.requests = $localStorage.requests || [{
-			currentPosition : {},	//{longitude: 0, latitude: 0}
+			currentPosition : {},		//{longitude: 0, latitude: 0}
 			invitees : [],				// as MD5
-			timeslots : [],				//{startTime: "", endTime: ""}
+			timeslots : [],				//{startTime: "", endTime: ""} in EPOCH
 			response : {
 				subjects : [],			// as MD5
-				timeslots : {},			//{startTime: "", endTime: ""}
+				timeslots : {},			//{startTime: "", endTime: ""}	in EPOCH
 			},
 		}];
 
 
-	// get API config
+	// get API configuration object in the necessary format of specified request
+	// index === 0 is the request currently in configuration
+	// index === 1 is the most recently sent request
 	this.getMampfAPIRequest = function(index) {
 		var mampfConfig = angular.fromJson(angular.toJson(this.model.requests[index]));
 		mampfConfig.identity = this.model.identity.id;
@@ -111,12 +112,14 @@ app.service('Config', function($localStorage) {
 		return mampfConfig;
 	};
 
+	// save response of a specific request in model 
 	this.setResponse = function(index, response) {
 		this.model.requests[index].response = angular.fromJson(angular.toJson(response));
 	};
 
+	// initialize new request
 	this.newRequest = function() {
-		// clone last entry
+		// clone last entry to avoid object references
 		var newRequest = angular.fromJson(angular.toJson(this.model.requests[0]));
 
 		newRequest.response = {
@@ -127,21 +130,25 @@ app.service('Config', function($localStorage) {
 			},
 		};
 
+		// put in first place, so that index 0 is the newest one
 		this.model.requests.unshift(newRequest);
 	};
 
-	// functions to update model
+	// delete all contacts
 	this.delContacts = function() {
-		this.model.contacts = [];
+		// splice to maintain binding to local storage
+		this.model.contacts.splice(0, this.model.contacts.length);
 	};
 
-	//TODO: question if contact has multiple numbers or not
+	// add contact
 	this.addContact = function(name, phone) {
+		// array is passed if there are multiple numbers, else it is a single string
+		// only phone[0] is used
 		if( typeof phone === 'string' ) {
 			phone = [ phone ];
 		}
 
-		//check if phone no. already in contacts
+		//check if phone number already in contacts
 		if (this.getContactByPhone(phone) === undefined) {
 			var contact = {
 				name : name,
@@ -157,7 +164,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	//Add a group with name and members (IDs) - array to local storage
+	// add a group with name and members (IDs) - array to local storage
 	this.addGroup = function(name, members) {
 		if( typeof members === 'string' ) {
 			members = [ members ];
@@ -178,7 +185,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	//Remove an existing group
+	// remove an existing group
 	this.remGroup = function(group) {
 		var pos = this.model.groups.indexOf(group);
 		if (pos > -1) {
@@ -189,11 +196,12 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	//show contacts of a group
+	// show contacts of a group
 	this.expandGroup = function(group) {
        group.show = !group.show;
-  };
+	};
 
+	// look up the contact object by phone number
 	this.getContactByPhone = function(phone) {
 		for (var pos in this.model.contacts) {
 			if (this.model.contacts[pos].hasOwnProperty("phone")) {
@@ -205,6 +213,7 @@ app.service('Config', function($localStorage) {
 		return undefined;
 	};
 
+	// look up the contact object by ID as MD5
 	this.getContactById = function(id) {
 		for (var pos in this.model.contacts) {
 			if (this.model.contacts[pos].hasOwnProperty("id")) {
@@ -216,7 +225,7 @@ app.service('Config', function($localStorage) {
 		return undefined;
 	};
 
-	//return reference to group object by groupname
+	// look up the group object by name
 	this.getGroupByName = function(name) {
 		for (var pos in this.model.groups) {
 			if (this.model.groups[pos].hasOwnProperty("name")) {
@@ -228,6 +237,7 @@ app.service('Config', function($localStorage) {
 		return undefined;
 	};
 
+	// remove single contact from model
 	this.remContact = function(contact) {
 		var pos = this.model.contacts.indexOf(contact);
 		if (pos > -1) {
@@ -238,17 +248,19 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	// set identity 
 	this.setIdentity = function(name, phone) {
 		this.model.identity.name = name;
 		this.model.identity.phone = phone;
 		this.model.identity.id = phoneNumberToMd5("" + phone);
 	};
 
-	//only the last request can be changed with these functions
+	// set position of currently configurable request
 	this.setPosition = function(lat, lon) {
 		this.model.requests[0].currentPosition = { "latitude": lat, "longitude": lon};
 	};
 
+	// check invitees of currently configurable request
 	this.isInvitee = function(contact) {
 		if(!contact){
 			return;
@@ -257,7 +269,7 @@ app.service('Config', function($localStorage) {
 		return (pos > -1) ? true : false;
 	};
 
-	//Check if group is invited
+	// check if all members of a group are invited
 	this.isGroupInvited = function(group) {
 		//if one contact is found which is not currently invited, the whole group is not invited
 		for(var pos in group.members){
@@ -271,22 +283,24 @@ app.service('Config', function($localStorage) {
 		return true;
 	};
 
-	//Check if all contacts are invited
+	// check if all contacts are invited
 	this.isEvrbdyInvited = function(){
 		for(var pos in this.model.contacts){
-			if(!this.isInvitee(this.model.contacts[pos]))
+			if(!this.isInvitee(this.model.contacts[pos])){
 				return false;
+			}
 		}
 		return true;
 	};
 
-	//Check if all members of a group are invited
+	// check if all members of all groups are invited
 	this.checkGroups = function() {
 		for(var pos in this.model.groups){
 			this.isGroupInvited(this.model.groups[pos]);
 		}
 	};
 
+	// toggle invitation status of a contact
 	this.toggleInvitee = function(contact) {
 		var pos = this.model.requests[0].invitees.indexOf(contact.id);
 		if (pos > -1) {
@@ -301,7 +315,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	//toggle invitation of all group members,
+	// toggle invitation status of all group members of one group
 	this.toggleInviteeGroup = function(group) {
 		if(group.invited)
 			group.invited = false;
@@ -324,7 +338,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	//toggle invitation of all contacts
+	// toggle invitation status of all contacts
 	this.toggleAll = function(){
 		if(this.isEvrbdyInvited()){
 			for(var pos in this.model.contacts){
@@ -333,20 +347,24 @@ app.service('Config', function($localStorage) {
 		}
 		else{
 			for(var pos2 in this.model.contacts){
-				if(!this.isInvitee(this.model.contacts[pos2]))
+				if(!this.isInvitee(this.model.contacts[pos2])){
 					this.toggleInvitee(this.model.contacts[pos2]);
+				}
 			}
 		}
 	};
 
+	// delete all invitees of current request
 	this.delInvitees = function() {
 		this.model.requests[0].invitees = [];
 	};
 
+	// delete all timeslots of current request
 	this.delTimeslots = function() {
 		this.model.requests[0].timeslots = [];
 	};
 
+	// get position of a timeslot in the current request
 	this.getTimeslotIndex = function(timeslot) {
 		// auxiliary function similar to indexOf
 		var index = 0;
@@ -360,6 +378,7 @@ app.service('Config', function($localStorage) {
 		return -1;
 	};
 
+	// add timeslot to current request by startTime and endTime in EPOCH
 	this.addTimeslot = function(startTime, endTime) {
 		if(isNaN(startTime)){
 			return;
@@ -378,6 +397,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	// remove specific timeslot from current request
 	this.remTimeslot = function(startTime, endTime) {
 		var timeslot = {
 			startTime: startTime,
@@ -393,8 +413,9 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	// get the n contacts that are invited most often
 	this.getPopularContacts = function(n) {
-	// returns an array of all once invited contacts, sorted descending by the number of invites
+		// returns an array of all once invited contacts, sorted descending by the number of invites
 		var counts = {};
 
 		for(var i = 1; i < this.model.requests.length; i++) {
@@ -424,7 +445,10 @@ app.service('Config', function($localStorage) {
 		return popularContacts.slice(0,n);
 	};
 
+	// check if the members of all groups are valid contacts
 	this.validateGroups = function() {
+		// since contacts are imported, but groups are maintained in the app
+		// the groups need to be validated after each import
 		var tempIds = [];
 
 		for (var i = 0; i < this.model.contacts.length; i++) {
@@ -441,11 +465,11 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	// import contacts
 	this.importContacts = function(scopeApply) {
-		// Zunächst alle Kontakte löschen
-		if(this.model.contacts){
-			this.model.contacts.splice(0, this.model.contacts.length);
-		}
+		// first, empty contacts
+		this.delContacts();
+
 		var that = this;
 
 		var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
@@ -482,6 +506,7 @@ app.service('Config', function($localStorage) {
       				});
   			}
 		}
+
 		// Dummy-Kontakte anlegen
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
@@ -493,12 +518,6 @@ app.service('Config', function($localStorage) {
 		this.addContact("Kai Sieben",		"01748888888");
 		
 		this.validateGroups();
-		//TODO validate groups
-
-		// Die Contacts müssen in Model.contacts gepushed werden
-		// In der navigator.contacts.find() werden die savedContacts wieder aus Model.contacts geladen
-		//
-		// navigator.contacts.create(contacts[i]);
 	};
 });
 
