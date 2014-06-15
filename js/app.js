@@ -525,16 +525,26 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	// bind Config service to $rootScope, so that it is available everywhere
 	$rootScope.config = Config;
 	$rootScope.isLocationCustom = false;
-
-	// loading indicator on page nav
-	$rootScope.$on("$routeChangeStart", function() {
+	
+	// forward to profile if app is not initialized
+	$rootScope.$on('$locationChangeStart', function(event, next, curr) {
 		if (!$rootScope.config.model.isInitialized) {
-			alertify.alert('Please complete your profile first.');
 			$location.path('/profile');
 		}
+	})
+
+	// prevent user from changing the route, as long as app is not initialized
+	$rootScope.$on("$routeChangeStart", function(event, curr, prev) {
+		if (!$rootScope.config.model.isInitialized && prev) {
+			event.preventDefault();
+			alertify.alert('Please fill in your profile first.');
+		}
+		
+		// activate loading indicator
 		$rootScope.loading = true;
 	});
-
+	
+	// deactivate loading indicator
 	$rootScope.$on("$routeChangeSuccess", function() {
 		$rootScope.loading = false;
 	});
@@ -935,25 +945,25 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 	$scope.phone = Config.model.identity.phone;
 
 	$scope.save = function() {
-	    var name = $scope.profile.name;
-		var phonenr = $scope.profile.phonenr;
+	    var name = $scope.personal.name;
+		var phonenr = $scope.personal.phonenr;
 		var returnValue = true;
 
-		$(profile.name).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+		$(personal.name).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
 			$(this).removeClass('animated shake');
 		});
 
-		$(profile.phonenr).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+		$(personal.phonenr).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
 			$(this).removeClass('animated shake');
 		});
 
 		// form validation
 		if (!name.$modelValue) {
-			$(profile.name).addClass("animated shake");
+			$(personal.name).addClass("animated shake");
 			returnValue = false;
 		}
 		if (phonenr.$modelValue === '' || isNaN(phonenr.$modelValue)) {
-			$(profile.phonenr).addClass("animated shake");
+			$(personal.phonenr).addClass("animated shake");
 			returnValue = false;
 		}
 
@@ -961,7 +971,7 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 		
 		$rootScope.config.setIdentity($scope.name, $scope.phone);
 		
-		if ($rootScope.config.model.isInitialized) {
+		if (!$rootScope.config.model.isInitialized) {
 			// set initialized flag
 			$rootScope.config.model.isInitialized = true;
     
