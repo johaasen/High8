@@ -603,7 +603,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// check if the request has picked timeslots
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
-			´//disable datepicker to pick only one date per request
+			//disable datepicker to pick only one date per request
 			$('#form-control-date').prop('disabled', true);
 			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
 			var startTime = new Date(startTimeMil);
@@ -627,9 +627,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
         		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
         		var date = new Date(startTimeMil);
+
         		//set current date
         		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
-        	}
+        		        	}
         	else{
         		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
         	}
@@ -637,14 +638,18 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+"");
         	//if request has already entries
         	$scope.checkRequest();
-        	
+        	//set minimum for Datepicker
+        	var aktdate = new Date();
+        	this.set('min', [aktdate.getFullYear(), aktdate.getMonth(), aktdate.getDate()]);
+
    		},
   		onSet: function(context) {
-        	var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
+        	//var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
         	//no pick option before today
         	var pickerDate = this.get('select', 'yyyy-mm-dd');
         	var aktDate = new Date();
         	var aktString = aktDate.toISOString().substr(0,10);
+
     	}
 	});
 	
