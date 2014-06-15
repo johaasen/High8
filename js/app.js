@@ -157,15 +157,13 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	//Add a group with name and members (IDs) - array to local storage
 	this.addGroup = function(name, members) {
 		if( typeof members === 'string' ) {
 			members = [ members ];
 		}
-		if( !name ) {
-			name ="Unnamed Group";
-		}
 
-		//check if group already existing
+		//check if group is already existing
 		if (this.getGroupByName(name) === undefined) {
 			var group = {
 				name : name,
@@ -180,6 +178,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	//Remove an existing group
 	this.remGroup = function(group) {
 		var pos = this.model.groups.indexOf(group);
 		if (pos > -1) {
@@ -190,6 +189,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	//show contacts of a group
 	this.expandGroup = function(group) {
        group.show = !group.show;
   };
@@ -216,6 +216,7 @@ app.service('Config', function($localStorage) {
 		return undefined;
 	};
 
+	//return reference to group object by groupname
 	this.getGroupByName = function(name) {
 		for (var pos in this.model.groups) {
 			if (this.model.groups[pos].hasOwnProperty("name")) {
@@ -256,6 +257,7 @@ app.service('Config', function($localStorage) {
 		return (pos > -1) ? true : false;
 	};
 
+	//Check if group is invited
 	this.isGroupInvited = function(group) {
 		//if one contact is found which is not currently invited, the whole group is not invited
 		for(var pos in group.members){
@@ -269,6 +271,7 @@ app.service('Config', function($localStorage) {
 		return true;
 	};
 
+	//Check if all contacts are invited
 	this.isEvrbdyInvited = function(){
 		for(var pos in this.model.contacts){
 			if(!this.isInvitee(this.model.contacts[pos]))
@@ -277,6 +280,7 @@ app.service('Config', function($localStorage) {
 		return true;
 	};
 
+	//Check if all members of a group are invited
 	this.checkGroups = function() {
 		for(var pos in this.model.groups){
 			this.isGroupInvited(this.model.groups[pos]);
@@ -297,6 +301,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	//toggle invitation of all group members,
 	this.toggleInviteeGroup = function(group) {
 		if(group.invited)
 			group.invited = false;
@@ -319,6 +324,7 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
+	//toggle invitation of all contacts
 	this.toggleAll = function(){
 		if(this.isEvrbdyInvited()){
 			for(var pos in this.model.contacts){
@@ -565,7 +571,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	
 	$scope.showMap = function() {
 		$scope.showLocation = !$scope.showLocation;
-	}
+	};
 	
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
@@ -744,16 +750,18 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, $window) {
-	//TODO: Model is not filled with contacts, they can be received only asynchronously through the onSucces of the find method.
+	//reference to contacts array in local storage
 	$scope.contacts = $rootScope.config.model.contacts;
-	// $scope.groups = $rootScope.config.model.groups;
 
+	//call function importContacts
 	$scope.importContacts = function(){
 		$rootScope.config.importContacts($scope.$apply);
 	};
 
+	//temporary array to create groups
 	var members = [];
 
+	//Add/remove member to members array
 	$scope.toggleMember = function(contact) {
 		var pos = members.indexOf(contact);
 		if (pos > -1) {
@@ -763,12 +771,15 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 		}
 	};
 
+	//function to sort by name
 	function nameSort (a, b) {
 	  if (a.name < b.name) return -1;
 		if (a.name > b.name) return 1;
 	};
 
+	//Add recently configured group to the model
 	$scope.addGroupToModel = function(name){
+
 		$("input[name=groupName]").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
 				$(this).removeClass('animated bounce');
 		});
@@ -777,28 +788,35 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 				$(this).removeClass('animated shake');
 		});
 
+		//if no name is set, the input field gets animated to notify the user
 		if(!name){
 			$("input[name=groupName]").addClass("animated bounce");
 			return false;
 		}
 
+		//if no mebers are added, the contact list gets animated to notify the user
 		if(members.length<1){
 			$("ul[id=groupList]").addClass("animated shake");
 			return false;
 		}
 
+		//sort members alphabetically
 		members.sort(nameSort);
 
 		var memberIDs = [];
 
+		//Add IDs of contacts to an array
 		for(var pos in members){
 			memberIDs.push(members[pos].id);
 		}
 
+		//Call addGroup to add this configured group to the model
 		$rootScope.config.addGroup(name, memberIDs);
+		//Navigate back to the previous page
 		$window.history.back();
 	};
 	
+	//Check if contact is currently selected as member
 	$scope.inMembers = function (contact) {
 		var pos = members.indexOf(contact);
 		if (pos > -1) {
@@ -808,9 +826,11 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 		}
 	};
 
+
 	$scope.tabAllActivated = true;
 	$scope.tabGroupsActivated = false;
 
+	//show/hide upper right button, depending on selected tab
 	$scope.toggleHiddenButton = function (tabID){
 		if(tabID==='Groups'){
 			$scope.tabGroupsActivated = true;
