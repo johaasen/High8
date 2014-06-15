@@ -13,6 +13,9 @@ app.config(function($routeProvider, $locationProvider) {
 	}).when('/location', {
 		templateUrl : 'location.html',
 		controller : 'quicklunchCtrl'
+	}).when('/profile', {
+		templateUrl : 'profile.html',
+		controller  : 'profileCtrl'
 	}).when('/QuickLunch', {
 		templateUrl : 'QuickLunch.html',
 		controller : 'quicklunchCtrl'
@@ -919,6 +922,64 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	$scope.checkAgain();
 
 });
+
+app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
+	$scope.name = Config.model.identity.name;
+	$scope.phone = Config.model.identity.phone;
+
+	$scope.signUp = function() {
+		var name = $scope.profile.name;
+		var phonenr = $scope.profile.phonenr;
+		var returnValue = true;
+
+		$(profile.name).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+			$(this).removeClass('animated shake');
+		});
+
+		$(profile.phonenr).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+			$(this).removeClass('animated shake');
+		});
+
+		// dirty validation
+		if (!name.$modelValue) {
+			$(profile.name).addClass("animated shake");
+			returnValue = false;
+		}
+		if (phonenr.$modelValue === '' || isNaN(phonenr.$modelValue)) {
+			$(profile.phonenr).addClass("animated shake");
+			returnValue = false;
+		}
+
+		if (!returnValue) return false;
+
+		// import contacts
+		$rootScope.config.importContacts();
+
+		// set identity
+		$rootScope.config.setIdentity(name.$modelValue, phonenr.$modelValue);
+
+		// set initialized flag
+		$rootScope.config.model.isInitialized = true;
+
+		// route to landing screen
+		$location.path('/');
+	};
+
+	$scope.save = function() {
+			$rootScope.config.setIdentity($scope.name, $scope.phone);
+	}
+
+	$scope.toggleGoogleContacts = function() {
+		if ($rootScope.config.model.useGoogleContacts) {
+			// trigger import from Google
+			$rootScope.config.importContacts();
+		} else {
+			// forward to google permission-website
+			window.open('https://security.google.com/settings/security/permissions');
+		}
+		//console.log('asdf');
+	}
+})
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 	// TODO: Mike content-for yield-to
