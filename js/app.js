@@ -88,7 +88,7 @@ app.service('Config', function($localStorage) {
 		// {name: "", phone: "", id: ""}
 
 	this.model.contacts = $localStorage.contacts || [];
-		// [{ name: "", phone: "", id: ""}]
+		// [{ name: "", phoneNumbers: [""], id: ""}]
 
 	this.model.groups = $localStorage.groups || [];
 		// [{ groupname: "", invited : boolean, members : [{id}]}]
@@ -145,8 +145,11 @@ app.service('Config', function($localStorage) {
 
 	// add contact
 	this.addContact = function(name, phone) {
-		// array is passed if there are multiple numbers, else it is a single string
-		// only phone[0] is used
+		/*
+			An array is passed if there are multiple numbers, otherwise it is a string with a just one phone
+			number. Only phone[0] is used for now, but for extensibility reasons an array is used as data
+			structure, e.g. the phonegap API uses an array.
+		*/
 		if( typeof phone === 'string' ) {
 			phone = [ phone ];
 		}
@@ -206,9 +209,14 @@ app.service('Config', function($localStorage) {
 
 	// look up the contact object by phone number
 	this.getContactByPhone = function(phone) {
+		// allow string or array
+		if( typeof phone === 'string' ) {
+			phone = [ phone ];
+		}
+
 		for (var pos in this.model.contacts) {
-			if (this.model.contacts[pos].hasOwnProperty("phone")) {
-				if (this.model.contacts[pos].phone == phone) {
+			if (this.model.contacts[pos].hasOwnProperty("phoneNumbers")) {
+				if (this.model.contacts[pos].phoneNumbers[0] == phone[0]) {
 					return this.model.contacts[pos];
 				}
 			}
@@ -320,10 +328,11 @@ app.service('Config', function($localStorage) {
 
 	// toggle invitation status of all group members of one group
 	this.toggleInviteeGroup = function(group) {
-		if(group.invited)
+		if(group.invited){
 			group.invited = false;
-		else
+		}else{
 			group.invited = true;
+		}
 		for(var con in group.members){
 			contact = this.getContactById(group.members[con]);
 			var pos = this.model.requests[0].invitees.indexOf(contact.id);
@@ -416,6 +425,8 @@ app.service('Config', function($localStorage) {
 		// returns an array of all once invited contacts, sorted descending by the number of invites
 		var counts = {};
 
+		// iterate over all invitees of all requests and build an object that holds all IDs and the
+		// respective count of invitations
 		for(var i = 1; i < this.model.requests.length; i++) {
 			for(var j = 0; j < this.model.requests[i].invitees.length; j++){
 				var invitee = this.model.requests[i].invitees[j];
@@ -423,7 +434,10 @@ app.service('Config', function($localStorage) {
 			}
 		}
 		
+		// properties of the object are the IDs
 		var popularIds = Object.keys(counts);
+
+		// sort IDs by invitation count, descending
 		popularIds.sort(function(a,b){
 			if (counts[a] < counts[b]){
 				return 1;
@@ -434,6 +448,7 @@ app.service('Config', function($localStorage) {
 			return 0;
 		});
 
+		// look up contact objects of the IDs
 		var popularContacts = [];
 		for (i = 0; i < popularIds.length; i++) {
 			popularContacts.push(this.getContactById(popularIds[i]));
@@ -467,6 +482,8 @@ app.service('Config', function($localStorage) {
 	this.importContacts = function(scopeApply) {
 		// first, empty contacts
 		this.delContacts();
+		var dummyContactsNeeded = true;
+		if ($rootScope.config.model.useGoogleContacts) {
 
 		var that = this;
 
@@ -482,7 +499,6 @@ app.service('Config', function($localStorage) {
   			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
 		}
 
-		var dummyContactsNeeded = true;
 		function handleAuthResult(authResult) {
 
   			if (authResult && !authResult.error) {
@@ -506,7 +522,9 @@ app.service('Config', function($localStorage) {
   			}
 		}
 
-		// Dummy-Kontakte anlegen
+		}
+
+		// Dummy-Kontakte anlegen (wenn keine google contacts)
 		if(dummyContactsNeeded){
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
