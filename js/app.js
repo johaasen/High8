@@ -60,7 +60,7 @@ app.factory('Location', function() {
 			var that = this;
 			$.getScript('js/location.js', function() {
 				that.getCurrentPosition(function(pos){
-					initialize(pos);
+					maps.initializeMap(pos);
 				});
 			});
 		}
@@ -553,7 +553,6 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.showInvitees = false;
 	$scope.showLocation = false;
 	$scope.showDates = true;
-	$scope.isLocationInit = !$rootScope.config.model.requests[0].currentPosition.latitude;
 
 	$scope.showTimeList = function(){
 		$scope.showDates = !$scope.showDates;
@@ -657,7 +656,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	}
         	else{
         		var minute = '30';
-        		var hour = date.getHours()+1;
+        		var hour = (date.getHours()+1)%24;
         	}
         	$('#form-control-endTime').attr("placeholder", ""+hour+":"+minute);
    		}
@@ -675,6 +674,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.setNewPosition = function() {
+		console.log($('#location-add').data());
 		var pos = $('#location-add').data().pos;
 		$scope.setPosition(pos);
 		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
@@ -688,7 +688,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.setInitLocation = function() {
-		if ($scope.isLocationInit && !$rootScope.isLocationCustom) $scope.setCurrentPosition();
+		if (!$rootScope.isLocationCustom) $scope.setCurrentPosition();
 	};
 	
 	$scope.addTimeslotToRequest = function() {
