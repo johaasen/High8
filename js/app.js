@@ -526,16 +526,15 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
+		if (!$rootScope.config.model.isInitialized) {
+			$location.path('/profile');
+		}
 		$rootScope.loading = true;
 	});
 
 	$rootScope.$on("$routeChangeSuccess", function() {
 		$rootScope.loading = false;
 	});
-
-	if (!$rootScope.config.model.isInitialized) {
-		$location.path('/initialize');
-	}
 
 	// backend connection for Mampf API (mampfBackendConnection.js)
 	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
@@ -919,8 +918,8 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 	$scope.name = Config.model.identity.name;
 	$scope.phone = Config.model.identity.phone;
 
-	$scope.signUp = function() {
-		var name = $scope.profile.name;
+	$scope.save = function() {
+	    var name = $scope.profile.name;
 		var phonenr = $scope.profile.phonenr;
 		var returnValue = true;
 
@@ -932,7 +931,7 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 			$(this).removeClass('animated shake');
 		});
 
-		// dirty validation
+		// form validation
 		if (!name.$modelValue) {
 			$(profile.name).addClass("animated shake");
 			returnValue = false;
@@ -943,22 +942,16 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 		}
 
 		if (!returnValue) return false;
-
-		// import contacts
-		$rootScope.config.importContacts();
-
-		// set identity
-		$rootScope.config.setIdentity(name.$modelValue, phonenr.$modelValue);
-
-		// set initialized flag
-		$rootScope.config.model.isInitialized = true;
-
-		// route to landing screen
-		$location.path('/');
-	};
-
-	$scope.save = function() {
-			$rootScope.config.setIdentity($scope.name, $scope.phone);
+		
+		$rootScope.config.setIdentity($scope.name, $scope.phone);
+		
+		if ($rootScope.config.model.isInitialized) {
+			// set initialized flag
+			$rootScope.config.model.isInitialized = true;
+    
+    		// route to landing screen
+    		$location.path('/');
+		}
 	}
 
 	$scope.toggleGoogleContacts = function() {
