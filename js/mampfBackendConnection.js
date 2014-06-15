@@ -2,12 +2,16 @@
 function phoneNumberToMd5(phoneNumber){
     phoneNumber = phoneNumber.replace(/[+\- ,\.\/]/g,"");
     
+    //if phone number starts with 00, country code precedes, cut away
     if(phoneNumber.indexOf("00") === 0) {
         phoneNumber = phoneNumber.slice(2);
     }
+    
+    //if phone number does not start with a 0, a 2digit countrycode was cut away, add 0 to normalise phonenumber format
     if(!(phoneNumber.indexOf("0") === 0)) {
         phoneNumber = "0" + phoneNumber.slice(2);
     }
+    
     var md5value = md5(phoneNumber).toUpperCase();
     return md5value;
 }
@@ -17,13 +21,13 @@ var BACKEND_URL = "http://dennistempi.itm.uni-luebeck.de/mampf/";
 
 var MampfAPI = function(apiUrl) {
     this.apiUrl = apiUrl;
-    this.config = {};
-        
+    //asynchronous find matches function
     this.findMatches = function(callback) {
         var xhr = new XMLHttpRequest();
         
         xhr.onreadystatechange = function() {
             if(xhr.readyState === 4) {
+                // if xhr is done, check http status and execute callback/ throw error
                 if(xhr.status === 200) {
                     console.log(xhr.responseText); //DEBUG
                     var jsonResponse = JSON.parse(xhr.responseText);
@@ -48,7 +52,7 @@ var MampfConfig = function(identity, invitees, currentPosition, timeslots) {
     this.timeslots = timeslots;
 }
 
-// DEBUG FROM HERE
+// DEBUG FROM HERE; DEMO CONTENT
 
 var demoConfig1 = {"identity":"B25BF7426FABCADF01103045FD7707CE","invitees":["A9B9D2ED66A5DA2AFB3247F6947F5591"],"currentPosition":{"longitude":9.170299499999999,"latitude":48.773556600000006},"timeslots":[{"startTime":1401621970786,"endTime":1401629170786},{"startTime":1401629170786,"endTime":1401636370786}]};
 
