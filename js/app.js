@@ -482,6 +482,7 @@ app.service('Config', function($localStorage) {
   			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
 		}
 
+		var dummyContactsNeeded = true;
 		function handleAuthResult(authResult) {
 
   			if (authResult && !authResult.error) {
@@ -500,12 +501,13 @@ app.service('Config', function($localStorage) {
          					}
          	
          				}
-         				if(scopeApply){scopeApply();}
+         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
       				});
   			}
 		}
 
 		// Dummy-Kontakte anlegen
+		if(dummyContactsNeeded){
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
 		this.addContact("Johannes Haasen", "01743333333");
@@ -514,7 +516,7 @@ app.service('Config', function($localStorage) {
 		this.addContact("Mike Mülhaupt",	"01746666666");
 		this.addContact("Simon Liebeton",	"01747777777");
 		this.addContact("Kai Sieben",		"01748888888");
-		
+		}
 		this.validateGroups();
 	};
 });
