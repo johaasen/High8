@@ -467,6 +467,8 @@ app.service('Config', function($localStorage) {
 	this.importContacts = function(scopeApply) {
 		// first, empty contacts
 		this.delContacts();
+		var dummyContactsNeeded = true;
+		if ($rootScope.config.model.useGoogleContacts) {
 
 		var that = this;
 
@@ -482,7 +484,6 @@ app.service('Config', function($localStorage) {
   			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
 		}
 
-		var dummyContactsNeeded = true;
 		function handleAuthResult(authResult) {
 
   			if (authResult && !authResult.error) {
@@ -506,7 +507,9 @@ app.service('Config', function($localStorage) {
   			}
 		}
 
-		// Dummy-Kontakte anlegen
+		}
+
+		// Dummy-Kontakte anlegen (wenn keine google contacts)
 		if(dummyContactsNeeded){
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
