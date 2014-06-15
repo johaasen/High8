@@ -527,6 +527,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	// loading indicator on page nav
 	$rootScope.$on("$routeChangeStart", function() {
 		if (!$rootScope.config.model.isInitialized) {
+			alertify.alert('Please complete your profile first.');
 			$location.path('/profile');
 		}
 		$rootScope.loading = true;
@@ -601,7 +602,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	// check if their are Timeslots in the request
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
-			´//disable datepicker to pick only one date per request
+			//disable datepicker to pick only one date per request
 			$('#form-control-date').prop('disabled', true);
 			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
 			var startTime = new Date(startTimeMil);
