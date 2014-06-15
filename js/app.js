@@ -80,8 +80,10 @@ app.service('Config', function($localStorage) {
 	// bind to localStorage
 	this.model = $localStorage;
 
-	// initialized flag to check if the user needs to do a full sign up
-	this.model.isInitialized = $localStorage.isInitialized || false;
+	// some flags for user-settings
+	this.model.isInitialized 		= $localStorage.isInitialized || false;
+	this.model.useGoogleContacts 	= $localStorage.useGoogleContacts || false;
+	this.model.useCurrentPosition	= $localStorage.useCurrentPosition || false;
 
 	// initialize model object
 	this.model.identity = $localStorage.identity || {};
