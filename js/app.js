@@ -598,7 +598,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.showMap = function() {
 		$scope.showLocation = !$scope.showLocation;
 	};
-	// check if their are Timeslots in the request
+	// check if the request has picked timeslots
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
 			´//disable datepicker to pick only one date per request
@@ -639,7 +639,6 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
    		},
   		onSet: function(context) {
         	var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
-        	//console.log(currentPick);
         	//no pick option before today
         	var pickerDate = this.get('select', 'yyyy-mm-dd');
         	var aktDate = new Date();
@@ -647,14 +646,14 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	}
 	});
 	
-	//set Picker for starttime
+	//set starttime Picker
 	var startTimePicker = $('form[name="newTimeslotTime"] input[name="startTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
 		formatSubmit: 'HH:i',
 		hiddenName: true,
 		onStart: function() {
-			// get only 30 Minutes slots fpr the Timepicker
+			// get only 30 Minutes slots for the Timepicker
 			var date = new Date();
         	this.set('select', [date.getHours(), date.getMinutes()]);
         	if(date.getMinutes()>30){
@@ -669,7 +668,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
         	$('#form-control-startTime').attr("placeholder", ""+hour+":"+minute);
    		},
    		onClose: function() {
-   			//set entpicker one hour after the picked startdate
+   			//set endtime one hour after the picked startdate
    			var picker = endTimePicker.pickatime('picker');
    			var hour = this.get('select','HH');
    			var minute = this.get('select','i');
@@ -680,7 +679,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 
 	});
 
-	//set Picker for endtime
+	//set endtime Picker 
 	var endTimePicker = 	$('form[name="newTimeslotTime"] input[name="endTime"]').pickatime({
 		clear: '',
 		format: 'HH:i',
@@ -688,7 +687,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		hiddenName: true,
 		onStart: function() {
 			var date = new Date();
-        	// get only 30 Minutes slots fpr the Timepicker
+        	// get only 30 Minutes slots for the Timepicker
         	this.set('select', [date.getHours() + 1, date.getMinutes()]);
         	if(date.getMinutes()>30){
         		var minute = '00';
