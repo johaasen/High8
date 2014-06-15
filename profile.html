@@ -1,0 +1,56 @@
+<div class="scrollable" id="profile">
+  <div class="scrollable-content">
+  	<div content-for="title">
+  		<span>Your Profile</span>
+  	</div>
+		
+		<div class="col-xs-12">
+			<p class="bg-info text-center">
+				We need to know some personal details about you, so your friends can find you.
+			</p>
+		</div>
+		
+		<div class="col-xs-12">
+			<form novalidate name="profile" class="form-horizontal" ng-submit="signUp()">
+					<div class="form-group has-feedback">
+						<div class="col-xs-2 text-right">
+							<i class="fa fa-user fa-2x"></i>
+							<label class="sr-only" for="lastname">Name</label>
+						</div>
+						<div class="col-xs-10">
+							<input type="text" name="name" ng-model="name" class="form-control" id="name" placeholder="Name">
+						</div>
+					</div>
+					<div class="form-group has-feedback">
+						<div class="col-xs-2 text-right">
+							<i class="fa fa-phone fa-2x"></i>
+							<label class="sr-only" for="phonenr">Phonenumber</label>
+						</div>
+						<div class="col-xs-10">
+							<input type="text" pattern="[0-9\+\ \-\/]*" name="phonenr" ng-model="phone" class="form-control" id="phonenr" placeholder="Phone">
+						</div>
+					</div>
+					<div class="col-xs-4 col-xs-offset-2 save-btn">
+						<button type="submit" class="btn btn-default btn-block">Save</button>
+					</div>
+			</form>
+		</div>
+		
+		<div class="col-xs-12" id="settings">
+			<div class="col-xs-2">
+				<i class="fa fa-gears fa-2x"></i>
+			</div>
+			<div class="col-xs-10">
+				<h3>Settings</h3>
+				<div class="item">
+					<span>Use Current position</span>
+					<switch ng-model="config.model.useCurrentPosition" class="pull-right"></switch>
+				</div>
+				<div class="item">
+					<span>Use Google-Contacts</span>
+					<switch ng-model="config.model.useGoogleContacts" ng-change="toggleGoogleContacts()" class="pull-right"></switch>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
