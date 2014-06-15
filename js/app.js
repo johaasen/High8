@@ -354,16 +354,6 @@ app.service('Config', function($localStorage) {
 		}
 	};
 
-	// delete all invitees of current request
-	this.delInvitees = function() {
-		this.model.requests[0].invitees = [];
-	};
-
-	// delete all timeslots of current request
-	this.delTimeslots = function() {
-		this.model.requests[0].timeslots = [];
-	};
-
 	// get position of a timeslot in the current request
 	this.getTimeslotIndex = function(timeslot) {
 		// auxiliary function similar to indexOf
@@ -380,9 +370,10 @@ app.service('Config', function($localStorage) {
 
 	// add timeslot to current request by startTime and endTime in EPOCH
 	this.addTimeslot = function(startTime, endTime) {
-		if(isNaN(startTime)){
+		if(isNaN(startTime) || isNaN(endTime)){
 			return;
 		}
+
 		var timeslot = {
 			startTime: startTime,
 			endTime: endTime
@@ -399,6 +390,10 @@ app.service('Config', function($localStorage) {
 
 	// remove specific timeslot from current request
 	this.remTimeslot = function(startTime, endTime) {
+		if(isNaN(startTime) || isNaN(endTime)){
+			return;
+		}
+
 		var timeslot = {
 			startTime: startTime,
 			endTime: endTime
@@ -542,8 +537,12 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 	// backend connection for Mampf API (mampfBackendConnection.js)
 	$rootScope.mampfAPI = new MampfAPI(BACKEND_URL);
 
-	// call Mampf API
+	// call Mampf API and handle response
 	$rootScope.findMatches = function(requestIndex, checkAgain) {
+		// requestIndex specifies which request from the model should be send
+		// checkAgain is an optionally injected function to evaluate the response for dependent views
+
+		// show loading indicator
 		$rootScope.loading = true;
 
 		requestIndex = requestIndex || 0;
@@ -553,17 +552,22 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 			// save response to model
 			$rootScope.config.setResponse(requestIndex, response);
 
-			// init new request after successfull call and save of response
+			// init new request after successfull (and new) request
 			if (requestIndex === 0) {
 				$rootScope.config.newRequest();
 			}
 
+			// disable loading indicator
 			$rootScope.loading = false;
+
+			// switch to response view or call checkAgain function if necessary
 			if ($location.$$path !== "/response") {
 				$location.path("/response");
 			} else if(checkAgain){
 				checkAgain();
 			}
+
+			// force an update of rootScope so that views get newest values immediately
 			$rootScope.$apply();
 		});
 	};
@@ -584,8 +588,9 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.showList = function(){
-		if($rootScope.config.model.requests[0].invitees.length>0)
+		if($rootScope.config.model.requests[0].invitees.length>0){
 			$scope.showInvitees = !$scope.showInvitees;
+		}
 	};
 	
 	$scope.showMap = function() {
@@ -744,20 +749,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		}
 		$rootScope.findMatches(0);
 	};
-	
-  $scope.sortByPopularity = function(contact){
-  	var counter = 0;
-    for(var i = 1; i < $rootScope.config.model.requests.length; i++){
-      var request = $rootScope.config.model.requests[i];
-      for(var j = 0; j < request.invitees.length; j++){
-        if(contact.id===request.invitees[j]){
-          counter++;
-        }
-      }
-    }
-    return counter;
-  };
-  
+	  
   	$scope.allContactsDefault = function(){
 		if($rootScope.config.model.requests.length>1){
 			return "inactive";
