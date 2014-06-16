@@ -953,7 +953,7 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 
 			function formatDate(epoch){
 				var date = new Date(epoch);
-				return date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+				return date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
 			}
 
 			$scope.response = {
