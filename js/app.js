@@ -918,6 +918,9 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	            $location.path('/QuickLunch');
 	            alertify.alert('Jeez, aint nobody wanna eat with you!');
 	            break;
+	        case 'noRequest':
+	            $location.path('/QuickLunch');
+	            alertify.alert('Please send a request first.');
 	    }
 	});
 	
@@ -1008,9 +1011,13 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 
 		if (!returnValue) return false;
 		
+		// create MD5 and write to model
 		$rootScope.config.setIdentity($scope.name, $scope.phone);
 		
 		if (!$rootScope.config.model.isInitialized) {
+    		// import contacts
+    		$rootScope.config.importContacts();
+		    
 			// set initialized flag
 			$rootScope.config.model.isInitialized = true;
     
