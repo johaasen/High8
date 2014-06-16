@@ -2,19 +2,7 @@
 // for more information, see: https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete
 
 var maps = {
-  map: new google.maps.Map(document.getElementById('map-canvas'), {
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    zoom: 13,
-    draggable: true,
-	panControl: false,
-	mapTypeControl: false,
-	overviewMapControl: false,
-	rotateControl: false,
-	scaleControl: false,
-	scrollWheel: false,
-	streetViewControl: false,
-	zoomControl: false
-  }),
+  map: null,
   marker: new google.maps.Marker({
 	draggable: true,
     anchorPoint: new google.maps.Point(0, -29)
@@ -22,7 +10,21 @@ var maps = {
   infowindow: new google.maps.InfoWindow(),
   autocomplete: null,
   initializeMap: function(pos) {
-  	var input = /** @type {HTMLInputElement} */(
+  	this.map = new google.maps.Map(document.getElementById('map-canvas'), {
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      zoom: 13,
+      draggable: true,
+      panControl: false,
+      mapTypeControl: false,
+      overviewMapControl: false,
+      rotateControl: false,
+      scaleControl: false,
+      scrollWheel: false,
+      streetViewControl: false,
+      zoomControl: false
+    });
+
+    var input = /** @type {HTMLInputElement} */(
 		document.getElementById('pac-input')
   	);
 
@@ -35,18 +37,17 @@ var maps = {
   	this.autocomplete = new google.maps.places.Autocomplete(input);
   	this.autocomplete.bindTo('bounds', this.map);
 
-  	var that = this;
-  	var geocoder = new google.maps.Geocoder();
-  	geocoder.geocode({'latLng': position}, function(results, status) {that.onReverseGeocode(results, status);});
+  	this.reverseGeocode(position);
   	
-  	$("body").data({
+  	var that = this;
+    $("body").data({
       pos: {
-	    coords: {
-	  	  // k and A are the cryptic property names for the marker's latitude and longitude
-	      latitude: that.marker.position.k,
-		  longitude: that.marker.position.A
+	      coords: {
+	  	    // k and A are the cryptic property names for the marker's latitude and longitude
+	        latitude: that.marker.position.k,
+		      longitude: that.marker.position.A
+	      }
 	    }
-	  }
     });
 
     google.maps.event.addListener(this.autocomplete, 'place_changed', function() {that.onPlaceChanged(that.autocomplete);});
@@ -65,47 +66,48 @@ var maps = {
       this.map.setZoom(17); 
     }
     
-	this.marker.setPosition(place.geometry.location);
-	var that = this;
-	$("body").data().pos.coords = {
-	  // k and A are the cryptic property names for the marker's latitude and longitude
-	  latitude: that.marker.position.k,
-	  longitude: that.marker.position.A
-	};	
-	$("body").data().location = {
-	  name: place.name,
-	  query: $("#pac-input").val(),
-	  address: place.formatted_address
-	};
+	  this.marker.setPosition(place.geometry.location);
+	  var that = this;
+	  $("body").data().pos.coords = {
+	    // k and A are the cryptic property names for the marker's latitude and longitude
+	    latitude: that.marker.position.k,
+	    longitude: that.marker.position.A
+	  };	
+	  $("body").data().location = {
+	    name: place.name,
+	    query: $("#pac-input").val(),
+	    address: place.formatted_address
+	  };
   },
   onDragEnd: function(source) {
     var position = new google.maps.LatLng(source.position.k, source.position.A);
-    var that = this;
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'latLng': position}, function(results, status) {that.onReverseGeocode(results, status);});
+    this.reverseGeocode(position);
   },
-  onReverseGeocode: function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      if (results[0]) {
-        $("body").data({
-      	  location: {
+  reverseGeocode: function(position) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'latLng': position}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          $("body").data({
+      	    location: {
       	      name: "",
-      		  query: "",
-			  address: results[0].formatted_address
-		  }
-	    });
+      		    query: "",
+			        address: results[0].formatted_address
+		        }
+	        });
+        } else {
+          //alert('No results found');
+        }
       } else {
-        //alert('No results found');
+        //alert('Geocoder failed due to: ' + status);
       }
-    } else {
-      //alert('Geocoder failed due to: ' + status);
-    }
+    });
   },
   initializeNearby: function(pos) {
   	var request = {
       location: pos,
       radius: 500,
-      types: ['store']
+      types: ['restaurant']
     };
     
     var service = new google.maps.places.PlacesService(this.map);

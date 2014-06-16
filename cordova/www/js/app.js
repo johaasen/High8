@@ -60,11 +60,11 @@ app.factory('Location', function() {
 		},
 		init: function() {
 			var that = this;
-			$.getScript('js/location.js', function() {
+			//$.getScript('js/location.js', function() {
 				that.getCurrentPosition(function(pos){
 					maps.initializeMap(pos);
 				});
-			});
+			//});
 		}
 	};
 
@@ -490,11 +490,13 @@ app.service('Config', function($localStorage) {
 		if (this.model.useGoogleContacts) {
 
 			var that = this;
-	
+			//ClientID for Browsers
 			var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
 			if(window.location.origin===null){
+				//ClientID for Smartphone
 				clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
 			}
+			//Scope: Google Contacts
 			var scopes = 'https://www.google.com/m8/feeds';
 	
 	   		window.setTimeout(checkAuth,3);
@@ -511,6 +513,7 @@ app.service('Config', function($localStorage) {
 	         				//Handle Response
 	         				for(var i = 0;i < response.feed.entry.length; i++){
 	         					var contact = response.feed.entry[i];
+	         					//Add all Google Contacts that have a mobile phone number defined
 	         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
 	         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
 	         							var phoneNumber = contact.gd$phoneNumber[j];
@@ -521,6 +524,8 @@ app.service('Config', function($localStorage) {
 	         					}
 	         	
 	         				}
+	         				//Refresh UI because changes in the model are done asynchronously
+	         				that.validateGroups();
 	         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
 	      				});
 	  			}
@@ -528,7 +533,7 @@ app.service('Config', function($localStorage) {
 
 		}
 
-		// Dummy-Kontakte anlegen (wenn keine google contacts)
+		// Add Dummy Contacts for Demo
 		if(dummyContactsNeeded){
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
@@ -746,6 +751,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.setCurrentPosition = function() {
 		Location.getCurrentPosition(function(pos){
 			$scope.setPosition(pos);
+			maps.reverseGeocode(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
 		});
 	};
 	
@@ -911,7 +917,7 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	            alertify.alert('<h1>Sorry, dude!</h1><br />Something went terribly wrong...<br />');
 	            break;
 	        case 'noMatch':
-	            $location.path('/QuickLunch');
+	            $location.path('/response');
 	            alertify.alert('Jeez, aint nobody wanna eat with you!');
 	            break;
 	        case 'noRequest':
@@ -923,6 +929,16 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	$scope.location = $('body').data().location;
 	$scope.pos      = $('body').data().pos;
 	
+	// auxiliary functions to format date and time
+	$scope.formatHours = function (epoch){
+				var date = new Date(epoch);
+				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
+			}
+
+	$scope.formatDate = function (epoch){
+				var date = new Date(epoch);
+				return date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
+			}
 	
 	$scope.checkAgain = function() {
 		if (!$rootScope.config.model.requests[1]) {
@@ -941,16 +957,6 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 			// response contains subject(s) and a timeslot
 			$scope.responseStatus = "matchFound";
 
-			function formatHours(epoch){
-				var date = new Date(epoch);
-				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
-			}
-
-			function formatDate(epoch){
-				var date = new Date(epoch);
-				return date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
-			}
-
 			// build response object from model for easier access
 			$scope.response = {
 				subjects: function(){
@@ -961,9 +967,9 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 						return subjects;
 					}(),
 				timeslot: {
-						date: formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
-						startTime: formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
-						endTime: formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
+						date: $scope.formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
+						startTime: $scope.formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
+						endTime: $scope.formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
 					},
 				location: {
 					name: "",
@@ -1037,7 +1043,6 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 			// and import dummy contacts
 			$rootScope.config.importContacts();
 		}
-		//console.log('asdf');
 	}
 })
 
