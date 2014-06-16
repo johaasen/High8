@@ -53,12 +53,14 @@
         <div class="media-body">
             <h3 class="media-heading">Where?</h3>
             <h3 style="padding-left: 15px"><small>
-            	DHBW Mannheim
+            	{{location.query || location.address}}
             </small></h3>
         </div>
       </div>
 
-      <div><img src="http://placehold.it/300x300" /></div>
+        <div><a href="#/location">
+			<img src="https://maps.googleapis.com/maps/api/staticmap?center={{pos.coords.latitude}},{{pos.coords.longitude}}&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:%7C{{pos.coords.latitude}},{{pos.coords.longitude}}" draggable="false" style="border: 1px solid black"></img>
+	    </a></div>
 
 </div>
 

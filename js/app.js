@@ -754,8 +754,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.setNewPosition = function() {
-		console.log($('#location-add').data());
-		var pos = $('#location-add').data().pos;
+		//console.log($('#location-add').data());
+		var pos = $('body').data().pos;
 		$scope.setPosition(pos);
 		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
 		window.location.href = '#/QuickLunch';
@@ -907,6 +907,10 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 
 app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	$rootScope.currentView = 'response';
+	
+	$scope.location = $('body').data().location;
+	$scope.pos      = $('body').data().pos;
+	
 	
 	$scope.checkAgain = function() {
 		if (!$rootScope.config.model.requests[1]) {
