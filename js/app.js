@@ -1014,6 +1014,7 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 		// create MD5 and write to model
 		$rootScope.config.setIdentity($scope.name, $scope.phone);
 		
+		// wenn noch nicht initialisiert...
 		if (!$rootScope.config.model.isInitialized) {
     		// import contacts
     		$rootScope.config.importContacts();
@@ -1023,6 +1024,10 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
     
     		// route to landing screen
     		$location.path('/');
+		} else {
+		    // falls bereits initialisiert, nur Bestätigung anzeigen
+		    alertify.alert('Successfully saved!');
+		    
 		}
 	}
 
