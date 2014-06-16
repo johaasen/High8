@@ -498,6 +498,9 @@ app.service('Config', function($localStorage) {
 						}
 					}
 				}
+				that.validateGroups();                                   
+				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
+				
     			alert('Found ' + contacts.length + ' contacts.');
     		};
 
