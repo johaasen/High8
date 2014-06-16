@@ -493,9 +493,11 @@ app.service('Config', function($localStorage) {
 				for(var i = 0; i < contacts.length; i++){
 					var contact = contacts[i];
 					console.log(contact.displayName);
-					for(var j = 0; j < contact.phoneNumbers.length; j++){
-						if(contact.phoneNumbers[j].type==='mobile'){
-							that.addContact(contact.displayName, contact.phoneNumbers[j].value);
+					if(contact.phoneNumbers){
+						for(var j = 0; j < contact.phoneNumbers.length; j++){
+							if(contact.phoneNumbers[j].type==='mobile'){
+								that.addContact(contact.displayName, contact.phoneNumbers[j].value);
+							}
 						}
 					}
 				}
@@ -513,7 +515,7 @@ app.service('Config', function($localStorage) {
 			// find all contacts with 'Bob' in any name field
 			var options = {};
 			options.multiple = true;
-			options.desiredFields = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.phoneNumbers];
+			options.desiredFields = [navigator.contacts.fieldType.name, navigator.contacts.fieldType.phoneNumbers];
 			var fields = ["*"];
 			navigator.contacts.find(onSuccess, onError, fields, options);
 		}
