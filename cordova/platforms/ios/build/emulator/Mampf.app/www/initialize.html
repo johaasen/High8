@@ -1,0 +1,33 @@
+<div class="scrollable">
+  <div class="scrollable-content">
+		<div class="col-xs-12">
+			<p id="logo">Mampf</p>
+			<p class="bg-info text-center">
+				We need some of your personal data,<br>
+				 such that your friends can find you. 
+			</p>
+		</div>
+		<div class="col-xs-12">
+			<form novalidate name="profile" ng-submit="signUp()">
+				
+				<div class="col-xs-4">
+					<img src="res/apple-icon-144x144.png" class="img-thumbnail" />
+				</div>
+				
+				<div class="col-xs-8">
+					<div class="form-group has-feedback">
+						<label class="sr-only" for="lastname">Name</label>
+						<input type="text" name="name" ng-model="name" class="form-control" id="name" placeholder="Name">
+						<!-- <i class="fa fa-times form-control-feedback" ng-show="profile.name.$dirty && profile.name.$invalid"></i> -->
+					</div>
+					<div class="form-group has-feedback">
+						<label class="sr-only" for="phonenr">Phone number</label>
+						<input type="tel" name="phonenr" ng-model="phonenr" class="form-control" id="phonenr" placeholder="Phone number">
+						<!-- <i class="fa fa-times form-control-feedback" ng-show="profile.phonenr.$dirty && profile.phonenr.$invalid"></i> -->
+					</div>
+					<button type="submit" class="btn btn-default">Sign Up!</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

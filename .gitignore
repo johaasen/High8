@@ -5,4 +5,10 @@ cordova/platforms/android/*
 !cordova/platforms/android/ant-build
 cordova/platforms/android/ant-build/*
 !cordova/platforms/android/ant-build/Mampf-debug.apk
-cordova/platforms/ios
+
+cordova/platforms/ios/*
+!cordova/platforms/ios/build
+cordova/platforms/ios/build/*
+!cordova/platforms/ios/build/emulator
+cordova/platforms/ios/build/emulator/*
+!cordova/platforms/ios/build/emulator/Mampf.app
