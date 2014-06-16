@@ -487,18 +487,23 @@ app.service('Config', function($localStorage) {
 		this.delContacts();
 		var dummyContactsNeeded = true;
 		
-		if(navigator.contacts!==null&&navigator!==undefined){
+		if(navigator.contacts!==null&&navigator.contacts!==undefined){
 			var that = this;						
 			var onSuccess = function (contacts) {
 				for(var i = 0; i < contacts.length; i++){
 					var contact = contacts[i];
-					for(var j = 0; j < contact.phoneNumbers; j++){
+					console.log(contact.displayName);
+					for(var j = 0; j < contact.phoneNumbers.length; j++){
 						if(contact.phoneNumbers[j].type==='mobile'){
 							that.addContact(contact.displayName, contact.phoneNumbers[j].value);
 						}
 					}
 				}
     			alert('Found ' + contacts.length + ' contacts.');
+				that.validateGroups();
+				if(scopeApply){
+					scopeApply();
+				}
     		};
 
 			var onError = function (contactError) {
@@ -506,11 +511,10 @@ app.service('Config', function($localStorage) {
 			};
 
 			// find all contacts with 'Bob' in any name field
-			var options      = new ContactFindOptions();
-			options.filter   = "Bob";
+			var options = {};
 			options.multiple = true;
-			options.desiredFields = [navigator.contacts.fieldType.id];
-			var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.phoneNumbers];
+			options.desiredFields = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.phoneNumbers];
+			var fields = ["*"];
 			navigator.contacts.find(onSuccess, onError, fields, options);
 		}
 		else{
