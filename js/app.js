@@ -482,47 +482,49 @@ app.service('Config', function($localStorage) {
 
 	// import contacts
 	this.importContacts = function(scopeApply) {
+		
 		// first, empty contacts
 		this.delContacts();
 		var dummyContactsNeeded = true;
-		if ($rootScope.config.model.useGoogleContacts) {
+		
+		if (this.model.useGoogleContacts) {
 
-		var that = this;
-
-		var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
-		if(window.location.origin===null){
-			clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
-		}
-		var scopes = 'https://www.google.com/m8/feeds';
-
-   		window.setTimeout(checkAuth,3);
+			var that = this;
 	
-		function checkAuth() {
-  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-		}
-
-		function handleAuthResult(authResult) {
-
-  			if (authResult && !authResult.error) {
-    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
-      				function(response){
-         				//Handle Response
-         				for(var i = 0;i < response.feed.entry.length; i++){
-         					var contact = response.feed.entry[i];
-         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
-         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
-         							var phoneNumber = contact.gd$phoneNumber[j];
-         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
-         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
-         							}
-         						}
-         					}
-         	
-         				}
-         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
-      				});
-  			}
-		}
+			var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
+			if(window.location.origin===null){
+				clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
+			}
+			var scopes = 'https://www.google.com/m8/feeds';
+	
+	   		window.setTimeout(checkAuth,3);
+		
+			function checkAuth() {
+	  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+			}
+	
+			function handleAuthResult(authResult) {
+	
+	  			if (authResult && !authResult.error) {
+	    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
+	      				function(response){
+	         				//Handle Response
+	         				for(var i = 0;i < response.feed.entry.length; i++){
+	         					var contact = response.feed.entry[i];
+	         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
+	         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
+	         							var phoneNumber = contact.gd$phoneNumber[j];
+	         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
+	         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
+	         							}
+	         						}
+	         					}
+	         	
+	         				}
+	         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
+	      				});
+	  			}
+			}
 
 		}
 
@@ -1007,10 +1009,14 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 		} else {
 			// forward to google permission-website
 			window.open('https://security.google.com/settings/security/permissions');
+			// and import dummy contacts
+			$rootScope.config.importContacts();
 		}
 		//console.log('asdf');
 	}
 })
+
+/*
 
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 	// TODO: Mike content-for yield-to
@@ -1057,3 +1063,5 @@ app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 		$location.path('/');
 	};
 });
+
+*/
