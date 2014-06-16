@@ -74,12 +74,68 @@
 </div> <!-- ~invalid -->
 
 <div ng-switch-when="noMatch">
-    <div content-for="title">
-        <span>Sorry Dude!</span>
-    </div>
-    <div bs-panel>
-    <h3>No Match found, yet...<h3>
-  </div>
+    
+<div content-for="title">
+    <span>No Match!</span>
+</div>
+
+<div class="list-group">
+      <!-- Timeslot -->
+      <div class="list-group-item media">
+        <div class="pull-left">
+          <i class="fa fa-calendar feature-icon text-primary"></i>
+        </div>
+        <div class="media-body">
+            <h3 class="media-heading">Your Times</h3>
+            <ul class="list-group" style="margin-bottom: 0">
+              <li ng-repeat="timeslot in config.model.requests[1].timeslots" class="list-group-item subject">
+                <h3 style="margin-bottom:0px;">
+                  <small>{{formatDate(timeslot.startTime) + ", " + formatHours(timeslot.startTime) + " - " + formatHours(timeslot.endTime)}}</small>
+                </h3>
+              </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Invitees -->
+      <div class="list-group-item media">
+        <div class="pull-left">
+          <i class="fa fa-group feature-icon text-primary"></i>
+        </div>
+        <div class="media-body">
+            <h3 class="media-heading">Your Invitees</h3>
+            <ul class="list-group" style="margin-bottom: 0">
+              <li ng-repeat="invitee in config.model.requests[1].invitees" class="list-group-item subject">
+                <h3 style="margin-bottom:0px;">
+                  <small>{{config.getContactById(invitee).name}}</small>
+                    <a class="btn btn-small pull-right" href="tel:{{config.getContactById(invitee).phoneNumbers[0]}}">
+                      <i class="fa fa-phone" style="font-size: 1.6em"></i>
+                    </a>
+                </h3>
+              </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="list-group-item media">
+        <div class="pull-left">
+          <i class="fa fa-map-marker feature-icon text-primary"></i>
+        </div>
+        <div class="media-body">
+            <h3 class="media-heading">Your Desired Location</h3>
+            <h3 style="padding-left: 15px"><small>
+              {{location.query || location.address}}
+            </small></h3>
+        </div>
+      </div>
+
+        <div><a href="#/location">
+      <img src="https://maps.googleapis.com/maps/api/staticmap?center={{pos.coords.latitude}},{{pos.coords.longitude}}&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:%7C{{pos.coords.latitude}},{{pos.coords.longitude}}" draggable="false" style="border: 1px solid black"></img>
+      </a></div>
+
+</div>
+
 </div> <!-- ~noMatch -->
 
 <div ng-switch-when="noRequest">

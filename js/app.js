@@ -911,7 +911,7 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	            alertify.alert('<h1>Sorry, dude!</h1><br />Something went terribly wrong...<br />');
 	            break;
 	        case 'noMatch':
-	            $location.path('/QuickLunch');
+	            $location.path('/response');
 	            alertify.alert('Jeez, aint nobody wanna eat with you!');
 	            break;
 	        case 'noRequest':
@@ -923,6 +923,16 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	$scope.location = $('body').data().location;
 	$scope.pos      = $('body').data().pos;
 	
+	// auxiliary functions to format date and time
+	$scope.formatHours = function (epoch){
+				var date = new Date(epoch);
+				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
+			}
+
+	$scope.formatDate = function (epoch){
+				var date = new Date(epoch);
+				return date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
+			}
 	
 	$scope.checkAgain = function() {
 		if (!$rootScope.config.model.requests[1]) {
@@ -941,16 +951,6 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 			// response contains subject(s) and a timeslot
 			$scope.responseStatus = "matchFound";
 
-			function formatHours(epoch){
-				var date = new Date(epoch);
-				return date.getHours() + ":" + (date.getMinutes()<10?"0":"") + date.getMinutes();
-			}
-
-			function formatDate(epoch){
-				var date = new Date(epoch);
-				return date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
-			}
-
 			// build response object from model for easier access
 			$scope.response = {
 				subjects: function(){
@@ -961,9 +961,9 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 						return subjects;
 					}(),
 				timeslot: {
-						date: formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
-						startTime: formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
-						endTime: formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
+						date: $scope.formatDate($rootScope.config.model.requests[1].response.timeslot.startTime),
+						startTime: $scope.formatHours($rootScope.config.model.requests[1].response.timeslot.startTime),
+						endTime: $scope.formatHours($rootScope.config.model.requests[1].response.timeslot.endTime)
 					},
 				location: {
 					name: "",
