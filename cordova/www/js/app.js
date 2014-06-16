@@ -487,62 +487,90 @@ app.service('Config', function($localStorage) {
 		this.delContacts();
 		var dummyContactsNeeded = true;
 		
-		if (this.model.useGoogleContacts) {
+		if(navigator.contacts!==null&&navigator!==undefined){
+			var that = this;						
+			var onSuccess = function (contacts) {
+				for(var i = 0; i < contacts.length; i++){
+					var contact = contacts[i];
+					for(var j = 0; j < contact.phoneNumbers; j++){
+						if(contact.phoneNumbers[j].type==='mobile'){
+							that.addContact(contact.displayName, contact.phoneNumbers[j].value);
+						}
+					}
+				}
+    			alert('Found ' + contacts.length + ' contacts.');
+    		};
 
-			var that = this;
-			//ClientID for Browsers
-			var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
-			if(window.location.origin===null){
-				//ClientID for Smartphone
-				clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
-			}
-			//Scope: Google Contacts
-			var scopes = 'https://www.google.com/m8/feeds';
-	
-	   		window.setTimeout(checkAuth,3);
-		
-			function checkAuth() {
-	  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-			}
-	
-			function handleAuthResult(authResult) {
-	
-	  			if (authResult && !authResult.error) {
-	    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
-	      				function(response){
-	         				//Handle Response
-	         				for(var i = 0;i < response.feed.entry.length; i++){
-	         					var contact = response.feed.entry[i];
-	         					//Add all Google Contacts that have a mobile phone number defined
-	         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
-	         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
-	         							var phoneNumber = contact.gd$phoneNumber[j];
-	         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
-	         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
-	         							}
-	         						}
-	         					}
-	         	
-	         				}
-	         				//Refresh UI because changes in the model are done asynchronously
-	         				that.validateGroups();
-	         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
-	      				});
-	  			}
-			}
+			var onError = function (contactError) {
+    			alert('onError!');
+			};
 
+			// find all contacts with 'Bob' in any name field
+			var options      = new ContactFindOptions();
+			options.filter   = "Bob";
+			options.multiple = true;
+			options.desiredFields = [navigator.contacts.fieldType.id];
+			var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.phoneNumbers];
+			navigator.contacts.find(onSuccess, onError, fields, options);
 		}
+		else{
+			if (this.model.useGoogleContacts) {
 
+				var that = this;
+				//ClientID for Browsers
+				var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
+				if(window.location.origin===null){
+					//ClientID for Smartphone
+					clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
+				}
+				//Scope: Google Contacts
+				var scopes = 'https://www.google.com/m8/feeds';
+		
+		   		window.setTimeout(checkAuth,3);
+			
+				function checkAuth() {
+		  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+				}
+		
+				function handleAuthResult(authResult) {
+		
+		  			if (authResult && !authResult.error) {
+		    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
+		      				function(response){
+		         				//Handle Response
+		         				for(var i = 0;i < response.feed.entry.length; i++){
+		         					var contact = response.feed.entry[i];
+		         					//Add all Google Contacts that have a mobile phone number defined
+		         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
+		         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
+		         							var phoneNumber = contact.gd$phoneNumber[j];
+		         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
+		         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
+		         							}
+		         						}
+		         					}
+		         	
+		         				}
+		         				//Refresh UI because changes in the model are done asynchronously
+		         				that.validateGroups();
+		         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
+		      				});
+		  			}
+				}
+	
+			}
+		}
+	
 		// Add Dummy Contacts for Demo
 		if(dummyContactsNeeded){
-		this.addContact("Julian Gimbel",	"01741111111");
-		this.addContact("Jan Sosulski",	"01742222222");
-		this.addContact("Johannes Haasen", "01743333333");
-		this.addContact("Jonas Sladek",	"01744444444");
-		this.addContact("Robert Pinsler",	"01755555555");
-		this.addContact("Mike Mülhaupt",	"01746666666");
-		this.addContact("Simon Liebeton",	"01747777777");
-		this.addContact("Kai Sieben",		"01748888888");
+			this.addContact("Julian Gimbel",	"01741111111");
+			this.addContact("Jan Sosulski",	"01742222222");
+			this.addContact("Johannes Haasen", "01743333333");
+			this.addContact("Jonas Sladek",	"01744444444");
+			this.addContact("Robert Pinsler",	"01755555555");
+			this.addContact("Mike Mülhaupt",	"01746666666");
+			this.addContact("Simon Liebeton",	"01747777777");
+			this.addContact("Kai Sieben",		"01748888888");
 		}
 		this.validateGroups();
 	};
@@ -752,6 +780,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		Location.getCurrentPosition(function(pos){
 			$scope.setPosition(pos);
 			maps.reverseGeocode(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			$('body').data().pos = pos;
 		});
 	};
 	
