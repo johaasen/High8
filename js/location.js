@@ -39,7 +39,7 @@ var maps = {
   	var geocoder = new google.maps.Geocoder();
   	geocoder.geocode({'latLng': position}, function(results, status) {that.onReverseGeocode(results, status);});
   	
-  	$("#location-add").data({
+  	$("body").data({
       pos: {
 	    coords: {
 	  	  // k and A are the cryptic property names for the marker's latitude and longitude
@@ -67,12 +67,12 @@ var maps = {
     
 	this.marker.setPosition(place.geometry.location);
 	var that = this;
-	$("#location-add").data().pos.coords = {
+	$("body").data().pos.coords = {
 	  // k and A are the cryptic property names for the marker's latitude and longitude
 	  latitude: that.marker.position.k,
 	  longitude: that.marker.position.A
 	};	
-	$("#location-add").data().location = {
+	$("body").data().location = {
 	  name: place.name,
 	  query: $("#pac-input").val(),
 	  address: place.formatted_address
@@ -87,7 +87,7 @@ var maps = {
   onReverseGeocode: function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       if (results[0]) {
-        $("#location-add").data({
+        $("body").data({
       	  location: {
       	      name: "",
       		  query: "",
