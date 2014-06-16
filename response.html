@@ -5,6 +5,10 @@
 <div ng-switch on="responseStatus"> 
 <div ng-switch-when="matchFound">
 
+<div content-for="title">
+    <span>Match Found!</span>
+</div>
+
 <div class="list-group">
       <!-- Header -->
       <!--
@@ -67,12 +71,18 @@
 </div> <!-- ~matchFound -->
 
 <div ng-switch-when="invalid">
+    <div content-for="title">
+        <span>boof!</span>
+    </div>
   <div bs-panel>
     <h3>Invalid Response from Backend<h3>
   </div>
 </div> <!-- ~invalid -->
 
 <div ng-switch-when="noMatch">
+    <div content-for="title">
+        <span>Sorry Dude!</span>
+    </div>
     <div bs-panel>
     <h3>No Match found, yet...<h3>
   </div>

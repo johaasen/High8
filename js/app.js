@@ -908,6 +908,19 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 app.controller('responseCtrl', function($rootScope, $scope, $location) {
 	$rootScope.currentView = 'response';
 	
+	$scope.$watch('responseStatus', function(newVal, oldVal) {
+	    switch (newVal) {
+	        case 'invalid':
+	            $location.path('/QuickLunch');
+	            alertify.alert('<h1>Sorry, dude!</h1><br />Something went terribly wrong...<br />');
+	            break;
+	        case 'noMatch':
+	            $location.path('/QuickLunch');
+	            alertify.alert('Jeez, aint nobody wanna eat with you!');
+	            break;
+	    }
+	});
+	
 	$scope.location = $('body').data().location;
 	$scope.pos      = $('body').data().pos;
 	
