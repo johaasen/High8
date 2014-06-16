@@ -5,13 +5,11 @@
 <div ng-switch on="responseStatus"> 
 <div ng-switch-when="matchFound">
 
-<div class="list-group">
-      <!-- Header -->
-      <!--
-      <div class="list-group-item">
-        <h3>Found a Match!</h3>
-      </div> -->
+<div content-for="title">
+    <span>Match Found!</span>
+</div>
 
+<div class="list-group">
       <!-- Timeslot -->
       <div class="list-group-item media">
         <div class="pull-left">
@@ -53,24 +51,32 @@
         <div class="media-body">
             <h3 class="media-heading">Where?</h3>
             <h3 style="padding-left: 15px"><small>
-            	DHBW Mannheim
+            	{{location.query || location.address}}
             </small></h3>
         </div>
       </div>
 
-      <div><img src="http://placehold.it/300x300" /></div>
+        <div><a href="#/location">
+			<img src="https://maps.googleapis.com/maps/api/staticmap?center={{pos.coords.latitude}},{{pos.coords.longitude}}&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:%7C{{pos.coords.latitude}},{{pos.coords.longitude}}" draggable="false" style="border: 1px solid black"></img>
+	    </a></div>
 
 </div>
 
 </div> <!-- ~matchFound -->
 
 <div ng-switch-when="invalid">
+    <div content-for="title">
+        <span>boof!</span>
+    </div>
   <div bs-panel>
     <h3>Invalid Response from Backend<h3>
   </div>
 </div> <!-- ~invalid -->
 
 <div ng-switch-when="noMatch">
+    <div content-for="title">
+        <span>Sorry Dude!</span>
+    </div>
     <div bs-panel>
     <h3>No Match found, yet...<h3>
   </div>
@@ -85,11 +91,14 @@
 
 </div> <!-- ~ng-switch -->
 
+</div>
+</div>
+</div>
+
+<!-- Navbar bottom check again button -->
 <div class="navbar navbar-app navbar-absolute-bottom">
   	<button class="btn btn-default justified" ng-click="findMatches(1, checkAgain)">
   		<i class="fa fa-refresh fa-navbar"></i>&nbsp;&nbsp;&nbsp;Check Again!
   	</button>
 </div>
 
-</div>
-</div>

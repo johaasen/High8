@@ -1,97 +1,134 @@
-function initialize(pos) {
+// initialize Google Places/Autocomplete controls
+// for more information, see: https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete
 
-  var map = new google.maps.Map(document.getElementById('map-canvas'), {
+var maps = {
+  map: new google.maps.Map(document.getElementById('map-canvas'), {
     mapTypeId: google.maps.MapTypeId.ROADMAP,
-		center: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
     zoom: 13,
-		panControl: false,
-		draggable: true,
-		mapTypeControl: false,
-		overviewMapControl: false,
-		rotateControl: false,
-		scaleControl: false,
-		scrollWheel: false,
-		streetViewControl: false,
-		zoomControl: false
-  });
-
-  var input = /** @type {HTMLInputElement} */(
+    draggable: true,
+	panControl: false,
+	mapTypeControl: false,
+	overviewMapControl: false,
+	rotateControl: false,
+	scaleControl: false,
+	scrollWheel: false,
+	streetViewControl: false,
+	zoomControl: false
+  }),
+  marker: new google.maps.Marker({
+	draggable: true,
+    anchorPoint: new google.maps.Point(0, -29)
+  }),
+  infowindow: new google.maps.InfoWindow(),
+  autocomplete: null,
+  initializeMap: function(pos) {
+  	var input = /** @type {HTMLInputElement} */(
 		document.getElementById('pac-input')
-	);
+  	);
 
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  	var position = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+  	this.map.setCenter(position);
+  	this.marker.setPosition(position);
+  	this.marker.setMap(this.map);
+  	this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
   
-  var autocomplete = new google.maps.places.Autocomplete(input);
-  autocomplete.bindTo('bounds', map);
+  	this.autocomplete = new google.maps.places.Autocomplete(input);
+  	this.autocomplete.bindTo('bounds', this.map);
 
-  var infowindow = new google.maps.InfoWindow();
-  var marker = new google.maps.Marker({
-    map: map,
-		draggable: true,
-    anchorPoint: new google.maps.Point(0, -29),
-		position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
-  });
-	
-	$("#location-add").data({
-		pos: {
-			coords: {
-				latitude: marker.position.k,
-				longitude: marker.position.A
-			}
-		}
-	});
+  	var that = this;
+  	var geocoder = new google.maps.Geocoder();
+  	geocoder.geocode({'latLng': position}, function(results, status) {that.onReverseGeocode(results, status);});
+  	
+  	$("body").data({
+      pos: {
+	    coords: {
+	  	  // k and A are the cryptic property names for the marker's latitude and longitude
+	      latitude: that.marker.position.k,
+		  longitude: that.marker.position.A
+	    }
+	  }
+    });
 
-  google.maps.event.addListener(autocomplete, 'place_changed', function() {
-    infowindow.close();
-    //marker.setVisible(false);
-    var place = autocomplete.getPlace();
+    google.maps.event.addListener(this.autocomplete, 'place_changed', function() {that.onPlaceChanged(that.autocomplete);});
+    google.maps.event.addListener(this.marker, 'dragend', function() {that.onDragEnd(that.marker);});
+  },
+  onPlaceChanged: function(source) {
+    var place = source.getPlace();
     if (!place.geometry) {
       return;
     }
 
-    // If the place has a geometry, then present it on a map.
     if (place.geometry.viewport) {
-      map.fitBounds(place.geometry.viewport);
+      this.map.fitBounds(place.geometry.viewport);
     } else {
-      map.setCenter(place.geometry.location);
-      map.setZoom(17);  // Why 17? Because it looks good.
+      this.map.setCenter(place.geometry.location);
+      this.map.setZoom(17); 
     }
     
-		marker.setPosition(place.geometry.location);
-		$("#location-add").data().pos.coords = {
-				latitude: marker.position.k,
-				longitude: marker.position.A
-		};		
-    //marker.setVisible(true);
-
-    var address = '';
-    if (place.address_components) {
-      address = [
-        (place.address_components[0] && place.address_components[0].short_name || ''),
-        (place.address_components[1] && place.address_components[1].short_name || ''),
-        (place.address_components[2] && place.address_components[2].short_name || '')
-      ].join(' ');
+	this.marker.setPosition(place.geometry.location);
+	var that = this;
+	$("body").data().pos.coords = {
+	  // k and A are the cryptic property names for the marker's latitude and longitude
+	  latitude: that.marker.position.k,
+	  longitude: that.marker.position.A
+	};	
+	$("body").data().location = {
+	  name: place.name,
+	  query: $("#pac-input").val(),
+	  address: place.formatted_address
+	};
+  },
+  onDragEnd: function(source) {
+    var position = new google.maps.LatLng(source.position.k, source.position.A);
+    var that = this;
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'latLng': position}, function(results, status) {that.onReverseGeocode(results, status);});
+  },
+  onReverseGeocode: function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[0]) {
+        $("body").data({
+      	  location: {
+      	      name: "",
+      		  query: "",
+			  address: results[0].formatted_address
+		  }
+	    });
+      } else {
+        //alert('No results found');
+      }
+    } else {
+      //alert('Geocoder failed due to: ' + status);
     }
+  },
+  initializeNearby: function(pos) {
+  	var request = {
+      location: pos,
+      radius: 500,
+      types: ['store']
+    };
+    
+    var service = new google.maps.places.PlacesService(this.map);
+    service.nearbySearch(request, this.onSearchNearby);
+  },
+  onSearchNearby: function (results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+      for (var i = 0; i < results.length; i++) {
+        this.createNearbyMarker(results[i]);
+      }
+    }
+  },
+  createNearbyMarker: function(place) {
+    var placeLoc = place.geometry.location;
+    var that = this;
+    var marker = new google.maps.Marker({
+      map: that.map,
+      position: place.geometry.location
+    });
 
-    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-    //infowindow.open(map, marker);
-		
-		debugger;
-  });
-			
-	// google.maps.event.addListener(marker, 'click', function() {
-			// var same = false;
-			// if (this.getAnimation() != null) same = true;
-				// for (var i = 0, m; m = markers[i]; i++) {
-					// m.setAnimation(null);
-			// }
-				
-			// if (same != true) {
-				// this.setAnimation(google.maps.Animation.BOUNCE);
-				// $("#location-add").css("display","block");
-				// $("#location-add").data("marker", this);
-			// } else {
-				// $("#location-add").css("display","none");
-			// }
-  // });
-}
+    google.maps.event.addListener(marker, 'click', function() {
+      that.infowindow.setContent(place.name);
+      that.infowindow.open(that.map, this);
+    });
+  }
+};
