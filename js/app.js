@@ -487,7 +487,7 @@ app.service('Config', function($localStorage) {
 		this.delContacts();
 		var dummyContactsNeeded = true;
 		
-		if(navigator.contacts!==null&&navigator!==undefined){
+		if(navigator.contacts!==null&&navigator.contacts!==undefined){
 			var that = this;						
 			var onSuccess = function (contacts) {
 				for(var i = 0; i < contacts.length; i++){
