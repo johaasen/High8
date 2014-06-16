@@ -490,11 +490,13 @@ app.service('Config', function($localStorage) {
 		if (this.model.useGoogleContacts) {
 
 			var that = this;
-	
+			//ClientID for Browsers
 			var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
 			if(window.location.origin===null){
+				//ClientID for Smartphone
 				clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
 			}
+			//Scope: Google Contacts
 			var scopes = 'https://www.google.com/m8/feeds';
 	
 	   		window.setTimeout(checkAuth,3);
@@ -511,6 +513,7 @@ app.service('Config', function($localStorage) {
 	         				//Handle Response
 	         				for(var i = 0;i < response.feed.entry.length; i++){
 	         					var contact = response.feed.entry[i];
+	         					//Add all Google Contacts that have a mobile phone number defined
 	         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
 	         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
 	         							var phoneNumber = contact.gd$phoneNumber[j];
@@ -521,6 +524,8 @@ app.service('Config', function($localStorage) {
 	         					}
 	         	
 	         				}
+	         				//Refresh UI because changes in the model are done asynchronously
+	         				that.validateGroups();
 	         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
 	      				});
 	  			}
@@ -528,7 +533,7 @@ app.service('Config', function($localStorage) {
 
 		}
 
-		// Dummy-Kontakte anlegen (wenn keine google contacts)
+		// Add Dummy Contacts for Demo
 		if(dummyContactsNeeded){
 		this.addContact("Julian Gimbel",	"01741111111");
 		this.addContact("Jan Sosulski",	"01742222222");
@@ -1038,7 +1043,6 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 			// and import dummy contacts
 			$rootScope.config.importContacts();
 		}
-		//console.log('asdf');
 	}
 })
 
