@@ -60,11 +60,11 @@ app.factory('Location', function() {
 		},
 		init: function() {
 			var that = this;
-			$.getScript('js/location.js', function() {
+			//$.getScript('js/location.js', function() {
 				that.getCurrentPosition(function(pos){
 					maps.initializeMap(pos);
 				});
-			});
+			//});
 		}
 	};
 
@@ -746,6 +746,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.setCurrentPosition = function() {
 		Location.getCurrentPosition(function(pos){
 			$scope.setPosition(pos);
+			maps.reverseGeocode(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
 		});
 	};
 	
