@@ -506,11 +506,10 @@ app.service('Config', function($localStorage) {
 			};
 
 			// find all contacts with 'Bob' in any name field
-			var options      = new ContactFindOptions();
-			options.filter   = "Bob";
+			var options = {};
 			options.multiple = true;
-			options.desiredFields = [navigator.contacts.fieldType.id];
-			var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.phoneNumbers];
+			options.desiredFields = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.phoneNumbers];
+			var fields = "*";
 			navigator.contacts.find(onSuccess, onError, fields, options);
 		}
 		else{
