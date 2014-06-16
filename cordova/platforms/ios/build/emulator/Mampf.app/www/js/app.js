@@ -496,7 +496,6 @@ app.service('Config', function($localStorage) {
 					if(contact.phoneNumbers){
 						for(var j = 0; j < contact.phoneNumbers.length; j++){
 							if(contact.phoneNumbers[j].type==='mobile'){
-								console.log(contact);
 								that.addContact(contact.displayName, contact.phoneNumbers[j].value);
 							}
 						}

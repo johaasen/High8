@@ -106,7 +106,7 @@ module.exports = [
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "org.apache.cordova.geolocation": "0.3.8",
+    "org.apache.cordova.geolocation": "0.3.9-dev",
     "org.apache.cordova.contacts": "0.2.12-dev"
 }
 // BOTTOM OF METADATA
