@@ -752,6 +752,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		Location.getCurrentPosition(function(pos){
 			$scope.setPosition(pos);
 			maps.reverseGeocode(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			$('body').data().pos = pos;
 		});
 	};
 	
