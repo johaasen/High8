@@ -121,24 +121,11 @@
   </div>
   </div>
 	
-  <!-- Overlay for response -->
-  <div overlay="responseOverlay">
-    <h4 class="overlay-title">Response</h4>
-    <br> 
-    <!-- TODO: ng repeat not working
-    <div ng-repeat="name in response.names">repeat</div>
-    -->
+</div>
+</div>
+</div>
 
-    <div>Who? {{config.model.requests[1].response.subjects[0]}}</div>
-    <p>When? {{config.model.requests[1].response.timeslot.startTime}}</p>
-
-    <p toggle="off" bubble target="responseOverlay">
-      <span class="btn btn-default">Thanks!</span>
-    </p>  
-  </div>
-</div>
-</div>
-</div>
+<!-- Navbar bottom send button -->
 <div id="findmatches" class="navbar navbar-app navbar-absolute-bottom">
   	<button class="btn btn-default justified" ng-click="sendRequest()"><b>Send Request!</b></button>
 </div>

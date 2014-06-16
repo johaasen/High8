@@ -81,8 +81,8 @@ app.service('Config', function($localStorage) {
 	this.model = $localStorage;
 
 	// some flags for user-settings
-	this.model.isInitialized 		= $localStorage.isInitialized || false;
-	this.model.useGoogleContacts 	= $localStorage.useGoogleContacts || false;
+	this.model.isInitialized		= $localStorage.isInitialized || false;
+	this.model.useGoogleContacts	= $localStorage.useGoogleContacts || false;
 	this.model.useCurrentPosition	= $localStorage.useCurrentPosition || false;
 
 	// initialize model object
@@ -148,7 +148,7 @@ app.service('Config', function($localStorage) {
 	// add contact
 	this.addContact = function(name, phone) {
 		/*
-			An array is passed if there are multiple numbers, otherwise it is a string with a just one phone
+			An array is passed if there are multiple numbers, otherwise it is a string with just one phone
 			number. Only phone[0] is used for now, but for extensibility reasons an array is used as data
 			structure, e.g. the phonegap API uses an array.
 		*/
@@ -553,7 +553,7 @@ app.controller('MainController', function($rootScope, $scope, $timeout, $locatio
 		if (!$rootScope.config.model.isInitialized) {
 			$location.path('/profile');
 		}
-	})
+	});
 
 	// prevent user from changing the route, as long as app is not initialized
 	$rootScope.$on("$routeChangeStart", function(event, curr, prev) {
@@ -772,8 +772,6 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.addTimeslotToRequest = function() {
-
-
 		var startTime = newTimeslotTime.startTime.value;
 		var endTime = newTimeslotTime.endTime.value;
 
@@ -840,7 +838,6 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 
 	//Add recently configured group to the model
 	$scope.addGroupToModel = function(name){
-
 		$("input[name=groupName]").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
 				$(this).removeClass('animated bounce');
 		});
@@ -886,7 +883,6 @@ app.controller('contactCtrl', function($rootScope, $scope, $window) {
 			return false;
 		}
 	};
-
 
 	$scope.tabAllActivated = true;
 	$scope.tabGroupsActivated = false;
@@ -939,11 +935,10 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 
 		}else if(!$rootScope.config.model.requests[1].response.timeslot){
 			// response contains a subject, but no timeslot
-
 			$scope.responseStatus = "invalid";
+
 		}else{	
 			// response contains subject(s) and a timeslot
-
 			$scope.responseStatus = "matchFound";
 
 			function formatHours(epoch){
@@ -956,6 +951,7 @@ app.controller('responseCtrl', function($rootScope, $scope, $location) {
 				return date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
 			}
 
+			// build response object from model for easier access
 			$scope.response = {
 				subjects: function(){
 						var subjects = [];
@@ -1011,10 +1007,10 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 
 		if (!returnValue) return false;
 		
-		// create MD5 and write to model
+		// call config service to create MD5 and write to model
 		$rootScope.config.setIdentity($scope.name, $scope.phone);
 		
-		// wenn noch nicht initialisiert...
+		// if not initialized yet
 		if (!$rootScope.config.model.isInitialized) {
     		// import contacts
     		$rootScope.config.importContacts();
@@ -1025,7 +1021,7 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
     		// route to landing screen
     		$location.path('/');
 		} else {
-		    // falls bereits initialisiert, nur Bestätigung anzeigen
+		    // if already initialized, just show a confirmation
 		    alertify.alert('Successfully saved!');
 		    
 		}
@@ -1046,9 +1042,9 @@ app.controller('profileCtrl', function($rootScope, $scope, $location, Config) {
 })
 
 /*
-
+	// TODO: delete initialize Ctrl
 app.controller('initializeCtrl', function($rootScope, $scope, $location) {
-	// TODO: Mike content-for yield-to
+	// Mike content-for yield-to
 	$rootScope.currentView = 'initialize';
 
 	$scope.signUp = function() {
@@ -1085,7 +1081,7 @@ app.controller('initializeCtrl', function($rootScope, $scope, $location) {
 		// set initialized flag
 		$rootScope.config.model.isInitialized = true;
 
-		//TODO: reset currentView-Marker
+		// reset currentView-Marker
 		$rootScope.currentView = '';
 
 		// route to landing screen
