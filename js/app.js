@@ -624,6 +624,10 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.showInvitees = false;
 	$scope.showLocation = false;
 	$scope.showDates = true;
+	$scope.startDate = new Date();
+	$scope.endDate = new Date();
+
+	//datepicker
 	$scope.today = function() {
     $scope.dt = new Date();
   };
@@ -657,7 +661,151 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 
   $scope.initDate = new Date('2016-15-20');
   $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-  $scope.format = $scope.formats[0];
+  $scope.format = $scope.formats[2];
+  // end of datepicker
+
+	$scope.showTimeList = function(){
+		$scope.showDates = !$scope.showDates;
+	};
+	
+	$scope.showList = function(){
+		if($rootScope.config.model.requests[0].invitees.length>0){
+			$scope.showInvitees = !$scope.showInvitees;
+		}
+	};
+
+	$scope.showMap = function() {
+		$scope.showLocation = !$scope.showLocation;
+	};
+	
+	// check if the request has picked timeslots
+	$scope.checkRequest = function() {
+		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+
+			//disable datepicker to pick only one date per request
+			// $('#form-control-date').prop('disabled', true);
+			// var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
+			// var startTime = new Date(startTimeMil);
+			//set Placeholder and value
+			// $('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
+		}
+		else{
+			//enable datepicker if the request has no timslots
+			// $('#form-control-date').prop('disabled', false);
+		}
+	};
+
+	// get only 30 Minutes slots for the Timepicker
+	
+	function onStart() {
+		var now = new Date();
+		var minute = '00';
+		var hours = '00';
+    	if(now.getMinutes()>30){
+    		minute = '00';
+    		now.setMinutes(0);
+    		hour = now.getHours()+1;
+    	}
+    	else{
+    		minute = '30';
+    		now.setMinutes(30);
+    		hour = now.getHours();
+    	}
+
+    	//copy timestamp of 'now' into startDate, NO REFERENCE!
+    	$scope.startDate = new Date(now.getTime());
+    	$scope.startDate.setHours(hour);
+    	
+    	var nexthour = parseInt(hour)+1;
+			//copy timestamp of 'now' into endDate + 1, NO REFERENCE!
+    	$scope.endDate = new Date(now.getTime());
+    	$scope.endDate.setHours(nexthour);
+
+    	//set default times
+    	$('#startTime').attr("placeholder", ""+hour+":"+minute);
+    	$('#endTime').attr("placeholder", ""+(hour+1)+":"+minute);
+    	$('#startTime').attr("value", ""+hour+":"+minute);
+    	$('#endTime').attr("value", ""+(hour+1)+":"+minute);
+
+  }
+  onStart();
+
+	//startTime picker
+	var startPicker = $('.startTime').clockpicker({
+	    align: 'left',
+	    autoclose:true
+	})
+    .find('input').change(function(){
+    	var minute = parseInt(this.value.substring(3,5));
+    	var hours = parseInt(this.value.substring(0,2));
+    	$scope.startDate = new Date($scope.dt.getTime());
+    	$scope.startDate.setMinutes(minute);
+    	$scope.startDate.setHours(hours);
+    });
+
+//endTime picker
+	var endPicker = $('.endTime').clockpicker({
+	    align: 'right',
+	    autoclose:true
+	})
+    .find('input').change(function(){
+      var minute = parseInt(this.value.substring(3,5));
+    	var hours = parseInt(this.value.substring(0,2));
+    	$scope.endDate = new Date($scope.dt.getTime());
+    	$scope.endDate.setMinutes(minute);
+    	$scope.endDate.setHours(hours);
+    });
+
+
+	$scope.setCurrentPosition = function() {
+		Location.getCurrentPosition(function(pos){
+			$scope.setPosition(pos);
+			maps.reverseGeocode(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			$('body').data().pos = pos;
+		});
+	};
+	
+	$scope.setPosition = function(pos) {
+		$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
+	};
+	
+	$scope.setNewPosition = function() {
+		//console.log($('#location-add').data());
+		var pos = $('body').data().pos;
+		$scope.setPosition(pos);
+		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
+		window.location.href = '#/QuickLunch';
+		$rootScope.isLocationCustom = true;
+	};
+	
+	$scope.onCancel = function() {
+		$("#pac-input").val('');
+		$("#pac-input").blur();
+	};
+	
+	$scope.setInitLocation = function() {
+		if (!$rootScope.isLocationCustom) $scope.setCurrentPosition();
+	};
+	
+	$scope.addTimeslotToRequest = function() {
+		$rootScope.config.addTimeslot($scope.startDate.getTime(), $scope.endDate.getTime());
+	};
+	
+	$scope.sendRequest = function() {
+		if($rootScope.config.model.requests[0].timeslots.length === 0){
+			$scope.addTimeslotToRequest();
+		}
+		$rootScope.findMatches(0);
+	};
+	  
+	$scope.allContactsDefault = function(){
+		if($rootScope.config.model.requests.length>1){
+			return "inactive";
+		}
+		else{
+			return "active";
+		}
+	};
 
 });
 

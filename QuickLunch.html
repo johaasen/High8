@@ -7,15 +7,16 @@
 	<i class="fa fa-check fa-3"></i>  SEND</a>
 </div>
 
-<div class="scrollable" id="quicklunch">
-<div class="scrollable-content">
-
 <div overlay="selectDate">  
   <div style="display:inline-block; min-height:290px;">
-    <datepicker ng-model="dt" ng-click="toggle('selectDate')" min-date="minDate" show-weeks="true" class="well well-sm"></datepicker>
+    <h4 class="overlay-title">Select date</h4>    
+    <datepicker ng-model="dt" min-date="minDate" show-weeks="true" class="well well-sm" style="background:transparent;border:0px;border-raduis:0px !important;"></datepicker>
+    <button type="button" ng-click="toggle('selectDate')"  class="btn btn-sm btn-danger pull-right ng-binding">DONE</button>
   </div>
 </div>
 
+<div class="scrollable" id="quicklunch">
+<div class="scrollable-content">
 
 <div style="margin-top:30px">
   <div class="panel">
@@ -27,8 +28,13 @@
 				When? 
       </span>
       <i class="fa fa-calendar pull-right" style="padding-right:10px; font-size:16px"></i>
-      <div class="pull-right no-margin-bottom no-padding-top" style="margin-top:-6px;font-size:14px">
-        <pre ng-click="toggle('selectDate')"><em>{{dt | date:'fullDate' }}</em></pre>
+      <div id="dateDisplay" class="pull-right no-margin-bottom no-padding-top" style="margin-top:-6px;font-size:14px">
+        <div class ="btn button-grey" ng-show="config.model.requests[0].timeslots.length === 0" ng-click="toggle('selectDate')">
+          {{dt | date:'dd.MM.yyyy' }}
+        </div>
+        <div class ="btn button-grey" ng-show="config.model.requests[0].timeslots.length > 0" >
+          {{dt | date:'dd.MM.yyyy' }}
+        </div>
       </div>
     </h2>
   </div>
@@ -38,12 +44,18 @@
 				<div>
 				<div class="form-control-wrapper startTime pull-left">
 					<label for="startTime" class="sr-only">from</label>
-					<input type="text" id="form-control-startTime" class="form-control" ng-model="startTime" name="startTime"> 
+					<!-- <input type="text" id="form-control-startTime" class="form-control" ng-model="startTime" name="startTime">  --> 
+          <div class="input-group clockpicker">
+              <input id="startTime" type="text" onfocus="this.blur()" class="form-control" >
+          </div>
 				</div>
 
 				<div class="form-control-wrapper pull-right endTime">
 					<label for="endTime" class="sr-only">to</label>
-					<input type="text" id="form-control-endTime" class="form-control" ng-model="endTime" name="endTime">
+					<!-- <input type="text" id="form-control-endTime" class="form-control" ng-model="endTime" name="endTime"> -->
+          <div class="input-group clockpicker">
+              <input id="endTime" type="text" onfocus="this.blur()" class="form-control" >
+          </div>
 				</div>
 				</div>
 				<div style="clear: left"></div>
