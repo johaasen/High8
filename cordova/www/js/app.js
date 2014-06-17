@@ -1,4 +1,4 @@
-var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui"]);
+var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui", "ui.bootstrap"]);
 
 app.config(function($routeProvider, $locationProvider) {
 	$locationProvider.html5Mode(false);
@@ -487,96 +487,62 @@ app.service('Config', function($localStorage) {
 		this.delContacts();
 		var dummyContactsNeeded = true;
 		
-		if(navigator.contacts!==null&&navigator.contacts!==undefined){
-			var that = this;						
-			var onSuccess = function (contacts) {
-				for(var i = 0; i < contacts.length; i++){
-					var contact = contacts[i];
-					console.log(contact.displayName);
-					if(contact.phoneNumbers){
-						for(var j = 0; j < contact.phoneNumbers.length; j++){
-							if(contact.phoneNumbers[j].type==='mobile'){
-								that.addContact(contact.displayName, contact.phoneNumbers[j].value);
-							}
-						}
-					}
-				}
-    			alert('Found ' + contacts.length + ' contacts.');
-				that.validateGroups();
-				if(scopeApply){
-					scopeApply();
-				}
-    		};
+		if (this.model.useGoogleContacts) {
 
-			var onError = function (contactError) {
-    			alert('onError!');
-			};
-
-			// find all contacts with 'Bob' in any name field
-			var options = {};
-			options.multiple = true;
-			options.desiredFields = [navigator.contacts.fieldType.name, navigator.contacts.fieldType.phoneNumbers];
-			var fields = ["*"];
-			navigator.contacts.find(onSuccess, onError, fields, options);
-		}
-		else{
-			if (this.model.useGoogleContacts) {
-
-				var that = this;
-				//ClientID for Browsers
-				var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
-				if(window.location.origin===null){
-					//ClientID for Smartphone
-					clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
-				}
-				//Scope: Google Contacts
-				var scopes = 'https://www.google.com/m8/feeds';
-		
-		   		window.setTimeout(checkAuth,3);
-			
-				function checkAuth() {
-		  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-				}
-		
-				function handleAuthResult(authResult) {
-		
-		  			if (authResult && !authResult.error) {
-		    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
-		      				function(response){
-		         				//Handle Response
-		         				for(var i = 0;i < response.feed.entry.length; i++){
-		         					var contact = response.feed.entry[i];
-		         					//Add all Google Contacts that have a mobile phone number defined
-		         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
-		         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
-		         							var phoneNumber = contact.gd$phoneNumber[j];
-		         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
-		         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
-		         							}
-		         						}
-		         					}
-		         	
-		         				}
-		         				//Refresh UI because changes in the model are done asynchronously
-		         				that.validateGroups();
-		         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
-		      				});
-		  			}
-				}
-	
+			var that = this;
+			//ClientID for Browsers
+			var clientId = '68944230699-ku5i9e03505itr7a61hsf45pah3gsacc.apps.googleusercontent.com';
+			if(window.location.origin===null){
+				//ClientID for Smartphone
+				clientID = '68944230699-fb9o103oqjuoia62ukk1sktespj2gc6p.apps.googleusercontent.com';
 			}
-		}
+			//Scope: Google Contacts
+			var scopes = 'https://www.google.com/m8/feeds';
 	
+	   		window.setTimeout(checkAuth,3);
+		
+			function checkAuth() {
+	  			gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+			}
+	
+			function handleAuthResult(authResult) {
+	
+	  			if (authResult && !authResult.error) {
+	    			$.get("https://www.google.com/m8/feeds/contacts/default/full?alt=json&access_token=" + authResult.access_token + "&max-results=700&v=3.0",
+	      				function(response){
+	         				//Handle Response
+	         				for(var i = 0;i < response.feed.entry.length; i++){
+	         					var contact = response.feed.entry[i];
+	         					//Add all Google Contacts that have a mobile phone number defined
+	         					if(contact !==null && contact!==undefined && contact.gd$phoneNumber !==null && contact.gd$phoneNumber!==undefined ){
+	         						for(var j = 0; j < contact.gd$phoneNumber.length;j++){
+	         							var phoneNumber = contact.gd$phoneNumber[j];
+	         							if(phoneNumber.rel === "http://schemas.google.com/g/2005#mobile" && contact.gd$name && contact.gd$name.gd$fullName && contact.gd$name.gd$fullName.$t){
+	         								that.addContact(contact.gd$name.gd$fullName.$t, phoneNumber.$t.replace(" ",""));
+	         							}
+	         						}
+	         					}
+	         	
+	         				}
+	         				//Refresh UI because changes in the model are done asynchronously
+	         				that.validateGroups();
+	         				if(scopeApply){scopeApply();dummyContactsNeeded = false;}
+	      				});
+	  			}
+			}
+
+		}
+
 		// Add Dummy Contacts for Demo
 		if(dummyContactsNeeded){
-			this.addContact("Julian Gimbel",	"01741111111");
-			this.addContact("Jan Sosulski",	"01742222222");
-			this.addContact("Johannes Haasen", "01743333333");
-			this.addContact("Jonas Sladek",	"01744444444");
-			this.addContact("Robert Pinsler",	"01755555555");
-			this.addContact("Mike Mülhaupt",	"01746666666");
-			this.addContact("Simon Liebeton",	"01747777777");
-			this.addContact("Kai Sieben",		"01748888888");
+		this.addContact("Julian Gimbel",	"01741111111");
+		this.addContact("Jan Sosulski",	"01742222222");
+		this.addContact("Johannes Haasen", "01743333333");
+		this.addContact("Jonas Sladek",	"01744444444");
+		this.addContact("Robert Pinsler",	"01755555555");
+		this.addContact("Mike Mülhaupt",	"01746666666");
+		this.addContact("Simon Liebeton",	"01747777777");
+		this.addContact("Kai Sieben",		"01748888888");
 		}
 		this.validateGroups();
 	};
@@ -658,6 +624,45 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.showInvitees = false;
 	$scope.showLocation = false;
 	$scope.showDates = true;
+	$scope.startDate = new Date();
+	$scope.endDate = new Date();
+
+	//datepicker
+	$scope.today = function() {
+    $scope.dt = new Date();
+  };
+  $scope.today();
+
+  $scope.clear = function () {
+    $scope.dt = null;
+  };
+
+  // Disable weekend selection
+  $scope.disabled = function(date, mode) {
+    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+  };
+
+  $scope.toggleMin = function() {
+    $scope.minDate = $scope.minDate ? null : new Date();
+  };
+  $scope.toggleMin();
+
+  $scope.open = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope.opened = true;
+  };
+
+  $scope.dateOptions = {
+    formatYear: 'yy',
+    startingDay: 1
+  };
+
+  $scope.initDate = new Date('2016-15-20');
+  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  $scope.format = $scope.formats[2];
+  // end of datepicker
 
 	$scope.showTimeList = function(){
 		$scope.showDates = !$scope.showDates;
@@ -668,118 +673,88 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			$scope.showInvitees = !$scope.showInvitees;
 		}
 	};
-	
+
 	$scope.showMap = function() {
 		$scope.showLocation = !$scope.showLocation;
 	};
+	
 	// check if the request has picked timeslots
 	$scope.checkRequest = function() {
 		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
+
 			//disable datepicker to pick only one date per request
-			$('#form-control-date').prop('disabled', true);
-			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
-			var startTime = new Date(startTimeMil);
+			// $('#form-control-date').prop('disabled', true);
+			// var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
+			// var startTime = new Date(startTimeMil);
 			//set Placeholder and value
-			$('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
+			// $('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
 		}
 		else{
 			//enable datepicker if the request has no timslots
-			$('#form-control-date').prop('disabled', false);
+			// $('#form-control-date').prop('disabled', false);
 		}
 	};
 
-	// initilize time picker for date
-	var datePicker = $('form[name="newTimeslotDate"] input[name="date"]').pickadate({
-		clear: '',
-		format: 'dd.mm.yyyy',
-		formatSubmit: 'yyyy-mm-dd',
-		hiddenName: true,
-		onStart: function() {
-			var date = new Date();
-			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
-        		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
-        		var date = new Date(startTimeMil);
-
-        		//set current date
-        		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
-        		        	}
-        	else{
-        		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
-        	}
-        	//set placeolder
-        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+"");
-        	//if request has already entries
-        	$scope.checkRequest();
-        	//set minimum for Datepicker
-        	var aktdate = new Date();
-        	this.set('min', [aktdate.getFullYear(), aktdate.getMonth(), aktdate.getDate()]);
-
-   		},
-  		onSet: function(context) {
-        	//var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
-        	//no pick option before today
-        	var pickerDate = this.get('select', 'yyyy-mm-dd');
-        	var aktDate = new Date();
-        	var aktString = aktDate.toISOString().substr(0,10);
-
-    	}
-	});
+	// get only 30 Minutes slots for the Timepicker
 	
-	//set starttime Picker
-	var startTimePicker = $('form[name="newTimeslotTime"] input[name="startTime"]').pickatime({
-		clear: '',
-		format: 'HH:i',
-		formatSubmit: 'HH:i',
-		hiddenName: true,
-		onStart: function() {
-			// get only 30 Minutes slots for the Timepicker
-			var date = new Date();
-        	this.set('select', [date.getHours(), date.getMinutes()]);
-        	if(date.getMinutes()>30){
-        		var minute = '00';
-        		var hour = date.getHours()+1
-        	}
-        	else{
-        		var minute = '30';
-        		var hour = date.getHours();
-        	}
-        	//set Placehoolder
-        	$('#form-control-startTime').attr("placeholder", ""+hour+":"+minute);
-   		},
-   		onClose: function() {
-   			//set endtime one hour after the picked startdate
-   			var picker = endTimePicker.pickatime('picker');
-   			var hour = this.get('select','HH');
-   			var minute = this.get('select','i');
-   			picker.set('min', [hour,minute]);
-   			var hour = (parseInt(hour)+1)%24;
-   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' });
+	function onStart() {
+		var now = new Date();
+		var minute = '00';
+		var hours = '00';
+    	if(now.getMinutes()>30){
+    		minute = '00';
+    		now.setMinutes(0);
+    		hour = now.getHours()+1;
+    	}
+    	else{
+    		minute = '30';
+    		now.setMinutes(30);
+    		hour = now.getHours();
     	}
 
-	});
+    	//copy timestamp of 'now' into startDate, NO REFERENCE!
+    	$scope.startDate = new Date(now.getTime());
+    	$scope.startDate.setHours(hour);
+    	
+    	var nexthour = parseInt(hour)+1;
+			//copy timestamp of 'now' into endDate + 1, NO REFERENCE!
+    	$scope.endDate = new Date(now.getTime());
+    	$scope.endDate.setHours(nexthour);
 
-	//set endtime Picker 
-	var endTimePicker = 	$('form[name="newTimeslotTime"] input[name="endTime"]').pickatime({
-		clear: '',
-		format: 'HH:i',
-		formatSubmit: 'HH:i',
-		hiddenName: true,
-		onStart: function() {
-			var date = new Date();
-        	// get only 30 Minutes slots for the Timepicker
-        	this.set('select', [date.getHours() + 1, date.getMinutes()]);
-        	if(date.getMinutes()>30){
-        		var minute = '00';
-        		var hour = date.getHours()+2
-        	}
-        	else{
-        		var minute = '30';
-        		var hour = (date.getHours()+1)%24;
-        	}
-        	//set Placeholder
-        	$('#form-control-endTime').attr("placeholder", ""+hour+":"+minute);
-   		}
-	});
+    	//set default times
+    	$('#startTime').attr("placeholder", ""+hour+":"+minute);
+    	$('#endTime').attr("placeholder", ""+(hour+1)+":"+minute);
+    	$('#startTime').attr("value", ""+hour+":"+minute);
+    	$('#endTime').attr("value", ""+(hour+1)+":"+minute);
+
+  }
+  onStart();
+
+	//startTime picker
+	var startPicker = $('.startTime').clockpicker({
+	    align: 'left',
+	    autoclose:true
+	})
+    .find('input').change(function(){
+    	var minute = parseInt(this.value.substring(3,5));
+    	var hours = parseInt(this.value.substring(0,2));
+    	$scope.startDate = new Date($scope.dt.getTime());
+    	$scope.startDate.setMinutes(minute);
+    	$scope.startDate.setHours(hours);
+    });
+
+//endTime picker
+	var endPicker = $('.endTime').clockpicker({
+	    align: 'right',
+	    autoclose:true
+	})
+    .find('input').change(function(){
+      var minute = parseInt(this.value.substring(3,5));
+    	var hours = parseInt(this.value.substring(0,2));
+    	$scope.endDate = new Date($scope.dt.getTime());
+    	$scope.endDate.setMinutes(minute);
+    	$scope.endDate.setHours(hours);
+    });
 
 
 	$scope.setCurrentPosition = function() {
@@ -813,24 +788,8 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.addTimeslotToRequest = function() {
-		var startTime = newTimeslotTime.startTime.value;
-		var endTime = newTimeslotTime.endTime.value;
-
-		var startdate = new Date(newTimeslotDate.date.value);
-		var enddate = new Date(newTimeslotDate.date.value);
-
-		//Create startdate Date
-		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));
-		startdate.setMinutes(startTime.substr((startTime.indexOf(":")+1),startTime.length));
-
-		//Create endtime Date
-		enddate.setHours(endTime.substr(0,endTime.indexOf(":")));
-		enddate.setMinutes(endTime.substr((endTime.indexOf(":")+1),endTime.length));
-
-		// add it to Timeslot in Milliseconds
-		$rootScope.config.addTimeslot(startdate.getTime(), enddate.getTime());
+		$rootScope.config.addTimeslot($scope.startDate.getTime(), $scope.endDate.getTime());
 	};
-	
 	
 	$scope.sendRequest = function() {
 		if($rootScope.config.model.requests[0].timeslots.length === 0){
@@ -839,7 +798,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 		$rootScope.findMatches(0);
 	};
 	  
-  	$scope.allContactsDefault = function(){
+	$scope.allContactsDefault = function(){
 		if($rootScope.config.model.requests.length>1){
 			return "inactive";
 		}
@@ -847,6 +806,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 			return "active";
 		}
 	};
+
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, $window) {
