@@ -1,4 +1,4 @@
-var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui"]);
+var app = angular.module('Mampf-Angular', ["ngRoute", "ngTouch", "ngStorage", "mobile-angular-ui", "ui.bootstrap"]);
 
 app.config(function($routeProvider, $locationProvider) {
 	$locationProvider.html5Mode(false);
@@ -624,194 +624,41 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	$scope.showInvitees = false;
 	$scope.showLocation = false;
 	$scope.showDates = true;
+	$scope.today = function() {
+    $scope.dt = new Date();
+  };
+  $scope.today();
 
-	$scope.showTimeList = function(){
-		$scope.showDates = !$scope.showDates;
-	};
-	
-	$scope.showList = function(){
-		if($rootScope.config.model.requests[0].invitees.length>0){
-			$scope.showInvitees = !$scope.showInvitees;
-		}
-	};
-	
-	$scope.showMap = function() {
-		$scope.showLocation = !$scope.showLocation;
-	};
-	// check if the request has picked timeslots
-	$scope.checkRequest = function() {
-		if ($rootScope.config.model.requests[0].timeslots.length  > 0){
-			//disable datepicker to pick only one date per request
-			$('#form-control-date').prop('disabled', true);
-			var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
-			var startTime = new Date(startTimeMil);
-			//set Placeholder and value
-			$('#form-control-date').attr("placeholder",  ""+startTime.getDate()+"."+(startTime.getMonth()+1)+"."+startTime.getFullYear()+"" );
-		}
-		else{
-			//enable datepicker if the request has no timslots
-			$('#form-control-date').prop('disabled', false);
-		}
-	};
+  $scope.clear = function () {
+    $scope.dt = null;
+  };
 
-	// initilize time picker for date
-	var datePicker = $('form[name="newTimeslotDate"] input[name="date"]').pickadate({
-		clear: '',
-		format: 'dd.mm.yyyy',
-		formatSubmit: 'yyyy-mm-dd',
-		hiddenName: true,
-		onStart: function() {
-			var date = new Date();
-			if ($rootScope.config.model.requests[0].timeslots.length  > 0){
-        		var startTimeMil = $rootScope.config.model.requests[0].timeslots[0].startTime;
-        		var date = new Date(startTimeMil);
+  // Disable weekend selection
+  $scope.disabled = function(date, mode) {
+    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+  };
 
-        		//set current date
-        		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
-        		        	}
-        	else{
-        		this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
-        	}
-        	//set placeolder
-        	$('#form-control-date').attr("placeholder", ""+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+"");
-        	//if request has already entries
-        	$scope.checkRequest();
-        	//set minimum for Datepicker
-        	var aktdate = new Date();
-        	this.set('min', [aktdate.getFullYear(), aktdate.getMonth(), aktdate.getDate()]);
+  $scope.toggleMin = function() {
+    $scope.minDate = $scope.minDate ? null : new Date();
+  };
+  $scope.toggleMin();
 
-   		},
-  		onSet: function(context) {
-        	//var currentPick = new Date(context.select[0],context.select[1],context.select[2]);
-        	//no pick option before today
-        	var pickerDate = this.get('select', 'yyyy-mm-dd');
-        	var aktDate = new Date();
-        	var aktString = aktDate.toISOString().substr(0,10);
+  $scope.open = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
 
-    	}
-	});
-	
-	//set starttime Picker
-	var startTimePicker = $('form[name="newTimeslotTime"] input[name="startTime"]').pickatime({
-		clear: '',
-		format: 'HH:i',
-		formatSubmit: 'HH:i',
-		hiddenName: true,
-		onStart: function() {
-			// get only 30 Minutes slots for the Timepicker
-			var date = new Date();
-        	this.set('select', [date.getHours(), date.getMinutes()]);
-        	if(date.getMinutes()>30){
-        		var minute = '00';
-        		var hour = date.getHours()+1
-        	}
-        	else{
-        		var minute = '30';
-        		var hour = date.getHours();
-        	}
-        	//set Placehoolder
-        	$('#form-control-startTime').attr("placeholder", ""+hour+":"+minute);
-   		},
-   		onClose: function() {
-   			//set endtime one hour after the picked startdate
-   			var picker = endTimePicker.pickatime('picker');
-   			var hour = this.get('select','HH');
-   			var minute = this.get('select','i');
-   			picker.set('min', [hour,minute]);
-   			var hour = (parseInt(hour)+1)%24;
-   		 	picker.set('select', ""+hour+":"+minute+"", { format: 'HH:i' });
-    	}
+    $scope.opened = true;
+  };
 
-	});
+  $scope.dateOptions = {
+    formatYear: 'yy',
+    startingDay: 1
+  };
 
-	//set endtime Picker 
-	var endTimePicker = 	$('form[name="newTimeslotTime"] input[name="endTime"]').pickatime({
-		clear: '',
-		format: 'HH:i',
-		formatSubmit: 'HH:i',
-		hiddenName: true,
-		onStart: function() {
-			var date = new Date();
-        	// get only 30 Minutes slots for the Timepicker
-        	this.set('select', [date.getHours() + 1, date.getMinutes()]);
-        	if(date.getMinutes()>30){
-        		var minute = '00';
-        		var hour = date.getHours()+2
-        	}
-        	else{
-        		var minute = '30';
-        		var hour = (date.getHours()+1)%24;
-        	}
-        	//set Placeholder
-        	$('#form-control-endTime').attr("placeholder", ""+hour+":"+minute);
-   		}
-	});
+  $scope.initDate = new Date('2016-15-20');
+  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  $scope.format = $scope.formats[0];
 
-
-	$scope.setCurrentPosition = function() {
-		Location.getCurrentPosition(function(pos){
-			$scope.setPosition(pos);
-			maps.reverseGeocode(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-		});
-	};
-	
-	$scope.setPosition = function(pos) {
-		$rootScope.config.setPosition(pos.coords.latitude, pos.coords.longitude);
-	};
-	
-	$scope.setNewPosition = function() {
-		//console.log($('#location-add').data());
-		var pos = $('body').data().pos;
-		$scope.setPosition(pos);
-		$scope.position = pos.coords.latitude + "," + pos.coords.longitude;
-		window.location.href = '#/QuickLunch';
-		$rootScope.isLocationCustom = true;
-	};
-	
-	$scope.onCancel = function() {
-		$("#pac-input").val('');
-		$("#pac-input").blur();
-	};
-	
-	$scope.setInitLocation = function() {
-		if (!$rootScope.isLocationCustom) $scope.setCurrentPosition();
-	};
-	
-	$scope.addTimeslotToRequest = function() {
-		var startTime = newTimeslotTime.startTime.value;
-		var endTime = newTimeslotTime.endTime.value;
-
-		var startdate = new Date(newTimeslotDate.date.value);
-		var enddate = new Date(newTimeslotDate.date.value);
-
-		//Create startdate Date
-		startdate.setHours(startTime.substr(0,startTime.indexOf(":")));
-		startdate.setMinutes(startTime.substr((startTime.indexOf(":")+1),startTime.length));
-
-		//Create endtime Date
-		enddate.setHours(endTime.substr(0,endTime.indexOf(":")));
-		enddate.setMinutes(endTime.substr((endTime.indexOf(":")+1),endTime.length));
-
-		// add it to Timeslot in Milliseconds
-		$rootScope.config.addTimeslot(startdate.getTime(), enddate.getTime());
-	};
-	
-	
-	$scope.sendRequest = function() {
-		if($rootScope.config.model.requests[0].timeslots.length === 0){
-			$scope.addTimeslotToRequest();
-		}
-		$rootScope.findMatches(0);
-	};
-	  
-  	$scope.allContactsDefault = function(){
-		if($rootScope.config.model.requests.length>1){
-			return "inactive";
-		}
-		else{
-			return "active";
-		}
-	};
 });
 
 app.controller('contactCtrl', function($rootScope, $scope, $window) {

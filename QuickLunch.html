@@ -9,6 +9,14 @@
 
 <div class="scrollable" id="quicklunch">
 <div class="scrollable-content">
+
+<div overlay="selectDate">  
+  <div style="display:inline-block; min-height:290px;">
+    <datepicker ng-model="dt" ng-click="toggle('selectDate')" min-date="minDate" show-weeks="true" class="well well-sm"></datepicker>
+  </div>
+</div>
+
+
 <div style="margin-top:30px">
   <div class="panel">
   <div class="panel-heading">
@@ -20,12 +28,7 @@
       </span>
       <i class="fa fa-calendar pull-right" style="padding-right:10px; font-size:16px"></i>
       <div class="pull-right no-margin-bottom no-padding-top" style="margin-top:-6px;font-size:14px">
-      	<form name="newTimeslotDate" class="ng-pristine ng-valid">
-          <div class="form-control-wrapper date">
-  					<label for="date" class="sr-only">Date</label>
-  					<input type="text" id="form-control-date" class="form-control" ng-model="date" name="date" size="7">
-          </div>
-        </form>
+        <pre ng-click="toggle('selectDate')"><em>{{dt | date:'fullDate' }}</em></pre>
       </div>
     </h2>
   </div>
