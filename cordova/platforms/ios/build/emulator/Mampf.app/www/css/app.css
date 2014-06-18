@@ -1,5 +1,27 @@
 @import url(https://fonts.googleapis.com/css?family=Lobster);
 
+.glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.glyphicon-chevron-right:before {
+  content: "+";
+}
+
+.glyphicon-chevron-left:before {
+  content: "-";
+}
+
+
 .no-margin-bottom {
   	margin-bottom: 0px;
 }
@@ -376,6 +398,19 @@ border-radius: 5px;
 	padding-top: 0;
 	border-top: 0;
 } 
+
+/*
+	Modifying Overlay
+
+	*/
+
+.overlay > .app {
+	-webkit-filter: none;
+}
+
+.overlay .overlay-inner > .overlay-background {
+	background: rgba(255, 255, 255, 1);
+}
 
 /* mainly from demo.css of mobile-angular-ui demo application*/
 #shuttle {
