@@ -1,0 +1,16 @@
+<div content-for="rightNav">
+	<a class="btn btn-navbar" ng-click="setNewPosition()">
+	<i id="location-add" class="fa fa-check fa-3"></i>  DONE</a>
+</div>
+
+<div class="scrollable" id="location" ng-init="location.init()">
+<div class="scrollable-content">
+
+	<input id="pac-input" class="controls" type="text" placeholder="Enter location">
+	<div class="cancel">
+		<img src="https://maps.gstatic.com/mapfiles/api-3/images/mapcnt3.png" draggable="false"></img>
+	</div>
+	<img src="https://maps.gstatic.com/mapfiles/transparent.png" draggable="false" ng-click="onCancel()">
+	<div id="map-canvas"></div>	
+</div>
+</div>

@@ -1,0 +1,44 @@
+<!-- Input field to search for contacts by name -->
+<input type="search" ng-model="contactSearch" class="form-control app-search" placeholder="Search.." />
+<div class="scrollable">
+<div class="scrollable-content">
+  <!-- upper right button to finish creation of group -->
+  <div content-for="rightNav">
+    <div class="btn btn-navbar" ng-click="addGroupToModel(groupName)">
+      <i class="fa fa-check fa-3"></i>  DONE</div>
+  </div>
+
+<!-- list of all contacts -->
+  <ul class="list-group" id="groupList" style="margin-bottom:55px;">
+    <li ng-repeat="contact in config.model.contacts | orderBy:'name' | filter:contactSearch" class="list-group-item">
+      <h3 style="margin-bottom:0px;">
+        <small>{{contact.name}} - <small>{{contact.phoneNumbers[0]}}</small></small>
+      </h3>
+      <!-- Switch button to add contacts to a group -->
+      <div ng-switch on="inMembers(contact)"> 
+
+        <div ng-switch-when="false">
+          <div  class="switch ng-isolate-scope switch-transition-enabled ng-click-active"
+                ng-click="toggleMember(contact)"
+                style="position: absolute; right: 10px; top: 6px;">
+          <div class="switch-handle"></div></div>
+        </div>
+
+        <div ng-switch-when="true">
+          <div  class="switch active ng-isolate-scope switch-transition-enabled ng-click-active"
+                ng-click="toggleMember(contact)" 
+                style="position: absolute; right: 10px; top: 6px;">
+          <div class="switch-handle"></div></div>
+        </div>
+
+     </div>
+
+    </li>
+	</ul>
+  <!-- bottom navbar with input field for the group name -->
+  <div class="navbar navbar-app navbar-absolute-bottom" style="padding:10px;">
+    <input type="text" name="groupName" ng-model="groupName" class="form-control" placeholder="Enter name for group.." style="border-color:#E2001A; font-size: 15pt;"/>
+  </div>
+
+</div>
+</div>
