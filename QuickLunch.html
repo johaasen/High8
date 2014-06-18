@@ -32,7 +32,7 @@
         <div class ="btn button-grey" ng-show="config.model.requests[0].timeslots.length === 0" ng-click="toggle('selectDate')">
           {{dt | date:'dd.MM.yyyy' }}
         </div>
-        <div class ="btn button-grey" ng-show="config.model.requests[0].timeslots.length > 0" >
+        <div class ="btn button-grey" ng-show="config.model.requests[0].timeslots.length > 0" onclick="alertify.alert('You already picked a Timeslot for this date');">
           {{dt | date:'dd.MM.yyyy' }}
         </div>
       </div>

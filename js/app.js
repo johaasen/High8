@@ -775,6 +775,7 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
     	$scope.startDate = new Date($scope.dt.getTime());
     	$scope.startDate.setMinutes(minute);
     	$scope.startDate.setHours(hours);
+    	$('#endTime').attr("value", ""+(hours+1)+":"+minute);
     });
 
 //endTime picker
@@ -822,12 +823,21 @@ app.controller('quicklunchCtrl', function($rootScope, $scope, Location) {
 	};
 	
 	$scope.addTimeslotToRequest = function() {
+		// Starttime is greater than Endtime
+		if($scope.startDate.getTime() > $scope.endDate.getTime()){
+			alertify.alert('Starttime is greater than Endtime');
+			return false;
+		}
+		//add Timeslot
 		$rootScope.config.addTimeslot($scope.startDate.getTime(), $scope.endDate.getTime());
+
 	};
 	
 	$scope.sendRequest = function() {
 		if($rootScope.config.model.requests[0].timeslots.length === 0){
-			$scope.addTimeslotToRequest();
+			if($scope.addTimeslotToRequest() === false){
+				return;
+			}
 		}
 		$rootScope.findMatches(0);
 	};
