@@ -487,6 +487,8 @@ app.service('Config', function($localStorage) {
 		this.delContacts();
 		var dummyContactsNeeded = true;
 		
+		//navigator.contacts is null on browser but filled on mobile device with cordova
+		//on cordova use phonebook contacts
 		if(navigator.contacts!==null&&navigator.contacts!==undefined){
 			var that = this;						
 			var onSuccess = function (contacts) {
@@ -519,6 +521,7 @@ app.service('Config', function($localStorage) {
 			var fields = ["*"];
 			navigator.contacts.find(onSuccess, onError, fields, options);
 		}
+		// use Google Contacts in Browser
 		else{
 			if (this.model.useGoogleContacts) {
 
